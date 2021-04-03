@@ -1,9 +1,9 @@
 # Group 1 for Cmpe352.01 Spring 2021
 
-## 🎓Course Definition
+## 🎓 Course Definition
 Fundamentals of Software Engineering focuses on teaching tools, practices and issues concerned with software development while highly depending on teamwork. 
 
-## ✔️Group Members
+## ✔️ Group Members
 - [Elif AKALIN](https://github.com/elxif)
 - [Berke ARGIN](https://github.com/MrLebowski42)
 - [Hakan BALIK](https://github.com/LehabuL)
@@ -17,8 +17,8 @@ Fundamentals of Software Engineering focuses on teaching tools, practices and is
  ## 🟩 Instructor & Teaching Assistants
  - **Instructor**: Suzan Üsküdarlı 
  - **Teaching Assistants**
- - - Emre Bilgili (In charge of us.)
- - - Egemen İşgüder
+ - - Emre Bilgili 
+ - - Egemen İşgüder (In charge of us.)
  - - Gökhan Çapan
  - - Serdar Metin
 
