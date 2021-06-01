@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>Welcome, {{personfirst}} {{personlast}}</h1>
+<p>You can view posts here.</p>
+<label>Post Id:</label>
+{{post.id}}
+    <br>
+    <label>Post owner:</label>
+    {{post.posterid}}
+    <br>
+    <label>Post Title:</label>
+    {{post.title}}
+    <br>
+    <label>Post description:</label>
+    {{post.description}}
+    <br>
+    {% for data_field in post.data_fields %}
+    <label>{{data_field.name}}</label>
+    {%if data_field.type =="text"%}
+    <p>{{data_field.content}}</p>
+    {%elif data_field.type="image"%}
+    <img src="{{data_field.content}}">
+    {%elif data_field.type="video"%}
+    <iframe src="{{data_field.content}}">
+    {%end if%}
+    {%end for%}
+    <hr>
+{% endfor %}
+
+
+
+</body>
+</html>

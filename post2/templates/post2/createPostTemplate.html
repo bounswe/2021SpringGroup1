@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cmpe 352 Website</title>
+</head>
+<body>
+
+<h1>Welcome, {{personfirst}} {{personlast}}</h1>
+<p>Lets create your post template!</p>
+<h2>{{template_name}}</h2>
+<p>{{description}}</p>
+<h4>Added data fields:</h4>
+{% for temp in added_template %}
+    <label>{{temp.name}}::::::{{temp.type}}:</label>
+{% endfor %}
+
+
+<form method="POST" action="../createPostTemplate/add_field" id="field_form">
+    {% csrf_token %}
+    <input name="field_name" placeholder="field name"></input>
+    <input name="form_content" placeholder="arguments(eg. an array for selection)"></input>
+    <input type="hidden" name="data_field_temps" value="{{added_templates}}">
+    <input type="hidden" name="template_name" value="{{template_name}}">
+    <input type="hidden" name="description" value="{{description}}">
+<button type="submit" name="post" value="create">Add field</button>
+</form>
+<label for="cars">Field type:</label>
+<select name="type" id="type_select" form="field_form">
+  <option value="text">Text</option>
+  <option value="image">Image</option>
+  <option value="video">Video</option>
+</select>
+<form method="POST" action="../savePostTemplate" id="submit_form">
+    {% csrf_token %}
+    <input type="hidden" name="data_field_temps" value="{{added_templates}}">
+    <input type="hidden" name="template_name" value="{{template_name}}">
+    <input type="hidden" name="description" value="{{description}}">
+<button type="submit" name="post" value="create">Create Post Template</button>
+</form>
+</body>
+</html>

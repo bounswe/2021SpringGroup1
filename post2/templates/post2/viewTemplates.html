@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>Welcome, {{personfirst}} {{personlast}}</h1>
+<p>Please select a template.</p>
+
+{% for item in alltemplates %}
+    <a href="createPost?template_id={{item.id}}">{{item.name}}</a>
+    <p>{{item.description}}</p>
+{% empty %}
+    <p>There is no post template</p>
+{% endfor %}
+
+
+</body>
+</html>

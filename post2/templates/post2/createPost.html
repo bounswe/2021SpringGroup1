@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cmpe 352 Website</title>
+</head>
+<body>
+
+<h1>Welcome, {{personfirst}} {{personlast}}</h1>
+<p>Lets create your post!</p>
+
+<form method="POST" action="../savePost/">
+    {% csrf_token %}
+<label>Title of your post:</label>
+<input name="title" placeholder="your title goes here"></input>
+<br>
+<label>Description of your post</label>
+<input name="description" placeholder="your description goes here"></input>
+{% for temp in data_field_temps %}
+    {% if temp.type=="text"%}
+        <label>{{temp.name}}:</label>    
+        <input name="{{temp.name}}_content" placeholder="enter text"></input>
+    {% elif temp.type=="image" %}
+        <label>{{temp.name}}:</label>  
+        <input name="{{temp.name}}_content" placeholder="enter image url"></input>
+    {% elif temp.type=="video" %}
+        <label>{{temp.name}}:</label>  
+        <input name="{{temp.name}}_content" placeholder="enter video url"></input>
+{% endfor %}
+<input type="hidden" name="post_template_id" value="{{post_template_id}}">
+<button type="submit" name="post" value="create">Create Post</button>
+</form>
+
+</body>
+</html>
