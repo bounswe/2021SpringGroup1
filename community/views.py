@@ -44,7 +44,7 @@ def createCommunity(req):
     if req.method == "POST":
         community = Community()
         community.name = req.GET["name"]
-        community.isPrivate = req.GET["isPrivate"]
+        community.isPrivate = (req.GET["isPrivate"]=="true")    #Cast to boolean
         moderator_name = req.GET["moderator"]
         user = User(name=moderator_name)
         community.moderator = user

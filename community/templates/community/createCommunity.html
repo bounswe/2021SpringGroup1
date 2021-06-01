@@ -3,33 +3,40 @@
 
 <head>
   <title>Welcome to the communities page!</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
   <div class="wrapper">
-    <h1>Welcome.</h1>
-    <p>
-      Let us create your community.
-    </p>
+    <div style="background-color:lavender; !important" class="jumbotron text-center">
+      <h1>Welcome.</h1>
+      <p>
+        Let us create your community.
+      </p>
+    </div>
 
-    <div class="controls">
+    <div class="container">
       <label>Name of your community:</label>
       <input id="name" placeholder="Name of community"></input>
       <br>
-
       <label>Whether this is a private community</label>
-      <input id="is_private" placeholder="True/False"></input>
+      <input type="checkbox" id="is_private" checked="checked"></input>
       <br>
-
       <label>Name of the moderator</label>
       <input id="moderator" placeholder="Moderator Name"></input>
       <br>
-      <button id="createCommunity">Create Community</button>
+      <button id="createCommunity" class="btn">Create Community</button>
     </div>
-
-    <div class="results">
-      <section id="results_section">
-      </section>
+    
+    <div class="container">
+      <div class="results">
+        <section id="results_section">
+        </section>
+      </div>
     </div>
 
   </div>
@@ -60,8 +67,9 @@
 
     function createCommunity(e) {
       e.preventDefault();
+
       const baseURL = '/community/createCommunity/';
-      let url = baseURL + "?name=" + name.value + "&isPrivate=" + is_private.value + "&moderator=" + moderator.value;
+      let url = baseURL + "?name=" + name.value + "&isPrivate=" + is_private.checked + "&moderator=" + moderator.value;
       // request options
       const headers = {
         'Accept': 'application/json',
@@ -91,7 +99,7 @@
       const para = document.createElement('pre');
       para.textContent = JSON.stringify(json, undefined, '\t')
       section.appendChild(para);
-      
+
       const line = document.createElement('p');
       if (Object.keys(json).length === 0 && json.constructor === Object) {
         line.textContent = "Error creating community! Are you sure all fields are correct?";
@@ -105,4 +113,5 @@
   </script>
 </body>
 <p></p>
+
 </html>

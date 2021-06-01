@@ -3,26 +3,34 @@
 
 <head>
   <title>Welcome to the communities page!</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
   <div class="wrapper">
-    <h1>Welcome.</h1>
-    <p>
-      Let us delete your community.
-    </p>
+    <div style="background-color:lavender; !important" class="jumbotron text-center">
+      <h1>Welcome.</h1>
+      <p>
+        Let us delete your community.
+      </p>
+  </div>
 
-    <div class="controls">
+    <div class="container">
       <label>Name of the community to delete:</label>
       <input id="name" placeholder="Name of community"></input>
       <br>
-
-      <button id="deleteCommunity">Delete Community</button>
+      <button id="deleteCommunity" class="btn">Delete Community</button>
     </div>
 
-    <div class="results">
-      <section id="results_section">
-      </section>
+    <div class="container">
+      <div class="results">
+        <section id="results_section">
+        </section>
+      </div>
     </div>
 
   </div>
@@ -81,7 +89,7 @@
       const para = document.createElement('pre');
       para.textContent = JSON.stringify(json, undefined, '\t')
       section.appendChild(para);
-      
+
       const line = document.createElement('p');
       if (Object.keys(json).length === 0 && json.constructor === Object) {
         line.textContent = "Error deleting community! Are you sure a community with given name exists?";

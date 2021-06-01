@@ -3,33 +3,46 @@
 
 <head>
     <title>Welcome to the communities page!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 
 <body>
     <div class="wrapper">
-        <h1>Welcome.</h1>
-        <p>
-            You can search, create communities, delete communities and view them here.
-        </p>
-        <div class="controls">
-            <!-- <form method="GET" action="./getFirst"> -->
-            <form>
-                <!-- <button type="submit" name="post" value="getFirst"> -->
-                <button id="getFirst">Get the first community.</button>
-                <button id="getLast">Get the last community.</button>
-                <button id="getAll">Get all communities.</button>
-                <button id="createCommunity">Create a new community.</button>
-                <button id="deleteCommunity">Delete an existing community.</button>
-                <br>
-                <button id="getSuggestions">Get suggested images for a community.</button>
-                <input type="text" id="input_field" class="search" placeholder="Name of community">
-
-            </form>
+        <div style="background-color:lavender; !important"  class="jumbotron text-center bg-primary">
+            <h1>Welcome.</h1>
+            <p>
+                You can search, create communities, delete communities and view them here.
+            </p>
         </div>
+        <div class="container">
+            <div class="col-sm">
+                <!-- <button type="submit" name="post" value="getFirst"> -->
+                <button id="getFirst" class="btn">Get the first community.</button>
+                <button id="getLast" class="btn">Get the last community.</button>
+                <button id="getAll" class="btn">Get all communities.</button>
+            </div>
+            <br>
+            <div class="col-sm">
+                <button id="createCommunity" class="btn">Create a new community.</button>
+                <button id="deleteCommunity" class="btn">Delete an existing community.</button>
+            </div>
+            <br>
+            <div class="col-sm">
+                <button id="getSuggestions" class="btn">Get suggested images for a community.</button>
+                <input type="text" id="input_field" class="search" placeholder="Name of community">
+            </div>
+        </div>
+        <br>
 
-        <div class="results">
-            <section id="results_section">
-            </section>
+        <div class="container">
+            <div class="results">
+                <section id="results_section">
+                </section>
+            </div>
         </div>
     </div>
 
@@ -133,6 +146,7 @@
                     let current = images[i];
                     img.src = current;
                     img.alt = searchTerm;
+                    img.className = "img-rounded"
                     section.appendChild(img);
                 }
             }
