@@ -1,23 +1,99 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Welcome to the communities page!</title>
-  </head>
-  <body>
-    <!-- <h1>Welcome, {{personfirst}} {{personlast}}</h1> -->
+
+<head>
+  <title>Welcome to the communities page!</title>
+</head>
+
+<body>
+  <div class="wrapper">
     <h1>Welcome.</h1>
     <p>
       Let us delete your community.
     </p>
 
-<form method="POST" action="./deleteCommunity/">
-    {% csrf_token %}
-<label>Name of the community to delete:</label>
-<input name="name" placeholder="Name of community"></input>
-<br>
+    <div class="controls">
+      <label>Name of the community to delete:</label>
+      <input id="name" placeholder="Name of community"></input>
+      <br>
 
-<button type="submit">Delete Community</button>
-</form>
+      <button id="deleteCommunity">Delete Community</button>
+    </div>
 
+    <div class="results">
+      <section id="results_section">
+      </section>
+    </div>
+
+  </div>
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    const section = document.getElementById("results_section");
+    const name = document.getElementById('name');
+    document.getElementById("deleteCommunity").addEventListener("click", deleteCommunity);
+
+    function deleteCommunity(e) {
+      e.preventDefault();
+      const baseURL = '/community/deleteCommunity/';
+      let url = baseURL + "?name=" + name.value;
+      // request options
+      const headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json; charset=UTF-8',
+        'X-CSRFToken': csrftoken
+      }
+      const options = {
+        method: 'POST',
+        headers,
+        //TODO: Check credentials here, when implemented.
+        // credentials: 'include',
+        // body: JSON.stringify({
+        //     email: 'test@example.com',
+        //     password: 'password'
+      }
+      fetch(url, options).then(function (result) {
+        return result.json();
+      }).then(function (json) {
+        displayResults(json);
+      });
+    }
+
+    function displayResults(json) {
+      while (section.firstChild) {
+        section.removeChild(section.firstChild);
+      }
+      const para = document.createElement('pre');
+      para.textContent = JSON.stringify(json, undefined, '\t')
+      section.appendChild(para);
+      
+      const line = document.createElement('p');
+      if (Object.keys(json).length === 0 && json.constructor === Object) {
+        line.textContent = "Error deleting community! Are you sure a community with given name exists?";
+      } else {
+        line.textContent = "Community or communities deleted successfully!";
+      }
+      section.appendChild(line);
+    }
+
+
+
+  </script>
 </body>
+
 </html>

@@ -43,9 +43,9 @@ def createCommunity(req):
     # TODO: add sanity check for the data.
     if req.method == "POST":
         community = Community()
-        community.name = req.POST["name"]
-        community.isPrivate = req.POST["isPrivate"]
-        moderator_name = req.POST["moderator"]
+        community.name = req.GET["name"]
+        community.isPrivate = req.GET["isPrivate"]
+        moderator_name = req.GET["moderator"]
         user = User(name=moderator_name)
         community.moderator = user
         # Create the first post of the community.
@@ -65,7 +65,7 @@ def createCommunity(req):
 def deleteCommunity(req):
     response = {}
     if req.method == "POST":
-        name_del = req.POST["name"]
+        name_del = req.GET["name"]
         # TODO:filter by unique id instead.
         to_delete = Community.objects.filter(name=name_del)
         list_of_dicts = list(to_delete)

@@ -1,53 +1,146 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <title>Welcome to the communities page!</title>
-  </head>
-  <body>
-    <!-- <h1>Welcome, {{personfirst}} {{personlast}}</h1> -->
-    <h1>Welcome.</h1>
-    <p>
-      You can search create communities, delete communities and view them here.
-    </p>
+</head>
 
-    <form method="GET" action="./getFirst">
-      <!-- <button type="submit" name="post" value="getFirst"> -->
-      <button type="submit">Get the first community.</button>
-    </form>
+<body>
+    <div class="wrapper">
+        <h1>Welcome.</h1>
+        <p>
+            You can search, create communities, delete communities and view them here.
+        </p>
+        <div class="controls">
+            <!-- <form method="GET" action="./getFirst"> -->
+            <form>
+                <!-- <button type="submit" name="post" value="getFirst"> -->
+                <button id="getFirst">Get the first community.</button>
+                <button id="getLast">Get the last community.</button>
+                <button id="getAll">Get all communities.</button>
+                <button id="createCommunity">Create a new community.</button>
+                <button id="deleteCommunity">Delete an existing community.</button>
+                <br>
+                <button id="getSuggestions">Get suggested images for a community.</button>
+                <input type="text" id="input_field" class="search" placeholder="Name of community">
 
-    <form method="GET" action="./getLast">
-      <button type="submit">Get the last community.</button>
-    </form>
+            </form>
+        </div>
 
-    <form method="GET" action="./getAll">
-      <button type="submit">Get all communities.</button>
-    </form>
+        <div class="results">
+            <section id="results_section">
+            </section>
+        </div>
+    </div>
 
-    <form method="GET" action="./createCommunity_ui">
-      <button type="submit">Create a new community.</button>
-    </form>
+    <script>
+        //Never used, but useful to have.
+        // const form = document.querySelector('form');
+        const section = document.getElementById("results_section");
+        const searchTerm = document.getElementById('input_field');
+        document.getElementById("getFirst").addEventListener("click", getFirst);
+        document.getElementById("getLast").addEventListener("click", getLast);
+        document.getElementById("getAll").addEventListener("click", getAll);
+        document.getElementById("createCommunity").addEventListener("click", createCommunity);
+        document.getElementById("deleteCommunity").addEventListener("click", deleteCommunity);
+        document.getElementById("getSuggestions").addEventListener("click", getSuggestions);
 
-    <form method="GET" action="./deleteCommunity_ui">
-      <button type="submit">Delete a community.</button>
-    </form>
+        function getFirst(e) {
+            e.preventDefault();
+            const baseURL = '/community/getFirst/';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
 
-    <form method="GET" action="./getSuggestions_ui">
-      <button type="submit">Get suggested images for a community.</button>
-    </form>
+        function getLast(e) {
+            e.preventDefault();
+            const baseURL = '/community/getLast/';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
 
-    <!-- <form method="GET" action="./createCommunity">
-      <button type="submit" name="post" value="create">
-        Create a Community
-      </button>
-    </form> -->
+        function getAll(e) {
+            e.preventDefault();
+            const baseURL = '/community/getAll/';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
 
-    <!-- <form method="GET" action="./viewPost">
-<button type="submit" name="post" value="view">View Posts</button>
-</form> -->
+        function createCommunity(e) {
+            e.preventDefault();
+            const baseURL = '/community/createCommunity_ui';
+            let url = baseURL;
+            window.location.href = url;
+        }
 
-    <!-- <form method="POST" action="">
-    {% csrf_token %}
-    <button type="submit" name="post" value="logout">Log out</button>
-</form> -->
-  </body>
+        function deleteCommunity(e) {
+            e.preventDefault();
+            const baseURL = '/community/deleteCommunity_ui';
+            let url = baseURL;
+            window.location.href = url;
+        }
+
+        function getSuggestions(e) {
+            e.preventDefault();
+            if (searchTerm.value == '') {
+                window.alert("Please enter a search term!");
+            }
+            else {
+                const baseURL = '/community/getSuggestions/?';
+                let url;
+                url = baseURL + 'name=' + searchTerm.value;
+                fetch(url).then(function (result) {
+                    return result.json();
+                }).then(function (json) {
+                    displayImages(json);
+                });
+            }
+        }
+
+        function displayResults(json) {
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const para = document.createElement('pre');
+            para.textContent = JSON.stringify(json, undefined, '\t')
+            section.appendChild(para);
+        }
+
+        function displayImages(json) {
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const images = json.images
+            if (images.length === 0) {
+                const para = document.createElement('p');
+                para.textContent = 'No results returned.'
+                section.appendChild(para);
+            } else {
+                for (var i = 0; i < images.length; i++) {
+                    const img = document.createElement('img');
+                    let current = images[i];
+                    img.src = current;
+                    img.alt = searchTerm;
+                    section.appendChild(img);
+                }
+            }
+        }
+
+
+    </script>
+
+</body>
+
 </html>
