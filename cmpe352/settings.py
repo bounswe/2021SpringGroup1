@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'reset_migrations',
     'person',
-
-
+    'community'
 ]
 
 MIDDLEWARE = [

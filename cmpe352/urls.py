@@ -20,4 +20,5 @@ from django.conf.urls import url,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('person/',include('person.routes')),
+    url('community/',include('community.routes')),
 ]
