@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to the communities page!</title>
+  </head>
+  <body>
+    <!-- <h1>Welcome, {{personfirst}} {{personlast}}</h1> -->
+    <h1>Welcome.</h1>
+    <p>
+      You can see image suggestions for a given community page here. 
+    </p>
+
+<form method="GET" action="./getSuggestions/">
+    {% csrf_token %}
+<label>Name of the community to get suggestions for:</label>
+<input name="name" placeholder="Name of community"></input>
+<br>
+
+<button type="submit">Get Suggestions</button>
+</form>
+
+</body>
+</html>

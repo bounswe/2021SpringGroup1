@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to the communities page!</title>
+  </head>
+  <body>
+    <!-- <h1>Welcome, {{personfirst}} {{personlast}}</h1> -->
+    <h1>Welcome.</h1>
+    <p>
+      You can search create communities, delete communities and view them here.
+    </p>
+
+    <form method="GET" action="./getFirst">
+      <!-- <button type="submit" name="post" value="getFirst"> -->
+      <button type="submit">Get the first community.</button>
+    </form>
+
+    <form method="GET" action="./getLast">
+      <button type="submit">Get the last community.</button>
+    </form>
+
+    <form method="GET" action="./getAll">
+      <button type="submit">Get all communities.</button>
+    </form>
+
+    <form method="GET" action="./createCommunity_ui">
+      <button type="submit">Create a new community.</button>
+    </form>
+
+    <form method="GET" action="./deleteCommunity_ui">
+      <button type="submit">Delete a community.</button>
+    </form>
+
+    <form method="GET" action="./getSuggestions_ui">
+      <button type="submit">Get suggested images for a community.</button>
+    </form>
+
+    <!-- <form method="GET" action="./createCommunity">
+      <button type="submit" name="post" value="create">
+        Create a Community
+      </button>
+    </form> -->
+
+    <!-- <form method="GET" action="./viewPost">
+<button type="submit" name="post" value="view">View Posts</button>
+</form> -->
+
+    <!-- <form method="POST" action="">
+    {% csrf_token %}
+    <button type="submit" name="post" value="logout">Log out</button>
+</form> -->
+  </body>
+</html>

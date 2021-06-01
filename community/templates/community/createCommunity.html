@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to the communities page!</title>
+  </head>
+  <body>
+    <!-- <h1>Welcome, {{personfirst}} {{personlast}}</h1> -->
+    <h1>Welcome.</h1>
+    <p>
+      Let us create your community.
+    </p>
+
+<form method="POST" action="./createCommunity/">
+    {% csrf_token %}
+<label>Name of your community:</label>
+<input name="name" placeholder="Name of community"></input>
+<br>
+
+<label>Whether this is a private community</label>
+<input name="isPrivate" placeholder="true/false"></input>
+<br>
+
+<label>Name of the moderator</label>
+<input name="moderator" placeholder="Moderator Name"></input>
+<br>
+
+<button type="submit">Create Community</button>
+</form>
+
+</body>
+</html>

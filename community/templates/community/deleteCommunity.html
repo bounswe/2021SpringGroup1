@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to the communities page!</title>
+  </head>
+  <body>
+    <!-- <h1>Welcome, {{personfirst}} {{personlast}}</h1> -->
+    <h1>Welcome.</h1>
+    <p>
+      Let us delete your community.
+    </p>
+
+<form method="POST" action="./deleteCommunity/">
+    {% csrf_token %}
+<label>Name of the community to delete:</label>
+<input name="name" placeholder="Name of community"></input>
+<br>
+
+<button type="submit">Delete Community</button>
+</form>
+
+</body>
+</html>
