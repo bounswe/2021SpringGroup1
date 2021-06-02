@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Welcome to the homepage!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+            <h1> Welcome to {{name}}.</h1>
+            <p>
+                {{description}}
+            </p>
+        </div>
+
+
+        <div class="container">
+            {% if not isMember %}
+            <div class="col-sm">
+                <button id="joinCommunity" class="btn btn-success">Press to join the community.</button>
+            </div>
+            {% else %}
+            <div class="col-sm">
+                <button id="leaveCommunity" class="btn btn-danger">Press to leave the community.</button>
+            </div>
+            {% endif %}
+        </div>
+        <br>
+
+        <div class="container">
+            {% if isMember %}
+            <div class="col-sm">
+                <button id="createPost" class="btn btn-primary">Press to create a post.</button>
+            </div>
+            {% else %}
+            <div class="col-sm">
+                <p>You can not create a post, since you are not a member! Please join the community first.</p>
+            </div>
+            {% endif %}
+        </div>
+        <br>
+
+        {% if isModerator %}
+        <div class="container">
+            <div class="col-sm">
+                <button id="createTemplate" class="btn btn-primary">Press to create a post template.</button>
+            </div>
+        </div>
+        <br>
+        {% endif %}
+
+        <div class="container">
+            <div class="col-sm">
+                <button id="getAllPostsOfCommunity" class="btn btn-primary">Press to see all posts in the
+                    community.</button>
+            </div>
+            <br>
+            <div class="btn-group" role="group" id="posts_section">
+                <!-- <section id="communities_section">
+                </section> -->
+            </div>
+        </div>
+
+        <br>
+
+        <div class="container">
+            <div id="section_posts">
+            </div>
+        </div>
+
+        <br>
+        
+        <div class="container">
+            <div id="results_section">
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const section = document.getElementById("results_section");
+        const section_posts = document.getElementById("section_posts");
+        let posts;
+
+        let element;
+        element = document.getElementById("joinCommunity");
+        if (element != null)
+            element.addEventListener("click", joinCommunity);
+        element = document.getElementById("leaveCommunity")
+        if (element != null)
+            element.addEventListener("click", leaveCommunity);
+        element = document.getElementById("createPost")
+        if (element != null)
+            element.addEventListener("click", createPost);
+        element = document.getElementById("createTemplate")
+        if (element != null)
+            element.addEventListener("click", createTemplate);
+        element = document.getElementById("getAllPostsOfCommunity")
+        if (element != null)
+            element.addEventListener("click", getAllPostsOfCommunity);
+
+
+        function joinCommunity(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/joinCommunity/'
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
+
+        function leaveCommunity(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/leaveCommunity/'
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
+
+        function createPost(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/createPost_ui/'
+            let url = baseURL;
+            window.location.href = url;
+        }
+
+        function createTemplate(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/createTemplate_ui/'
+            let url = baseURL;
+            window.location.href = url;
+        }
+
+        function getAllPostsOfCommunity(e) {
+            e.preventDefault();
+            // const baseURL = '/mainapp/getAllPostsOfCommunity';
+            const baseURL = '/community/getAll';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayPosts(json);
+            });
+        }
+
+        function goToPost(e) {
+            console.log(posts);
+            console.log(e.target);
+            console.log(e.target.id);
+            e.preventDefault();
+            const baseURL = '/mainapp/viewPost_ui';
+            let url = baseURL + "?id=" + e.target.id;
+            console.log(url);
+            window.location.href = url;
+        }
+
+        function displayPosts(json) {
+            console.log(json);
+            displayResults(json);
+            posts=json;
+            while (section_posts.firstChild) {
+                section_posts.removeChild(section_posts.firstChild);
+            }
+            var i = 1;
+            while (true) {
+                const post = json[i];
+                console.log(post);
+                i++;
+                if (post == undefined)
+                    break;
+
+                const button = document.createElement('button');
+                button.className = "btn btn-secondary";
+                button.textContent = post["title"];
+                button.id = post["id"];
+                section_posts.appendChild(button);
+                button.addEventListener("click", goToPost);
+            }
+        }
+
+        function displayResults(json) {
+            console.log(json);
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const para = document.createElement('pre');
+            para.textContent = JSON.stringify(json, undefined, '\t')
+            section.appendChild(para);
+        }
+
+    </script>
+
+</body>
+
+</html>
