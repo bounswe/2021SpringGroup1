@@ -1,3 +1,9 @@
+.vs
 .vscode
-**/__pycache__
+cmpe352/__pycache__/**
+cmpe352/migrations/__pycache__/**
+person/__pycache__/**
+person/migrations/__pycache__/**
+community/__pycache__/**
+community/migrations/__pycache__/**
 help.txt
