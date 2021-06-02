@@ -11,7 +11,8 @@ import ast
 def mainPage(request):
     if request.method == "POST":
         if request.POST["post"] == "logout":
-            request.session.flush()
+            if request.session:
+                request.session.flush()
             return HttpResponseRedirect("../")
     return render(request, "post2/mainPage.html", {"personfirst": request.session["firstname"], "personlast": request.session["lastname"]})
 
