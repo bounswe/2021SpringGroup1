@@ -5,12 +5,12 @@ from person.models import Person
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, verbose_name="Topluluk Adı")
-    moderator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='moderator') #A community has only one moderator.
+    moderator = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='moderator') #A community has only one moderator.
     numUsers = models.IntegerField(verbose_name = "Kullanıcı Sayısı")
     numPosts = models.IntegerField(verbose_name = "Post Sayısı")
     isPrivate = models.BooleanField(verbose_name = "Private mı?")
     createdDate = models.DateTimeField(auto_now_add = True,verbose_name = "Oluşturulma tarihi")
-
+    joinedUsers=models.ManyToManyField(Person,related_name='joinedCommunities')
     #TODO:Update this string.
 
     def __str__(self):

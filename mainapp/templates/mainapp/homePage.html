@@ -60,8 +60,8 @@
             console.log(e.target);
             console.log(e.target.id);
             e.preventDefault();
-            // const baseURL = '/mainapp/viewCommunity_ui/';
-            const baseURL = '/community/createCommunity_ui';
+            const baseURL = '/mainapp/viewCommunity_ui/';
+            //const baseURL = '/community/createCommunity_ui';
             let url = baseURL + "?id=" + e.target.id;
             console.log(url);
             window.location.href = url;
@@ -69,8 +69,8 @@
 
         function getUserCommunities(e) {
             e.preventDefault();
-            // const baseURL = '/mainapp/getAllCommuntiesOfUser/';
-            const baseURL = '/community/getAll';
+            const baseURL = '/mainapp/getAllCommuntiesOfUser/';
+            //const baseURL = '/community/getAll';
             let url = baseURL;
             fetch(url).then(function (result) {
                 return result.json();
@@ -81,8 +81,8 @@
 
         function createCommunity(e) {
             e.preventDefault();
-            // const baseURL = '/mainapp/createCommunity_ui';
-            const baseURL = '/community/createCommunity_ui';
+            const baseURL = '/mainapp/createCommunity_ui/';
+            //const baseURL = '/community/createCommunity_ui';
             let url = baseURL;
             console.log(url);
             window.location.href = url;

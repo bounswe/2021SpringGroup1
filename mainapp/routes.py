@@ -5,5 +5,8 @@ from . import views
 app_name = "mainapp"
 
 urlpatterns = [
-    path("", views.mainPage, name="mainPage"),
+    path("mainPage", views.mainPage, name="mainPage"),
+    path("getAllCommuntiesOfUser/", views.mainPage, name="mainPage"),
+    path("createCommunity_ui/",views.createCommunity_ui,name="createCommunity_ui"),
+    path("viewCommunity_ui/",views.viewCommunity_ui,name="viewCommunity_ui")
 ]

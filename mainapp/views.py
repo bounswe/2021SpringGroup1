@@ -23,7 +23,11 @@ def mainPage(req):
     if "community_id" in req.session.keys():
         del req.session["community_id"]
     #TODO: Update Html file
-    return render(req, "mainapp/index.html")
+    context={
+        "personfirst":req.session["firstname"],
+        "personlast":req.session["lastname"],
+        }
+    return render(req, "mainapp/homePage.html",context)
 
 def getAllCommunitiesOfUser(req):
     user_id=req.session["id"]
@@ -34,7 +38,7 @@ def createCommunity_ui(req):
     #TODO: Update Html file
     return render(req, "mainapp/createCommunity.html")
 
-def viewCommunity(req):
+def viewCommunity_ui(req):
     user_id=req.session["id"]
     user=Person.objects.get(pk=user_id)
     community_id=req.GET["id"]
@@ -84,7 +88,7 @@ def createCommunity(req):
         community.isPrivate = (req.GET["isPrivate"]=="true")    #Cast to boolean
         community.moderator= Person.object.get(req.session["id"])
         community.numUsers = 1
-        user.save()
+        community.joinedUsers.add(community.moderator)
         community.save()
         return JsonResponse(community.__str__())
     else:

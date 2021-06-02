@@ -20,7 +20,7 @@ def loginpage(request):
         request.session["lastname"] = request.POST["lastname"]
         request.session["id"] = person[0].id
 
-        return HttpResponseRedirect("/community/mainPage")
+        return HttpResponseRedirect("/mainapp/mainPage")
 
     if request.method == "GET":
         return render(request, "login/login.html")
