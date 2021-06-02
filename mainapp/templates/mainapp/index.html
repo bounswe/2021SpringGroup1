@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Welcome to the communities page!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div style="background-color:lavender; !important"  class="jumbotron text-center bg-primary">
+            <h1>Welcome.</h1>
+            <p>
+                You can search, create communities, delete communities and view them here.
+            </p>
+        </div>
+        <div class="container">
+            <div class="col-sm">
+                <!-- <button type="submit" name="post" value="getFirst"> -->
+                <button id="getFirst" class="btn">Get the first community.</button>
+                <button id="getLast" class="btn">Get the last community.</button>
+                <button id="getAll" class="btn">Get all communities.</button>
+            </div>
+            <br>
+            <div class="col-sm">
+                <button id="createCommunity" class="btn">Create a new community.</button>
+                <button id="deleteCommunity" class="btn">Delete an existing community.</button>
+            </div>
+            <br>
+            <div class="col-sm">
+                <button id="getSuggestions" class="btn">Get suggested images for a community.</button>
+                <input type="text" id="input_field" class="search" placeholder="Name of community">
+            </div>
+        </div>
+        <br>
+
+        <div class="container">
+            <div class="results">
+                <section id="results_section">
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        //Never used, but useful to have.
+        // const form = document.querySelector('form');
+        const section = document.getElementById("results_section");
+        const searchTerm = document.getElementById('input_field');
+        document.getElementById("getFirst").addEventListener("click", getFirst);
+        document.getElementById("getLast").addEventListener("click", getLast);
+        document.getElementById("getAll").addEventListener("click", getAll);
+        document.getElementById("createCommunity").addEventListener("click", createCommunity);
+        document.getElementById("deleteCommunity").addEventListener("click", deleteCommunity);
+        document.getElementById("getSuggestions").addEventListener("click", getSuggestions);
+
+        function getFirst(e) {
+            e.preventDefault();
+            const baseURL = '/community/getFirst/';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
+
+        function getLast(e) {
+            e.preventDefault();
+            const baseURL = '/community/getLast/';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
+
+        function getAll(e) {
+            e.preventDefault();
+            const baseURL = '/community/getAll/';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
+
+        function createCommunity(e) {
+            e.preventDefault();
+            const baseURL = '/community/createCommunity_ui';
+            let url = baseURL;
+            window.location.href = url;
+        }
+
+        function deleteCommunity(e) {
+            e.preventDefault();
+            const baseURL = '/community/deleteCommunity_ui';
+            let url = baseURL;
+            window.location.href = url;
+        }
+
+        function getSuggestions(e) {
+            e.preventDefault();
+            if (searchTerm.value == '') {
+                window.alert("Please enter a search term!");
+            }
+            else {
+                const baseURL = '/community/getSuggestions/?';
+                let url;
+                url = baseURL + 'name=' + searchTerm.value;
+                fetch(url).then(function (result) {
+                    return result.json();
+                }).then(function (json) {
+                    displayImages(json);
+                });
+            }
+        }
+
+        function displayResults(json) {
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const para = document.createElement('pre');
+            para.textContent = JSON.stringify(json, undefined, '\t')
+            section.appendChild(para);
+        }
+
+        function displayImages(json) {
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const images = json.images
+            if (images.length === 0) {
+                const para = document.createElement('p');
+                para.textContent = 'No results returned.'
+                section.appendChild(para);
+            } else {
+                for (var i = 0; i < images.length; i++) {
+                    const img = document.createElement('img');
+                    let current = images[i];
+                    img.src = current;
+                    img.alt = searchTerm;
+                    img.className = "img-rounded"
+                    section.appendChild(img);
+                }
+            }
+        }
+
+
+    </script>
+
+</body>
+
+</html>

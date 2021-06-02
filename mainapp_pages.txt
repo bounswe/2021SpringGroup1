@@ -1,0 +1,31 @@
+login->community/homePage
+
+homePage
+ Liste : getAllCommuntiesOfUser(): json(community.json)
+		{"1":tüm community}
+	button->viewCommunity_ui(id)
+ button:-> createCommunity_ui(): 
+
+createCommunity:
+	name: 
+	image: url
+	description:
+	isPrivate:
+	submit:->post createCommunity(name,desc,isPrivate,url) : {community}
+	viewSuggestedImages:-> getSuggestions(name): json	
+viewCommunity
+	'user_id'=user_id
+	'name'=name
+	'desctiption'=description	
+	Liste: getAllPostsOfCommunity(id) button:->viewPost(id)
+	if '!isPrivate' ve '!isMember'
+		button->joinCommunity():json
+	if 'isMember'
+		button->createPost_ui()
+	if 'isModerator'
+		button->createTemplate_ui()
+createPost:
+	getTemplatesOf
+		
+		
+  	

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cmpe 352 Website</title>
+</head>
+<body>
+<form method="POST" action="../createPostTemplate/initial">
+    {% csrf_token %}
+    <label>Template name:</label>
+    <input name="template_name" placeholder="enter template name"></input>
+    <br>
+    <label>Description of post template</label>
+    <input name="description" placeholder="your description goes here"></input>
+    <button type="submit" name="post" value="create">Next</button>
+</form>
+</body>
+</html>
