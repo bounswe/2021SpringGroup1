@@ -5,6 +5,9 @@ help.txt
 cmpe352/__pycache__/**
 cmpe352/migrations/__pycache__/**
 
+login/__pycache__/**
+login/migrations/__pycache__/**
+
 person/__pycache__/**
 person/migrations/__pycache__/**
 
