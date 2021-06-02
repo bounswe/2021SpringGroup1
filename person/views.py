@@ -8,7 +8,7 @@ import json
 numberPerson = 10
 PERSON_API = 'https://randomuser.me/api/?results='+str(numberPerson)
 
-
+#
 def person(response,id):
     person = Person()
     person.name = "bilal"

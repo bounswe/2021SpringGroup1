@@ -6,5 +6,7 @@ person/__pycache__/**
 person/migrations/__pycache__/**
 community/__pycache__/**
 community/migrations/__pycache__/**
+post2/__pycache__/**
+post2/migrations/__pycache__/**
 help.txt
 *.sqlite3

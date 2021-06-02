@@ -1,5 +1,6 @@
 from django.db import models
 from person.models import Person
+from community.models import Community
 
 # Create your models here.
 class PostTemplate(models.Model):
@@ -7,6 +8,8 @@ class PostTemplate(models.Model):
     name=models.CharField(max_length=50, verbose_name='Name')
     description = models.TextField(max_length=max, verbose_name='Description')
     data_field_temps=models.JSONField(max_length=max, verbose_name='DataFieldTemps',default='{}')
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='post_templates') #A post can be in only one community.
+    
     def __str__(self) -> str:
         data = {
             "id": self.id,
@@ -25,6 +28,7 @@ class Post(models.Model):
         auto_now_add=True, verbose_name="Created Date")
     dataFields=models.JSONField(max_length=max, verbose_name='Data',default='{}')
     postTemplate=models.ForeignKey(PostTemplate, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts') #A post can be in only one community.
     
     #def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
     #    dataFieldDict = json.loads(self.dataFields)
