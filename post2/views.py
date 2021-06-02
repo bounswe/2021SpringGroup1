@@ -4,6 +4,7 @@ from . import routes
 from .models import Post,PostTemplate,DataField,DataFieldTemp
 from person.models import Person
 import json
+import ast
 # Create your views here.
 
 
@@ -27,6 +28,9 @@ def createPostTemplateName(request):
 
 def createPostTemplateFieldInitial(request):
     if request.method=="POST":
+        name= request.POST["template_name"]
+        if PostTemplate.objects.filter(name=name):
+            return HttpResponseRedirect("../createPostTemplate/name")
         context={
             "template_name" : request.POST["template_name"],
             "description" : request.POST["description"],
@@ -36,7 +40,7 @@ def createPostTemplateFieldInitial(request):
 
 def createPostTemplateAddField(request):
     if request.method=="POST":
-        currentDict=json.loads(json.dumps(request.POST["data_field_temps"]))
+        currentDict=ast.literal_eval(request.POST["data_field_temps"])
         newFieldName=request.POST["field_name"]
         newFieldType=request.POST["type"]
         newFieldFormContent=request.POST["form_content"]
@@ -57,16 +61,18 @@ def createPostTemplatePage(request):
     context={
             "template_name" : request.POST["template_name"],
             "description" : request.POST["description"],
-            "added_templates": request.POST["data_field_temps"]
+            "added_templates": ast.literal_eval(request.POST["data_field_temps"])
             }
     return render(request,"post2/createPostTemplate2.html",context)
 
 def savePostTemplate(request):
     if request.method == "POST":
-        templateName=request.POST["name"]
+        templateName=request.POST["template_name"]
         templateDesc=request.POST["description"]
-        dataFieldTempsData=json.loads(json.dumps(request.POST["TemplateFields"]))
+        str=json.dumps(ast.literal_eval(request.POST["data_field_temps"]))
+        dataFieldTempsData=json.loads(str)
         newTemplate=PostTemplate()
+        newTemplate.save()
         templateFields={}
         for i in dataFieldTempsData:
             newFieldTemp=DataFieldTemp()
@@ -74,13 +80,13 @@ def savePostTemplate(request):
             newFieldTemp.type=dataFieldTempsData[i]["type"]
             newFieldTemp.form_content=dataFieldTempsData[i]["form_content"]
             newFieldTemp.postTemplate=newTemplate
-            templateField[newFieldTemp.name]=newFieldTemp.__str__()
             newFieldTemp.save()
+            templateFields[newFieldTemp.name]=newFieldTemp.__str__()
         newTemplate.name=templateName
         newTemplate.description=templateDesc
         newTemplate.data_field_temps=templateFields
         newTemplate.save()
-    return HttpResponseRedirect("/post")
+    return HttpResponseRedirect("/post2")
 
 def savePost(request):
     if request.method == "POST":
@@ -129,7 +135,7 @@ def savePost(request):
         post.dataFields=dataFields
         post.postTemplate=postTemp
         post.save()
-    return HttpResponseRedirect("/post")
+    return HttpResponseRedirect("/post2")
 
 def viewAllPosts(request):
     posts = Post.objects.all()

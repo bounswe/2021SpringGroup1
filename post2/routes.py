@@ -6,7 +6,7 @@ app_name = "post2"
 
 urlpatterns = [
     path("", views.mainPage, name="mainPage"),
-    path("viewAllPosts", views.viewAllPosts, name="viewAllPosts"),
+    path("viewAllPosts/", views.viewAllPosts, name="viewAllPosts"),
     path("createPost/templates",views.viewTemplates, name="viewTemplates"),
     path("createPost?template_id=<int:template_id>",views.createPost,name="createPost"),
     path("createPostTemplate/name",views.createPostTemplateName,name="createPostTemplateName"),

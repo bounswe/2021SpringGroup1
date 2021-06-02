@@ -8,25 +8,26 @@
 <h1>Welcome, {{personfirst}} {{personlast}}</h1>
 <p>Lets create your post!</p>
 
-<form method="POST" action="../savePost/">
+<form method="POST" action="{% url 'post2:savePost' template_id %}">
     {% csrf_token %}
 <label>Title of your post:</label>
 <input name="title" placeholder="your title goes here"></input>
 <br>
 <label>Description of your post</label>
 <input name="description" placeholder="your description goes here"></input>
-{% for temp in data_field_temps %}
-    {% if temp.type=="text"%}
+{% for key,temp in data_field_temps.items %}
+    {% if temp.type == "text" %}
         <label>{{temp.name}}:</label>    
         <input name="{{temp.name}}_content" placeholder="enter text"></input>
-    {% elif temp.type=="image" %}
+    {% elif temp.type == "image" %}
         <label>{{temp.name}}:</label>  
         <input name="{{temp.name}}_content" placeholder="enter image url"></input>
-    {% elif temp.type=="video" %}
+    {% elif temp.type == "video" %}
         <label>{{temp.name}}:</label>  
         <input name="{{temp.name}}_content" placeholder="enter video url"></input>
+    {% endif %}
 {% endfor %}
-<input type="hidden" name="post_template_id" value="{{post_template_id}}">
+<input type="hidden" name="post_template_id" value="{{template_id}}">
 <button type="submit" name="post" value="create">Create Post</button>
 </form>
 

@@ -10,8 +10,8 @@
 <h2>{{template_name}}</h2>
 <p>{{description}}</p>
 <h4>Added data fields:</h4>
-{% for temp in added_templates %}
-    <label>({{temp.name}},{{temp.type}})</label>
+{% for key, temp in added_templates.items %}
+    <label>({{ temp.name }},{{ temp.type }})</label>
 {% endfor %}
 
 
@@ -30,7 +30,7 @@
   <option value="image">Image</option>
   <option value="video">Video</option>
 </select>
-<form method="POST" action="../createPostTemplate/fields" id="submit_form">
+<form method="POST" action="../savePostTemplate" id="submit_form">
     {% csrf_token %}
     <input type="hidden" name="data_field_temps" value="{{added_templates}}">
     <input type="hidden" name="template_name" value="{{template_name}}">

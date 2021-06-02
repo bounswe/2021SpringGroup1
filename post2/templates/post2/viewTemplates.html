@@ -9,7 +9,7 @@
 <p>Please select a template.</p>
 
 {% for item in alltemplates %}
-    <a href="createPost?template_id={{item.id}}">{{item.name}}</a>
+    <a href="{% url 'post2:createPost' item.id %}">{{item.name}}</a>
     <p>{{item.description}}</p>
 {% empty %}
     <p>There is no post template</p>
