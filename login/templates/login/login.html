@@ -1,0 +1,21 @@
+<html>
+<head>
+    <title>Deneme title</title>
+</head>
+
+<body>
+    <form method="POST" action="/login/">
+        {% csrf_token %}
+        <label>Firstname:</label>
+        <input name="firstname"></input>
+        <br>
+        <label>Lastname:</label>
+        <input name="lastname"></input>
+        <br>
+        <button type="submit" name="login">Login</button>
+    </form>
+
+
+
+</body>
+</html>
