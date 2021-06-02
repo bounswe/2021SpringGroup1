@@ -19,38 +19,73 @@ SEARCH_API = 'https://www.googleapis.com/customsearch/v1?key=' + \
     str(API_KEY) + '&cx=' + CX + '&q='
 
 
-def mainPage(request):
-    return render(request, "mainapp/index.html", {"personfirst": request.session["firstname"], "personlast": request.session["lastname"]})
+def mainPage(req):
+    if "community_id" in req.session.keys():
+        del req.session["community_id"]
+    #TODO: Update Html file
+    return render(req, "mainapp/index.html")
+
+def getAllCommunitiesOfUser(req):
+    user_id=req.session["id"]
+    user=Person.objects.get(pk=user_id)
+    return JsonResponse(user.joinedCommunities.all())
 
 def createCommunity_ui(req):
-    return render(req, "community/createCommunity.html")
+    #TODO: Update Html file
+    return render(req, "mainapp/createCommunity.html")
 
+def viewCommunity(req):
+    user_id=req.session["id"]
+    user=Person.objects.get(pk=user_id)
+    community_id=req.GET["id"]
+    req.sessions["community_id"]=community_id
+    currentCommunity=Community.objects.get(pk=community_id)
+    isMember=(user in community.joinedUsers)
+    isModerator=(community.moderator==user)
+    #TODO: Update Html file
+    return render(req,".html",{"user_id":user_id,"name":currentCommunity.name,"description":currentCommunity.description,"isMember":isMember,"isModerator":isModerator})
+
+def getAllPostsOfCommunity(req):
+    if req.method =="POST":
+        user_id=req.session["id"]
+        user=Person.objects.get(pk=user_id)
+        community_id=req.sessions["community_id"]
+        currentCommunity=Community.objects.get(pk=community_id)
+        if user in community.joinedUsers:
+            return JsonResponse(currentCommunity.posts)
+        else:
+            return JsonResponse({})
 
 def deleteCommunity_ui(req):
-    return render(req, "community/deleteCommunity.html")
+    return render(req, "mainapp/deleteCommunity.html")
 
 def getSuggestions_ui(req):
     return render(req, "community/getSuggestions.html")
 
+def joinCommunity(req):
+    if req.method=="POST":
+        user_id=req.session["id"]
+        user=Person.objects.get(pk=user_id)
+        community_id=req.sessions["community_id"]
+        currentCommunity=Community.objects.get(pk=community_id)
+        if not currentCommunity.isPrivate:
+            user.joinedCommunities.add(currentCommunity)
+            return JsonResponse({"success":True})
+        else:
+            return JsonResponse({"success":False})
+
 def createCommunity(req):
     # TODO: add sanity check for the data.
+    if Community.objects.filter(name=req.GET["name"]):
+        return JsonResponse({})
     if req.method == "POST":
         community = Community()
         community.name = req.GET["name"]
         community.isPrivate = (req.GET["isPrivate"]=="true")    #Cast to boolean
-        moderator_name = req.GET["moderator"]
-        user = User(name=moderator_name)
-        community.moderator = user
-        # Create the first post of the community.
-        post = Post()
-        post.title = "Default first post!"
-        post.text = "Write some content here!"
-        post.community = community
+        community.moderator= Person.object.get(req.session["id"])
         community.numUsers = 1
-        community.numPosts = 1
         user.save()
         community.save()
-        post.save()
         return JsonResponse(community.__str__())
     else:
         return JsonResponse({})
@@ -72,6 +107,7 @@ def deleteCommunity(req):
 
 def getFirst(req):
     if req.method == "GET":
+        print(req.session["firstname"])
         query_set = Community.objects.all()
         list_of_dicts = list(query_set)
         first_community = list_of_dicts[0]
@@ -141,9 +177,14 @@ def getSuggestions(req):
         return JsonResponse({})
 
 
-def viewTemplates(request):
-    templates=PostTemplate.objects.all()
-    return render(request,"post2/viewTemplates.html",{"personfirst": request.session["firstname"], "personlast": request.session["lastname"] , "alltemplates":templates})
+def getCommunityTemplates(request):
+    if request.method=="GET":
+        community_id=req.sessions["community_id"]
+        currentCommunity=Community.objects.get(pk=community_id)
+        templates=currentCommunity.post_templates
+        return JsonResponse(templates)
+    else:
+        return JsonResponse({})
 
 def createPost(request,template_id):
     template=PostTemplate.objects.filter(id=template_id)[0]
