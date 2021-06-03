@@ -6,8 +6,10 @@ app_name = "mainapp"
 
 urlpatterns = [
     path("mainPage", views.mainPage, name="mainPage"),
-    path("getAllCommuntiesOfUser/", views.mainPage, name="mainPage"),
+    path("login_ui/", views.login_ui, name="login_ui"),
     path("createCommunity_ui/",views.createCommunity_ui,name="createCommunity_ui"),
     path("viewCommunity_ui/",views.viewCommunity_ui,name="viewCommunity_ui"),
-    path("getSuggestions/",views.getSuggestions,name="getSuggestions")
+    //TODO:remove non-ui paths.
+    path("getSuggestions/",views.getSuggestions,name="getSuggestions"),
+    path("getAllCommuntiesOfUser/", views.mainPage, name="mainPage"),
 ]

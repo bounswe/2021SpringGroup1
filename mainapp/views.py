@@ -29,6 +29,10 @@ def mainPage(req):
         }
     return render(req, "mainapp/homePage.html",context)
 
+def login_ui(req):
+    #TODO: Implement this function! This is a placeholder!
+    return render(req, "mainapp/login.html")
+
 def getAllCommunitiesOfUser(req):
     user_id=req.session["id"]
     user=Person.objects.get(pk=user_id)
