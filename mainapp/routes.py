@@ -20,4 +20,5 @@ urlpatterns = [
     path("createPost_ui/",views.createPost_ui,name="createPost_ui"),
     path("createPost/",views.createPost,name="createPost"),
     path("viewPost_ui/",views.viewPost_ui,name="viewPost_ui"),
+    path("leaveCommunity_ui/",views.leaveCommunity_ui,name="leaveCommunity_ui"),
 ]

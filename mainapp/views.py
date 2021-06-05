@@ -65,6 +65,22 @@ def viewPost_ui(request):
     post.dataFields.all()
     return render(request,"mainapp/viewPost.html",{"post":post, "data_fields":list(post.dataFields.all())})
 
+def leaveCommunity_ui(req):
+    #TODO: Update Html file
+    user_id=req.session["id"]
+    user=Person.objects.get(pk=user_id)
+    community_id=req.session["community_id"]
+    currentCommunity=Community.objects.get(pk=community_id)
+    context={
+        "personfirst":req.session["firstname"],
+        "personlast":req.session["lastname"],
+        }
+    if user in currentCommunity.joinedUsers.all():
+        user.joinedCommunities.remove(currentCommunity)
+        return render(req, "mainapp/leaveCommunity.html",context)
+    else:
+        return render(req, "mainapp/leaveCommunity.html",context)
+
 def createCommunity(req):
     
     if Community.objects.filter(name=req.GET["name"]):
@@ -108,19 +124,7 @@ def joinCommunity(req):
             return JsonResponse({"success":True})
         else:
             return JsonResponse({"success":False})
-
-def leaveCommunity(req):
-    if req.method=="POST":
-        user_id=req.session["id"]
-        user=Person.objects.get(pk=user_id)
-        community_id=req.session["community_id"]
-        currentCommunity=Community.objects.get(pk=community_id)
-        if user in currentCommunity.joinedUsers.all():
-            user.joinedCommunities.remove(currentCommunity)
-            return JsonResponse({"success":True})
-        else:
-            return JsonResponse({"success":False})
-
+     
 def getAllPostsOfCommunity(req):
     if req.method =="GET":
         user_id=req.session["id"]
