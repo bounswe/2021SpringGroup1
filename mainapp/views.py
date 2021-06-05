@@ -62,7 +62,8 @@ def createPostTemplate_ui(request):
 
 def viewPost_ui(request):
     post=Post.objects.get(pk=request.GET["id"])
-    return render(request,"mainapp/viewPost.html",{"post":post})
+    post.dataFields.all()
+    return render(request,"mainapp/viewPost.html",{"post":post, "data_fields":list(post.dataFields.all())})
 
 def createCommunity(req):
     
