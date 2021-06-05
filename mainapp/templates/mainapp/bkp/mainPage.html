@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>Welcome, {{personfirst}} {{personlast}}</h1>
+<p>You can search or create new posts here.</p>
+
+<form method="POST" action="./createPost/templates">
+    {% csrf_token %}
+<button type="submit" name="post" value="create">Create a Post</button>
+</form>
+
+<form method="POST" action="./createPostTemplate/name">
+    {%csrf_token%}
+<button type="submit" name="post" value="view">Create a Post Template</button>
+</form>
+
+<form method="POST" action="">
+    {% csrf_token %}
+    <button type="submit" name="post" value="logout">Log out</button>
+</form>
+
+</body>
+</html>
