@@ -34,8 +34,8 @@
             </div>
             <br>
             <div class="btn-group" role="group" id="communities_section">
-                <!-- <section id="communities_section">
-                </section> -->
+                <section id="communities_section">
+                </section> 
             </div>
         </div>
 
@@ -69,7 +69,7 @@
 
         function getUserCommunities(e) {
             e.preventDefault();
-            const baseURL = '/mainapp/getAllCommuntiesOfUser/';
+            const baseURL = '/mainapp/getAllCommunitiesOfUser/';
             //const baseURL = '/community/getAll';
             let url = baseURL;
             fetch(url).then(function (result) {
