@@ -61,7 +61,7 @@
             nameInput.name = "name";
             typeInput.type="hidden";
             typeInput.name="type"
-            typeInput.value="image";
+            typeInput.value="text";
             
             div.appendChild(nameInput);
             div.appendChild(typeInput);
@@ -99,7 +99,7 @@
             nameInput.name = "name";
             typeInput.type="hidden";
             typeInput.name="type"
-            typeInput.value="image";
+            typeInput.value="video";
             
             div.appendChild(nameInput);
             div.appendChild(typeInput);
@@ -111,7 +111,7 @@
  function formValidation(e){
  if(true){
     passJson();
-    if(false)
+    if(true)
         document.getElementById("postTemplateForm").submit();
     }
  }
@@ -120,15 +120,24 @@
         var dict = []; // create an empty array
         for (let index = 0; index < formData.length; ++index) {
             let value = formData[index];
-            dict.push({
-                key:   index,
-                value: JSON.stringfy(value)
-            });
+            console.log(value.tagName)
+            if(value.tagName=="FORM"){
+                let data = {};
+                let formdata = new FormData(value);
+                for (let tuple of formdata.entries()) data[tuple[0]] = tuple[1];
+            
+                dict.push({
+                    key:   index,
+                    value: data
+                });
+            }
+            
         }
         
         var input=document.getElementById("data_field_temps");
         console.log(dict);
-        input.value=dict;
+        input.value=JSON.stringify(dict);
+        console.log(input.value)
         }
 </script>
 

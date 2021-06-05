@@ -6,11 +6,10 @@ from django.http import JsonResponse
 
 from .models import *
 
-
 import requests
 import json
 import ast
-NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
+#NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
 # Google image search api.
 API_KEY = 'AIzaSyDiHo8_fujA_TscMA9tVhQjb08biazRV0A'
 CX = 'b53774e143a6ec2c1'
@@ -51,19 +50,19 @@ def viewCommunity_ui(req):
 
 def deleteCommunity_ui(req):
     return render(req, "mainapp/deleteCommunity.html")
-
+#TODO: This file should be removed.
 def getSuggestions_ui(req):
     return render(req, "community/getSuggestions.html")
 
-def createPost_ui(request,template_id):
-    template=PostTemplate.objects.filter(id=template_id)[0]
-    return render(request, "../createPost.html", {"personfirst": request.session["firstname"], "personlast": request.session["lastname"], "data_field_temps":template.data_field_temps})
+def createPost_ui(request):
+    template=PostTemplate.objects.get(pk=request.GET["template_id"])
+    return render(request, "mainapp/createPost.html", {"personfirst": request.session["firstname"], "personlast": request.session["lastname"], "data_field_temps":list(template.dataFieldTemplates.all()), "template_id":request.GET["template_id"]})
 def createPostTemplate_ui(request):
     return render(request,"mainapp/createPostTemplate.html");
 
-def viewPost_ui(request,post_id):
-    post=Post.objects.filter(id=post_id)
-    return render(request,"post/viewPost.html",{"post":post})
+def viewPost_ui(request):
+    post=Post.objects.get(pk=request.GET["id"])
+    return render(request,"mainapp/viewPost.html",{"post":post})
 
 def createCommunity(req):
     
@@ -101,7 +100,7 @@ def joinCommunity(req):
     if req.method=="POST":
         user_id=req.session["id"]
         user=Person.objects.get(pk=user_id)
-        community_id=req.sessions["community_id"]
+        community_id=req.session["community_id"]
         currentCommunity=Community.objects.get(pk=community_id)
         if not currentCommunity.isPrivate:
             user.joinedCommunities.add(currentCommunity)
@@ -113,7 +112,7 @@ def leaveCommunity(req):
     if req.method=="POST":
         user_id=req.session["id"]
         user=Person.objects.get(pk=user_id)
-        community_id=req.sessions["community_id"]
+        community_id=req.session["community_id"]
         currentCommunity=Community.objects.get(pk=community_id)
         if user in currentCommunity.joinedUsers.all():
             user.joinedCommunities.remove(currentCommunity)
@@ -122,15 +121,17 @@ def leaveCommunity(req):
             return JsonResponse({"success":False})
 
 def getAllPostsOfCommunity(req):
-    if req.method =="POST":
+    if req.method =="GET":
         user_id=req.session["id"]
         user=Person.objects.get(pk=user_id)
-        community_id=req.sessions["community_id"]
+        community_id=req.session["community_id"]
         currentCommunity=Community.objects.get(pk=community_id)
         postsDict={}
+        i=1
         for post in currentCommunity.posts.all():
-            postsDict[post.id]=post.__str__()
-        if user in community.joinedUsers:
+            postsDict[i]=post.__str__()
+            i+=1
+        if user in currentCommunity.joinedUsers.all():
             return JsonResponse(postsDict)
         else:
             return JsonResponse({})
@@ -208,13 +209,15 @@ def getSuggestions(req):
 
 def getCommunityTemplates(request):
     if request.method=="GET":
-        community_id=req.sessions["community_id"]
+        community_id=request.session["community_id"]
         currentCommunity=Community.objects.get(pk=community_id)
         templates=currentCommunity.post_templates.all()
         templatesDict={}
+        i=1
         for template in templates:
-            templatesDict[template.id]=template.__str__()
-        return JsonResponse(templatesDict.__str__())
+            templatesDict[i]=template.__str__()
+            i+=1
+        return JsonResponse(templatesDict)
     else:
         return JsonResponse({})
 
@@ -222,18 +225,22 @@ def createPostTemplate(request):
     if request.method == "POST":
         templateName=request.POST["template_name"]
         templateDesc=request.POST["description"]
+        data_field_temps=request.POST["data_field_temps"]
         dataFieldTempsData=json.loads(request.POST["data_field_temps"])
+        
         newTemplate=PostTemplate()
- 
-        for i in dataFieldTempsData:
-            newFieldTemp=DataFieldTemp()
-            newFieldTemp.name=dataFieldTempsData[i]["name"]
-            newFieldTemp.type=dataFieldTempsData[i]["type"]
-            newFieldTemp.postTemplate=newTemplate
-            newFieldTemp.save()
         newTemplate.name=templateName
         newTemplate.description=templateDesc
-        newTemplate.community=Community.objects.get(pk=req.session["community_id"])
+        newTemplate.community=Community.objects.get(pk=request.session["community_id"])
+        newTemplate.save()
+        
+        for i in dataFieldTempsData:
+            newFieldTemp=DataFieldTemp()
+            newFieldTemp.name=i["value"]["name"]
+            newFieldTemp.type=i["value"]["type"]
+            newFieldTemp.form_content={}
+            newFieldTemp.postTemplate=newTemplate
+            newFieldTemp.save()
         newTemplate.save()
     return HttpResponse(JsonResponse(newTemplate.__str__()))
 
@@ -243,22 +250,30 @@ def createPost(request):
         description = request.POST["description"]
         postTempID=request.POST["post_template_id"]
         post = Post()
-        postTemp=PostTemplate.objects.filter(id=postTempID)[0]
-        temps=postTemp[0].dataFieldTemplates.all()
-        for temp in temps:
-            newField=DataField()
-            newField.name=temp.name
-            newField.post=post
-            newField.type=temps.type
-            newField.content=request.POST[temp.id+"_content"]
-            newField.save()
-        post.community=Community.objects.get(pk=req.session["community_id"])
+        postTemp=PostTemplate.objects.get(pk=postTempID)
+        temps=postTemp.dataFieldTemplates.all()
+        post.community=Community.objects.get(pk=request.session["community_id"])
         post.posterid = request.session["id"]
         post.title = title
         post.description = description
         post.postTemplate=postTemp
         post.save()
-        return JsonResponse(post.__srt__())
+        for temp in temps:
+            newField=DataField()
+            newField.name=temp.name
+            newField.post=post
+            newField.type=temp.type
+            contentDict={}
+            if temp.type=="text":
+                contentDict["text"]=request.POST[str(temp.id)+"_textcontent"]
+            elif temp.type=="image":
+                contentDict["url"]=request.POST[str(temp.id)+"_urlcontent"]
+            elif temp.type=="video":
+                contentDict["url"]=request.POST[str(temp.id)+"_urlcontent"]
+            newField.content=contentDict
+            newField.save()
+        post.save()
+        return JsonResponse(post.__str__())
     else:
         title = request.GET["title"]
         description = request.GET["description"]
@@ -279,17 +294,22 @@ def createPost(request):
         post.description = description
         post.postTemplate=postTemp
         post.save()
-        return JsonResponse(post.__srt__())
+        return JsonResponse(post.__str__())
 
 def getPost(req):
     if req.method=="GET":
         post=Post.objects.get(pk=req.GET["post_id"])
-        #user=Person.objects.get(pk=req.session["id"])
+        user=Person.objects.get(pk=req.session["id"])
         community=Community.objects.get(pk=req.session["community_id"])
         if post.community==community:
             return JsonResponse(post.__str__())
         else:
             return JsonResponse({})
+
+def getDataFieldsOfPost(req):
+    pass
+def getDataFieldTempsOfTemplate(req):
+    pass
 
 def viewAllPosts(request):
     posts = Post.objects.all()

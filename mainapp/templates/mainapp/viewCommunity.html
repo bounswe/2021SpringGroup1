@@ -37,6 +37,8 @@
             {% if isMember %}
             <div class="col-sm">
                 <button id="createPost" class="btn btn-primary">Press to create a post.</button>
+                <section id="templates_section">
+                </section>
             </div>
             {% else %}
             <div class="col-sm">
@@ -86,6 +88,7 @@
     <script>
         const section = document.getElementById("results_section");
         const section_posts = document.getElementById("section_posts");
+        const templates_section=document.getElementById("templates_section");
         let posts;
 
         let element;
@@ -130,9 +133,14 @@
 
         function createPost(e) {
             e.preventDefault();
-            const baseURL = '/mainapp/createPost_ui/'
+            const baseURL = '/mainapp/getCommunityTemplates/';
             let url = baseURL;
-            window.location.href = url;
+            console.log("I'm here.")
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayTemplates(json);
+            });
         }
 
         function createTemplate(e) {
@@ -145,7 +153,6 @@
         function getAllPostsOfCommunity(e) {
             e.preventDefault();
             const baseURL = '/mainapp/getAllPostsOfCommunity';
-            //const baseURL = '/community/getAll';
             let url = baseURL;
             fetch(url).then(function (result) {
                 return result.json();
@@ -164,7 +171,13 @@
             console.log(url);
             window.location.href = url;
         }
-
+        function goToPostCreation(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/createPost_ui/';
+            let url = baseURL + "?template_id=" + e.target.id;
+            console.log(url);
+            window.location.href = url;
+        }
         function displayPosts(json) {
             console.log(json);
             displayResults(json);
@@ -188,7 +201,29 @@
                 button.addEventListener("click", goToPost);
             }
         }
+        function displayTemplates(json) {
+            console.log(json);
+            displayResults(json);
+            templates = json;
+            while (templates_section.firstChild) {
+                templates_section.removeChild(templates_section.firstChild);
+            }
+            var i = 1;
+            while (true) {
+                const template = json[i];
+                console.log(template);
+                i++;
+                if (template == undefined)
+                    break;
 
+                const button = document.createElement('button');
+                button.className = "btn btn-secondary";
+                button.textContent = template["name"];
+                button.id = template["id"];
+                templates_section.appendChild(button);
+                button.addEventListener("click", goToPostCreation);
+            }
+        }
         function displayResults(json) {
             console.log(json);
             while (section.firstChild) {

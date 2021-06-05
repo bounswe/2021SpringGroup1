@@ -15,5 +15,9 @@ urlpatterns = [
     path("createCommunity/",views.createCommunity, name="createCommunity"),
     path("getAllPostsOfCommunity/", views.getAllPostsOfCommunity, name="getAllPostsOfCommunity"),
     path("createPostTemplate_ui/",views.createPostTemplate_ui,name="createPostTemplate_ui"),
-    path("createPostTemplate/",views.createPostTemplate,name="createPostTemplate")
+    path("createPostTemplate/",views.createPostTemplate,name="createPostTemplate"),
+    path("getCommunityTemplates/",views.getCommunityTemplates, name="getCommunityTemplates"),
+    path("createPost_ui/",views.createPost_ui,name="createPost_ui"),
+    path("createPost/",views.createPost,name="createPost"),
+    path("viewPost_ui/",views.viewPost_ui,name="viewPost_ui"),
 ]
