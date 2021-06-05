@@ -1,10 +1,12 @@
+<!--
+
 <html>
 <head>
     <title>Deneme title</title>
 </head>
 
 <body>
-    <form method="POST" action="/login/">
+    <form method="POST" action="">
         {% csrf_token %}
         <label>Firstname:</label>
         <input name="firstname"></input>
@@ -18,4 +20,44 @@
 
 
 </body>
+</html>
+----------------------------------->
+
+<html>
+
+<head>
+    <title>Welcome to the login page!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class=wrapper>
+        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+            <h1> Welcome.</h1>
+            <p>
+                Please enter your credentials below.
+            </p>
+        </div>
+
+        <div class="container">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <label>Firstname:</label>
+                <input id="firstname" name="firstname"></input>
+                <br>
+                <label>Lastname:</label>
+                <input id="lastname" name="lastname"></input>
+                <br>
+                <button id="loginbutton" type="submit" name="login">Login</button>
+            </form>
+        </div>
+        <br>
+    </div>
+
+</body>
+
 </html>
