@@ -137,15 +137,15 @@
 
         function createTemplate(e) {
             e.preventDefault();
-            const baseURL = '/mainapp/createTemplate_ui/'
+            const baseURL = '/mainapp/createPostTemplate_ui/'
             let url = baseURL;
             window.location.href = url;
         }
 
         function getAllPostsOfCommunity(e) {
             e.preventDefault();
-            // const baseURL = '/mainapp/getAllPostsOfCommunity';
-            const baseURL = '/community/getAll';
+            const baseURL = '/mainapp/getAllPostsOfCommunity';
+            //const baseURL = '/community/getAll';
             let url = baseURL;
             fetch(url).then(function (result) {
                 return result.json();
