@@ -35,13 +35,13 @@ class PostTemplate(models.Model):
         dataFields=self.dataFieldTemplates.all()
         dataFieldDict={}
         for d in dataFields:
-            dataFieldDict[d.id]=d._str_()
+            dataFieldDict[d.id]=d.__str__()
         
         data = {
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "data_field_temps": json.dumps(self.dataFieldDict)
+            "data_field_temps": dataFieldDict
         }
         return data
 
@@ -56,10 +56,10 @@ class Post(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts') #A post can be in only one community.
     
     def __str__(self) -> str:
-        dataFields=self.dataFields.all()
+        dataFieldsList=self.dataFields.all()
         dataFieldDict={}
-        for d in dataFields:
-            dataFieldDict[d.id]=d._str_()
+        for d in dataFieldsList:
+            dataFieldDict[d.id]=d.__str__()
         
         data = {
             "id": self.id,
@@ -67,7 +67,7 @@ class Post(models.Model):
             "title": self.title,
             "description": self.description,
             "date": self.createdDate,
-            "dataFields":json.dumps(self.dataFieldDict)
+            "dataFields":dataFieldDict
         }
         return data
 
@@ -80,7 +80,7 @@ class DataField(models.Model):
     def __str__(self) -> str:
         data = {
             "id": self.id,
-            "post":self.post,
+            "postid":self.post.id,
             "name": self.name,
             "type": self.type,
             "content": self.content
