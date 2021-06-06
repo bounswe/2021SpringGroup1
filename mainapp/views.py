@@ -1,3 +1,4 @@
+from random import Random, randint, random
 from django.shortcuts import render
 from django.core.serializers import serialize
 from django.views import View
@@ -9,7 +10,7 @@ from .models import *
 import requests
 import json
 import ast
-#NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
+NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
 # Google image search api.
 API_KEY = 'AIzaSyDiHo8_fujA_TscMA9tVhQjb08biazRV0A'
 CX = 'b53774e143a6ec2c1'
