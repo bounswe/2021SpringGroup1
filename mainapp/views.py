@@ -36,6 +36,23 @@ def mainPage(req):
     return render(req, "mainapp/homePage.html", context)
 
 
+def createPerson(req):
+    if req.method == 'GET':
+        return render(req, "mainapp/createPerson.html")
+    elif req.method == 'POST':
+        person = Person()
+        person.title = req.POST["lastname"] + " title"
+        person.firstname = req.POST["firstname"]
+        person.lastname = req.POST["lastname"]
+        person.location = req.POST["location"]
+        person.email = req.POST["email"]
+        person.age = req.POST["age"]
+        person.phone = req.POST["phone"]
+        person.imageUrl = req.POST["imgurl"]
+        person.save()
+        return HttpResponseRedirect("../")
+
+
 def createCommunity_ui(req):
     # TODO: Update Html file
     context = {

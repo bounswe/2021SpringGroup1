@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to the communities page!</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<h1>Welcome fresh meat</h1>
+<p>Lets create your account</p>
+
+<form method="POST" action="">
+    {% csrf_token %}
+<label>How should we call you?</label>
+<input name="title" placeholder="Mr" value="Mr" required></input>
+<br>
+<label>Your first name:</label>
+<input name="firstname" placeholder="your first name" value="firstname" required></input>
+<br>
+<label>Your last name</label>
+<input name="lastname" placeholder="your last name" value="lastname" required></input>
+<br>
+<label>Your location</label>
+<input name="location" placeholder="your location" value="Turkey" required></input>
+<br>
+<label>Your e mail address</label>
+<input name="email" placeholder="coolmail@mail.com" value="boun@boun.edu.tr" required></input>
+<br>
+<label>Your age</label>
+<input name="age" placeholder="21" value=21 required></input>
+<br>
+<label>Your phone number</label>
+<input name="phone" placeholder="05335332211" value="05339998877" required></input>
+<br>
+<label>Your img url?</label>
+<input name="imgurl" placeholder="url" value="imageimg" required></input>
+<br>
+
+<button type="submit" name="account" value="create">Create Your Account</button>
+
+</form>
+
+
+</body>
+</html>
