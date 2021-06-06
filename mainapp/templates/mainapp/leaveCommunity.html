@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>You are leaving!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+            <h1> Good By, {{personfirst}} {{personlast}}.</h1>
+            <p>
+                You are not a member of this community anymore.
+            </p>
+        </div>
+
+        <br>
+
+        <div class="container">
+            <div class="col-sm">
+                <button id="goToMainPage" class="btn btn-primary">Press to go to Main Page.</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        let element;
+        element = document.getElementById("goToMainPage")
+        if (element != null)
+            element.addEventListener("click", goToMainPage);
+        
+        function goToMainPage(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/mainPage'
+            let url = baseURL;
+            console.log(url);
+            window.location.href = url;
+        }
+
+    </script>
+
+</body>
+
+</html>
+        

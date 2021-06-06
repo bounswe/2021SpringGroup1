@@ -69,6 +69,12 @@
             </div>
         </div>
 
+        <div class="container">
+            <div class="col-sm">
+                <button id="goToMainPage" class="btn btn-primary">Press to go to Main Page.</button>
+            </div>
+        </div>
+
         <br>
 
         <div class="container">
@@ -107,6 +113,9 @@
         element = document.getElementById("getAllPostsOfCommunity")
         if (element != null)
             element.addEventListener("click", getAllPostsOfCommunity);
+        element = document.getElementById("goToMainPage")
+        if (element != null)
+            element.addEventListener("click", goToMainPage);
 
 
         function joinCommunity(e) {
@@ -122,13 +131,10 @@
 
         function leaveCommunity(e) {
             e.preventDefault();
-            const baseURL = '/mainapp/leaveCommunity/'
+            const baseURL = '/mainapp/leaveCommunity_ui/'
             let url = baseURL;
-            fetch(url).then(function (result) {
-                return result.json();
-            }).then(function (json) {
-                displayResults(json);
-            });
+            console.log(url);
+            window.location.href = url;
         }
 
         function createPost(e) {
@@ -159,6 +165,14 @@
             }).then(function (json) {
                 displayPosts(json);
             });
+        }
+
+        function goToMainPage(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/mainPage'
+            let url = baseURL;
+            console.log(url);
+            window.location.href = url;
         }
 
         function goToPost(e) {
@@ -203,19 +217,32 @@
         }
         function displayTemplates(json) {
             console.log(json);
-            displayResults(json);
+            const para = document.createElement('pre');
+            let paragraf = JSON.stringify(json, undefined, '\t')
+            if(paragraf.length == 2){
+                while (section.firstChild) {
+                section.removeChild(section.firstChild);
+                }
+                para.textContent = "You need to create a template first!"
+                section.appendChild(para);
+            }
+            else{
+                displayResults(json);
+            }
             templates = json;
             while (templates_section.firstChild) {
                 templates_section.removeChild(templates_section.firstChild);
             }
+            
             var i = 1;
+
             while (true) {
                 const template = json[i];
                 console.log(template);
                 i++;
-                if (template == undefined)
+                if (template == undefined){
                     break;
-
+                }
                 const button = document.createElement('button');
                 button.className = "btn btn-secondary";
                 button.textContent = template["name"];
