@@ -33,6 +33,12 @@
                 <button id="getUserCommunities" class="btn btn-primary">Press to see all your communities.</button>
             </div>
             <br>
+            <!--  @yunus-topal if something goes wrong, delete this form to get rid of logout feature.-->
+            <form method="POST" action="">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" name="logout" value="out">Log out</button>
+            </form>
+
             <div class="btn-group" role="group" id="communities_section">
                 <section id="communities_section">
                 </section> 
