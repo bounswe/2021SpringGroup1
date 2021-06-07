@@ -23,6 +23,12 @@ YOUTUBE_API_KEY='AIzaSyAGiNnRprjzxUGBj0ANdhZSg6ym2Zx4lf4'
 VIDEO_CHECK_API='https://www.googleapis.com/youtube/v3/videos'
 CAT_FACT = 'https://catfact.ninja/fact'
 
+# Detect Language API key
+DETECT_LANGUAGE_KEY="10721f4865e0bf2914dee88d7a91c265"
+# Detect Language URL
+DETECT_LANGUAGE_BASE_URL = "https://ws.detectlanguage.com/0.2/detect/"
+
+
 def mainPage(req):
     if "community_id" in req.session.keys():
         del req.session["community_id"]
@@ -351,6 +357,8 @@ def createPost(request):
         post.description = description
         post.postTemplate = postTemp
         post.save()
+
+        allText = title + " " + description
         for temp in temps:
             newField = DataField()
             newField.name = temp.name
@@ -359,12 +367,28 @@ def createPost(request):
             contentDict = {}
             if temp.type == "text":
                 contentDict["text"] = request.POST[str(temp.id)+"_textcontent"]
+                allText = allText + " " + request.POST[str(temp.id)+"_textcontent"]
             elif temp.type == "image":
                 contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
             elif temp.type == "video":
                 contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
             newField.content = contentDict
             newField.save()
+        myResponse= requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(str(DETECT_LANGUAGE_KEY),'12345'), data={'q':allText})
+        resultsJson = myResponse.json()
+        languageList= []
+        for element in resultsJson['data']['detections']:
+            languageList.append(element['language'])
+        languagesString = ','.join(languageList)
+
+        languageField = DataField()
+        languageField.name= 'Detected languages'
+        languageField.post = post
+        languageField.type = 'text'
+        contentDict= {}
+        contentDict["text"] = languagesString
+        languageField.content= contentDict
+        languageField.save()
         post.save()
         return JsonResponse(post.__str__())
 
