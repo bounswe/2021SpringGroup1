@@ -2,7 +2,125 @@ from django.test import TestCase
 from mainapp.models import *
 from mainapp.views import *
 # Create your tests here.
+import json
+class PostTestCase(TestCase):
+    def setUp(self):
+        self.moderator = Person.objects.create(
+            id=1,
+            title="Mr",
+            firstname="John",
+            lastname="Doe",
+            location="Istanbul",
+            email="john.doe@gmail.com",
+            age=30,
+            phone="01234567890",
+            imageUrl="www.xxx.yyy.zzz",
+            createdDate=models.DateTimeField(auto_now_add=True))
+        self.community= Community.objects.create(
+            id=1,
+            name="BUDDY",
+            description="Bogazici Un. student community!",
+            numUsers=1,
+            numPosts=0,
+            moderator=self.moderator,
+            isPrivate=False,
+        )
+        self.questionPostTemplate=PostTemplate.objects.create(
+            id=1,
+            name="Question",
+            description="Use this to ask questions.",
+            community=self.community,
+        )
+        self.discussionPostTemplate=PostTemplate.objects.create(
+            id=2,
+            name="Question",
+            description="Use this to start discussion.",
+            community=self.community,
+        )
+        self.questionTempField1=DataFieldTemp.objects.create(
+            id=1,
+            name="Question",
+            type="text",
+            form_content=json.loads("{}"),
+            postTemplate=self.questionPostTemplate,
+            )
+        self.discussionTempField1=DataFieldTemp.objects.create(
+            id=2,
+            name="Discussion",
+            type="text",
+            form_content=json.loads("{}"),
+            postTemplate=self.discussionPostTemplate,
+        )
+        self.discussionTempField2=DataFieldTemp.objects.create(
+            id=3,
+            name="Image",
+            type="image",
+            form_content=json.loads("{}"),
+            postTemplate=self.discussionPostTemplate,
+        )
+        self.post1=Post.objects.create(
+            id=1,
+            title="First Question",
+            description="My first question.",
+            posterid=self.moderator.id,
+            community=self.community,
+            postTemplate=self.questionPostTemplate,
+            createdDate=models.DateTimeField(auto_now_add=True),
+        )
+        self.post2=Post.objects.create(
+            id=2,
+            title="First Discussion",
+            description="My first discussion.",
+            posterid=self.moderator.id,
+            community=self.community,
+            postTemplate=self.questionPostTemplate,
+            createdDate=models.DateTimeField(auto_now_add=True),
+        )
+        self.questionDataField=DataField.objects.create(
+            id=1,
+            name="Question",
+            type="text",
+            content=json.loads('{ "text" : "Is this working" }'),
+            post=self.post1,
+            
+            )
+        self.discussionDataField1=DataField.objects.create(
+            id=2,
+            name="Discussion",
+            type="text",
+            content=json.loads('{ "text" : "I think it is working" }'),
+            post=self.post2,
+            
+            )
+        self.discussionDataField2=DataField.objects.create(
+            id=3,
+            name="Image",
+            type="image",
+            content=json.loads('{ "url" : "https://www.montclareschool.org/wp-content/uploads/2017/01/yes-1.jpg" }'),
+            post=self.post2,
+            
+            )
+    def test_community_has_right_templates(self):
+        community=self.community
+        postTemplates=community.post_templates.all()
+        self.assertTrue((self.discussionPostTemplate in postTemplates) and (self.questionPostTemplate in postTemplates))
+    
+    def test_templates_has_right_fields(self):
+        discussionTempFields=self.discussionPostTemplate.dataFieldTemplates.all()
+        questionTempFields=self.questionPostTemplate.dataFieldTemplates.all()
+        self.assertTrue((self.discussionTempField1 in discussionTempFields) and (self.discussionTempField2 in discussionTempFields))
+        self.assertTrue(self.questionTempField1 in questionTempFields)
+    
+    def test_community_has_right_posts(self):
+        community=self.community
+        posts=community.posts.all()
+        self.assertTrue((self.post1 in posts) and (self.post2 in posts))
 
+    def test_posts_have_right_fields(self):
+        discussionFields=self.post2.dataFields.all()
+        questionFields=self.post1.dataFields.all()
+        self.assertTrue((self.discussionDataField1 in discussionFields) and (self.discussionDataField2 in discussionFields))
+        self.assertTrue(self.questionDataField in questionFields)
 
 class CommunityTestCase(TestCase):
     def setUp(self):
