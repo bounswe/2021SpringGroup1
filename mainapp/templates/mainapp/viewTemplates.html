@@ -11,6 +11,9 @@
 </head>
 
 <body>
+    <nav style="margin-bottom: 0px; background-color:lavender; !important" class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="../mainPage">🏠</a>
+    </nav>
     <div class="wrapper">
         <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
             <h1> Welcome, {{personfirst}} {{personlast}}.</h1>
@@ -19,15 +22,15 @@
             </p>
         </div>
 
-        
+
         <div class="container">
             <div class="col-sm">
                 <button id="createCommunity" class="btn btn-primary">Press to create a new community.</button>
             </div>
         </div>
-        
+
         <br>
-        
+
         <div class="container">
             <div class="col-sm">
                 <button id="getUserCommunities" class="btn btn-primary">Press to see all your communities.</button>
@@ -35,12 +38,12 @@
             <br>
             <div class="btn-group" role="group" id="communities_section">
                 <section id="communities_section">
-                </section> 
+                </section>
             </div>
         </div>
 
         <br>
-        
+
         <div class="container">
             <div id="results_section">
             </div>
@@ -53,7 +56,7 @@
         const templates_section = document.getElementById("templates_section");
         let communities;
         document.getElementById("getCommunityTemplates").addEventListener("click", getCommunityTemplates);
-       
+
         function goToPostCreation(e) {
             e.preventDefault();
             const baseURL = '/mainapp/viewCommunity_ui/';

@@ -11,6 +11,9 @@
 </head>
 
 <body>
+    <nav style="margin-bottom: 0px; background-color:lavender; !important" class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="../mainPage">🏠</a>
+    </nav>
     <div class="wrapper">
         <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
             <h1> Welcome to {{name}}.</h1>
@@ -83,7 +86,7 @@
         </div>
 
         <br>
-        
+
         <div class="container">
             <div id="results_section">
             </div>
@@ -94,7 +97,7 @@
     <script>
         const section = document.getElementById("results_section");
         const section_posts = document.getElementById("section_posts");
-        const templates_section=document.getElementById("templates_section");
+        const templates_section = document.getElementById("templates_section");
         let posts;
 
         let element;
@@ -195,7 +198,7 @@
         function displayPosts(json) {
             console.log(json);
             displayResults(json);
-            posts=json;
+            posts = json;
             while (section_posts.firstChild) {
                 section_posts.removeChild(section_posts.firstChild);
             }
@@ -219,28 +222,28 @@
             console.log(json);
             const para = document.createElement('pre');
             let paragraf = JSON.stringify(json, undefined, '\t')
-            if(paragraf.length == 2){
+            if (paragraf.length == 2) {
                 while (section.firstChild) {
-                section.removeChild(section.firstChild);
+                    section.removeChild(section.firstChild);
                 }
                 para.textContent = "You need to create a template first!"
                 section.appendChild(para);
             }
-            else{
+            else {
                 displayResults(json);
             }
             templates = json;
             while (templates_section.firstChild) {
                 templates_section.removeChild(templates_section.firstChild);
             }
-            
+
             var i = 1;
 
             while (true) {
                 const template = json[i];
                 console.log(template);
                 i++;
-                if (template == undefined){
+                if (template == undefined) {
                     break;
                 }
                 const button = document.createElement('button');

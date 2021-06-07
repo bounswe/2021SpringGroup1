@@ -12,6 +12,9 @@
 
 <body>
   <div class="wrapper">
+    <nav style="margin-bottom: 0px; background-color:lavender; !important" class="navbar navbar-expand-lg">
+      <a class="navbar-brand" href="../mainPage">🏠</a>
+    </nav>
     <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
       <h1> Welcome, {{personfirst}} {{personlast}}.</h1>
       <p>
@@ -83,7 +86,7 @@
     function createCommunity(e) {
       e.preventDefault();
       const baseURL = '/mainapp/createCommunity/';
-      let url = baseURL + "?name=" + name.value + "&desc=" + desc.value + "&isPrivate=" + is_private.checked + "&url=" + img_url.value ;
+      let url = baseURL + "?name=" + name.value + "&desc=" + desc.value + "&isPrivate=" + is_private.checked + "&url=" + img_url.value;
       // request options
       const headers = {
         'Accept': 'application/json',
@@ -167,4 +170,5 @@
 
   </script>
 </body>
+
 </html>

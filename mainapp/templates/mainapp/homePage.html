@@ -11,7 +11,11 @@
 </head>
 
 <body>
+
     <div class="wrapper">
+        <nav style="margin-bottom: 0px; background-color:lavender; !important" class="navbar navbar-expand-lg">
+            <a class="navbar-brand" href="./mainPage">🏠</a>
+        </nav>
         <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
             <h1> Welcome, {{personfirst}} {{personlast}}.</h1>
             <p>
@@ -19,15 +23,15 @@
             </p>
         </div>
 
-        
+
         <div class="container">
             <div class="col-sm">
                 <button id="createCommunity" class="btn btn-primary">Press to create a new community.</button>
             </div>
         </div>
-        
+
         <br>
-        
+
         <div class="container">
             <div class="col-sm">
                 <button id="getUserCommunities" class="btn btn-primary">Press to see all your communities.</button>
@@ -43,12 +47,12 @@
 
             <div class="btn-group" role="group" id="communities_section">
                 <section id="communities_section">
-                </section> 
+                </section>
             </div>
         </div>
 
         <br>
-        
+
         <div class="container">
             <div id="results_section">
             </div>
