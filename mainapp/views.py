@@ -359,7 +359,8 @@ def createPost(request):
             newField.type = temps.type
             newField.content = request.GET[temp.id+"_content"]
             newField.save()
-        post.community = Community.objects.get(pk=req.session["community_id"])
+        post.community = Community.objects.get(
+            pk=request.session["community_id"])
         post.posterid = request.session["id"]
         post.title = title
         post.description = description
