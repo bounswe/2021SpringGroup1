@@ -1,5 +1,6 @@
 from django.test import TestCase
 from mainapp.models import *
+from mainapp.views import *
 # Create your tests here.
 
 
@@ -131,3 +132,57 @@ class PersonTestCase(TestCase):
         """Person create date is checked."""
         person = Person.objects.get(id=2)
         self.assertIsNotNone(person.createdDate)
+
+
+# @gktpmuhammed Join and leave community testing.
+
+class JoinAndLeaveTestCase(TestCase):
+    def setUp(self):
+        self.moderator = Person.objects.create(id=3,
+                                               title="Mr",
+                                               firstname="John",
+                                               lastname="Smith",
+                                               location="USA",
+                                               email="mr_smith@gmail.com",
+                                               age=40,
+                                               phone="01234567890",
+                                               imageUrl="mr.smith",
+                                               createdDate=models.DateTimeField(auto_now_add=True))
+
+        self.moderator2 = Person.objects.create(id=4,
+                                               title="Mrs",
+                                               firstname="Jane",
+                                               lastname="Smith",
+                                               location="USA",
+                                               email="mrs_smith@gmail.com",
+                                               age=40,
+                                               phone="01234567890",
+                                               imageUrl="mrs.smith",
+                                               createdDate=models.DateTimeField(auto_now_add=True))
+    
+        Community.objects.create(
+            id=2,
+            name="Dummy",
+            description="Dummy Community for test!",
+            numUsers=1,
+            numPosts=0,
+            moderator=self.moderator,
+            isPrivate=False,
+        )
+        
+        
+    def test_join_community(self):
+        person = Person.objects.get(id=3)
+        person2 = Person.objects.get(id=4)
+        currentCommunity = Community.objects.get(id=2)
+        person2.joinedCommunities.add(currentCommunity)
+        self.assertIn(person2, currentCommunity.joinedUsers.all())
+        
+    def test_leave_community(self):
+        person = Person.objects.get(id=3)
+        person2 = Person.objects.get(id=4)
+        currentCommunity = Community.objects.get(id=2)
+        person2.joinedCommunities.add(currentCommunity)
+        self.assertIn(person2, currentCommunity.joinedUsers.all())
+        person2.joinedCommunities.remove(currentCommunity)
+        self.assertNotIn(person2, currentCommunity.joinedUsers.all())
