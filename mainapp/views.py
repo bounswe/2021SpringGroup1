@@ -19,6 +19,7 @@ SEARCH_API = 'https://www.googleapis.com/customsearch/v1?key=' + \
     str(API_KEY) + '&cx=' + CX + '&q='
 YOUTUBE_API_KEY='AIzaSyAGiNnRprjzxUGBj0ANdhZSg6ym2Zx4lf4'
 VIDEO_CHECK_API='https://www.googleapis.com/youtube/v3/videos'
+CAT_FACT = 'https://catfact.ninja/fact'
 
 def mainPage(req):
     if "community_id" in req.session.keys():
@@ -36,10 +37,29 @@ def mainPage(req):
     }
     return render(req, "mainapp/homePage.html", context)
 
+def leaveCommunity_ui(req):
+    # TODO: Update Html file
+    if req.method == "GET":
+        user_id = req.session["id"]
+        user = Person.objects.get(pk=user_id)
+        community_id = req.session["community_id"]
+        currentCommunity = Community.objects.get(pk=community_id)
+        context = {
+            "personfirst": req.session["firstname"],
+            "personlast": req.session["lastname"],
+        }
+        if user in currentCommunity.joinedUsers.all():
+            user.joinedCommunities.remove(currentCommunity)
+            return render(req, "mainapp/leaveCommunity.html", context)
+        else:
+            return render(req, "mainapp/leaveCommunity.html", context)
+
 
 def createPerson(req):
     if req.method == 'GET':
-        return render(req, "mainapp/createPerson.html")
+        response = requests.get(CAT_FACT)
+        nicefact = response.json()
+        return render(req, "mainapp/createPerson.html", {"fact": nicefact["fact"]})
     elif req.method == 'POST':
         person = Person()
         person.title = req.POST["lastname"] + " title"
@@ -135,7 +155,7 @@ def deleteCommunity(req):
 
 
 def joinCommunity(req):
-    if req.method == "POST":
+    if req.method == "GET":
         user_id = req.session["id"]
         user = Person.objects.get(pk=user_id)
         community_id = req.session["community_id"]
