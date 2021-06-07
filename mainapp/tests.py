@@ -51,7 +51,7 @@ class CommunityTestCase(TestCase):
         self.assertEqual(community.numUsers, 1)
 
     def test_num_posts(self):
-        """Number of users in the community is checked."""
+        """Number of posts in the community is checked."""
         community = Community.objects.get(id=1)
         self.assertEqual(community.numPosts, 0)
 
