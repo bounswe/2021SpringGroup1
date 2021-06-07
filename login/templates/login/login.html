@@ -47,10 +47,10 @@
             <form method="POST" action="">
                 {% csrf_token %}
                 <label>Firstname:</label>
-                <input id="firstname" name="firstname"></input>
+                <input id="firstname" name="firstname" required></input>
                 <br>
                 <label>Lastname:</label>
-                <input id="lastname" name="lastname"></input>
+                <input id="lastname" name="lastname" required></input>
                 <br>
                 <button id="loginbutton" class="btn btn-primary" type="submit" name="login">Login</button>
                 <br>

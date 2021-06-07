@@ -11,7 +11,7 @@ def loginpage(request):
         first = request.POST["firstname"]
         last = request.POST["lastname"]
         person = Person.objects.filter(firstname=first, lastname=last)
-        if person[0].id == None:
+        if len(person) == 0:
             request.session["errormsg"] = "there is no person with the firstname of %s and the lastname of %s!" % (
                 request.POST["firstname"], request.POST["lastname"])
             return errorpage(request)
