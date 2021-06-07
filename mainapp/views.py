@@ -10,7 +10,8 @@ from .models import *
 import requests
 import json
 import ast
-# NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
+
+NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
 # Google image search api.
 API_KEY = 'AIzaSyDiHo8_fujA_TscMA9tVhQjb08biazRV0A'
 CX = 'b53774e143a6ec2c1'
@@ -98,6 +99,22 @@ def viewPost_ui(request):
     return render(request, "mainapp/viewPost.html", {"post": post, "data_fields": list(post.dataFields.all())})
 
 
+def leaveCommunity_ui(req):
+    #TODO: Update Html file
+    user_id=req.session["id"]
+    user=Person.objects.get(pk=user_id)
+    community_id=req.session["community_id"]
+    currentCommunity=Community.objects.get(pk=community_id)
+    context={
+        "personfirst":req.session["firstname"],
+        "personlast":req.session["lastname"],
+        }
+    if user in currentCommunity.joinedUsers.all():
+        user.joinedCommunities.remove(currentCommunity)
+        return render(req, "mainapp/leaveCommunity.html",context)
+    else:
+        return render(req, "mainapp/leaveCommunity.html",context)
+
 def createCommunity(req):
 
     if Community.objects.filter(name=req.GET["name"]):
@@ -157,7 +174,6 @@ def leaveCommunity(req):
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False})
-
 
 def getAllPostsOfCommunity(req):
     if req.method == "GET":
