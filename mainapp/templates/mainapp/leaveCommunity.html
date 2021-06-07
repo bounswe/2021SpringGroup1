@@ -20,20 +20,44 @@
         </div>
 
         <br>
+        <div class="container">
+            <div class="col-sm">
+                
+                    <button id="getYourLeavingGift" class="btn btn-primary">  Press to get your leaving present.</button>
+                
+            </div>
+        </div>
+        <br>
+
 
         <div class="container">
             <div class="col-sm">
                 <button id="goToMainPage" class="btn btn-primary">Press to go to Main Page.</button>
             </div>
         </div>
+
+        <br>
+
+        <div class="container">
+            <div class="results">
+              <section id="results_section">
+              </section>
+            </div>
+          </div>
+
     </div>
 
     <script>
 
+        const section = document.getElementById("results_section");
         let element;
         element = document.getElementById("goToMainPage")
         if (element != null)
             element.addEventListener("click", goToMainPage);
+        
+        element = document.getElementById("getYourLeavingGift")
+        if (element != null)
+            element.addEventListener("click", getYourLeavingGift);
         
         function goToMainPage(e) {
             e.preventDefault();
@@ -41,6 +65,37 @@
             let url = baseURL;
             console.log(url);
             window.location.href = url;
+        }
+        
+        function getYourLeavingGift(e) {
+            console.log("gif was here")
+            e.preventDefault();
+            const baseURL = '/mainapp/getGifs'
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayImages(json);
+            });
+        }
+
+        function displayImages(json) {
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const images = json.images
+            if (images.length === 0) {
+                const para = document.createElement('p');
+                para.textContent = 'No results returned.'
+                section.appendChild(para);
+            } else {
+                const img = document.createElement('img');
+                let current = images;
+                console.log(current)
+                img.src = current;
+                img.className = "img-rounded"
+                section.appendChild(img);
+            }
         }
 
     </script>

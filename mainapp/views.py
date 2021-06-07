@@ -6,7 +6,8 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 
 from .models import *
-
+import random
+import urllib
 import requests
 import json
 import ast
@@ -269,6 +270,27 @@ def getSuggestions(req):
         response["query"] = name            # The searched string
         # Resulting images to be shown.
         response["images"] = list_of_urls[:NUM_SUGGESTIONS]
+        return JsonResponse(response)
+    else:
+        return JsonResponse({})
+
+
+def getGifs(req):
+    if req.method == "GET":
+        GIF_SEARCH_API = "http://api.giphy.com/v1/gifs/search?q=leave&api_key=u35Tzaaf2qEPKp2vXpBCnsvpBE1ZxpFj&limit=3"
+
+        res = requests.get(GIF_SEARCH_API)
+        myJson = res.content.decode('utf8')
+        data = json.loads(myJson)
+        dataPretty = json.dumps(data, indent=2)
+        files = data["data"]
+        image_url = []
+        for item in files:
+            image_url.append(item["images"]["original"]["url"])
+
+        response = {}
+        randomNumber = random.randint(0,2)
+        response["images"] = image_url[randomNumber]
         return JsonResponse(response)
     else:
         return JsonResponse({})

@@ -42,5 +42,6 @@ urlpatterns = [
     path("viewPost_ui/",views.viewPost_ui,name="viewPost_ui"),
     path("leaveCommunity_ui/",views.leaveCommunity_ui,name="leaveCommunity_ui"),
     path("joinCommunity/",views.joinCommunity,name="joinCommunity"),
+    path("getGifs/",views.getGifs,name="getGifs"),
     
 ]
