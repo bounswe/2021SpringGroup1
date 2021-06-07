@@ -2,3 +2,4 @@ django
 requests
 json
 django-reset-migrations
+isodate

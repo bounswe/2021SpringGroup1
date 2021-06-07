@@ -13,41 +13,96 @@
 <h1>Welcome, {{personfirst}} {{personlast}}</h1>
 <p>Lets create your post!</p>
 
-<form method="POST" action="{% url 'mainapp:createPost' %}">
+<form id="PostForm" method="POST" action="{% url 'mainapp:createPost' %}">
     {% csrf_token %}
 <label>Title of your post:</label>
-<input name="title" placeholder="your title goes here"></input>
+<input name="title" placeholder="your title goes here" required></input>
 <br>
 <label>Description of your post</label>
-<input name="description" placeholder="your description goes here"></input>
+<input name="description" placeholder="your description goes here" required></input>
 {% for temp in data_field_temps %}
     <br>
     <label>{{temp.name}}:</label>        
     {% if temp.type == "text" %}
-        <input name="{{temp.id}}_textcontent" placeholder="enter text"></input>
+        <input id="{{temp.id}}_textcontent" name="{{temp.id}}_textcontent" placeholder="enter text" required></input>
     {% elif temp.type == "image" %} 
-        <input name="{{temp.id}}_urlcontent" placeholder="enter image url"></input>
+        <input id="{{temp.id}}_urlcontent" name="{{temp.id}}_urlcontent" placeholder="enter image url" required></input>
     {% elif temp.type == "video" %}
-        <input name="{{temp.id}}_urlcontent" placeholder="enter video url"></input>
+        <input id="{{temp.id}}_urlcontent" name="{{temp.id}}_urlcontent" placeholder="enter video url" required></input>
     {% endif %}
 {% endfor %}
 <br>
-<button type="submit" name="post" value="create">Create Post</button>
 <input type="hidden" name="post_template_id" value="{{template_id}}">
-</form>
-<script>
-function getUserCommunities(e) {
-            e.preventDefault();
-            const baseURL = '/mainapp/getAllCommunitiesOfUser/';
-            //const baseURL = '/community/getAll';
-            let url = baseURL;
-            fetch(url).then(function (result) {
-                return result.json();
-            }).then(function (json) {
-                displayCommunities(json);
-            });
-        }
 
+</form>
+<button id="formSubmit" type="submit" name="post"  value="create">Create Post</button>
+
+<script>
+var form=document.getElementById("PostForm");
+document.getElementById("formSubmit").addEventListener("click", onSubmitClicked);
+var template_id={{template_id}};
+var postTemplateData={};
+window.onload = function() {
+      getPostTemplateData();
+};
+
+function getPostTemplateData(){
+    url="/mainapp/getPostTemplate?template_id="+template_id;
+        fetch(url).then(function (result) {
+          return result.json();
+        }).then(function (json) {
+            postTemplateData=json;
+          
+    });
+}
+function onSubmitClicked(e){
+    checkValidity();
+}
+async function checkValidity(){
+    var isValid=true;
+    var reason="";
+    console.log("Im herehere");
+    for(let i=1;;i++){
+        console.log(postTemplateData)  
+        var currentFieldTemp=postTemplateData["data_field_temps"][i];
+        console.log(currentFieldTemp);  
+        if(currentFieldTemp==undefined){
+            console.log("undefined");
+            break;
+          }
+            
+          if (currentFieldTemp["type"]=="video"){
+            console.log("Im here0");
+            var urlinput=document.getElementById(currentFieldTemp["id"]+"_urlcontent");
+            if(urlinput==null){
+                isValid=false;
+                reason="Some fields are empty!";
+                break;
+            }
+            else{
+                console.log("Im here1");
+                const baseURL = '/mainapp/checkVideo?';
+                let url;
+                url = baseURL + 'url=' + urlinput.value;
+                await fetch(url).then(function (result) {
+                    
+                return result.json();
+                }).then(function (json) {
+                    isValid=json["isValid"];
+                    reason=json["Reason"];
+                });
+                if(!isValid)
+                    break;
+            }
+
+            }
+    }if(isValid){
+        form.submit();
+    }else{
+        console.log("Im here2");
+        alert("Creation failed: "+reason);
+    }
+};
 </script>
 
 

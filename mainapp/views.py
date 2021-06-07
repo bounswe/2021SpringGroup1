@@ -6,11 +6,10 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 
 from .models import *
-
 import requests
 import json
+import isodate
 import ast
-
 NUM_SUGGESTIONS = 5  # Number of image suggestions to be forwarded.
 # Google image search api.
 API_KEY = 'AIzaSyDiHo8_fujA_TscMA9tVhQjb08biazRV0A'
@@ -18,8 +17,8 @@ CX = 'b53774e143a6ec2c1'
 # Search string after this.
 SEARCH_API = 'https://www.googleapis.com/customsearch/v1?key=' + \
     str(API_KEY) + '&cx=' + CX + '&q='
-CAT_FACT = 'https://catfact.ninja/fact'
-
+YOUTUBE_API_KEY='AIzaSyAGiNnRprjzxUGBj0ANdhZSg6ym2Zx4lf4'
+VIDEO_CHECK_API='https://www.googleapis.com/youtube/v3/videos'
 
 def mainPage(req):
     if "community_id" in req.session.keys():
@@ -40,9 +39,7 @@ def mainPage(req):
 
 def createPerson(req):
     if req.method == 'GET':
-        response = requests.get(CAT_FACT)
-        nicefact = response.json()
-        return render(req, "mainapp/createPerson.html", {"fact": nicefact["fact"]})
+        return render(req, "mainapp/createPerson.html")
     elif req.method == 'POST':
         person = Person()
         person.title = req.POST["lastname"] + " title"
@@ -99,25 +96,7 @@ def createPostTemplate_ui(request):
 def viewPost_ui(request):
     post = Post.objects.get(pk=request.GET["id"])
     post.dataFields.all()
-    return render(request, "mainapp/viewPost.html", {"post": post, "data_fields": list(post.dataFields.all())})
-
-
-def leaveCommunity_ui(req):
-    # TODO: Update Html file
-    if req.method == "GET":
-        user_id = req.session["id"]
-        user = Person.objects.get(pk=user_id)
-        community_id = req.session["community_id"]
-        currentCommunity = Community.objects.get(pk=community_id)
-        context = {
-            "personfirst": req.session["firstname"],
-            "personlast": req.session["lastname"],
-        }
-        if user in currentCommunity.joinedUsers.all():
-            user.joinedCommunities.remove(currentCommunity)
-            return render(req, "mainapp/leaveCommunity.html", context)
-        else:
-            return render(req, "mainapp/leaveCommunity.html", context)
+    return render(request, "mainapp/viewPost.html", {"post": post, "postJson": "{}"})
 
 
 def createCommunity(req):
@@ -156,7 +135,7 @@ def deleteCommunity(req):
 
 
 def joinCommunity(req):
-    if req.method == "GET":
+    if req.method == "POST":
         user_id = req.session["id"]
         user = Person.objects.get(pk=user_id)
         community_id = req.session["community_id"]
@@ -165,7 +144,7 @@ def joinCommunity(req):
             user.joinedCommunities.add(currentCommunity)
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, "Error Message": "This community is private. You can not join without invitation."})
+            return JsonResponse({"success": False})
 
 
 def leaveCommunity(req):
@@ -345,28 +324,6 @@ def createPost(request):
             newField.save()
         post.save()
         return JsonResponse(post.__str__())
-    else:
-        title = request.GET["title"]
-        description = request.GET["description"]
-        postTempID = request.POST["post_template_id"]
-        post = Post()
-        postTemp = PostTemplate.objects.filter(id=postTempID)[0]
-        temps = postTemp[0].dataFieldTemplates.all()
-        for temp in temps:
-            newField = DataField()
-            newField.name = temp.name
-            newField.post = post
-            newField.type = temps.type
-            newField.content = request.GET[temp.id+"_content"]
-            newField.save()
-        post.community = Community.objects.get(
-            pk=request.session["community_id"])
-        post.posterid = request.session["id"]
-        post.title = title
-        post.description = description
-        post.postTemplate = postTemp
-        post.save()
-        return JsonResponse(post.__str__())
 
 
 def getPost(req):
@@ -379,6 +336,15 @@ def getPost(req):
         else:
             return JsonResponse({})
 
+def getPostTemplate(req):
+    if req.method == "GET":
+        postTemplate = PostTemplate.objects.get(pk=req.GET["template_id"])
+        user = Person.objects.get(pk=req.session["id"])
+        community = Community.objects.get(pk=req.session["community_id"])
+        if postTemplate.community == community:
+            return JsonResponse(postTemplate.__str__())
+        else:
+            return JsonResponse({})
 
 def getDataFieldsOfPost(req):
     pass
@@ -387,6 +353,31 @@ def getDataFieldsOfPost(req):
 def getDataFieldTempsOfTemplate(req):
     pass
 
+def checkVideo(req):
+    if req.method == "GET":
+        url = req.GET["url"]
+        res = requests.get(VIDEO_CHECK_API + "?part=contentDetails,status&id="+url+"&key="+YOUTUBE_API_KEY)
+        myJson = res.content.decode('utf8')
+        data = json.loads(myJson)
+        if data["items"]:
+            videoData=data["items"][0]
+            videoDurationStr=videoData["contentDetails"]["duration"]
+            strIndex=len(videoDurationStr)-1
+            duration=isodate.parse_duration(videoDurationStr)
+            
+            if not videoData["status"]["embeddable"]:
+                return JsonResponse({"isValid":False,"Reason":"Video is not embeddable."})
+            elif not videoData["status"]["privacyStatus"]=="public":
+                return JsonResponse({"isValid":False,"Reason":"Video is private."})
+            elif videoData["contentDetails"]["contentRating"]=="ytAgeRestricted":
+                return JsonResponse({"isValid":False,"Reason":"Video is age restricted."})
+            elif duration.total_seconds()>301:
+                return JsonResponse({"isValid":False,"Reason":"Video is longer than 5 minutes."})
+            return JsonResponse({"isValid":True,"Reason":""})
+        else:
+            return JsonResponse({"isValid":False,"Reason":"Video is not found."})
+
+        
 
 def viewAllPosts(request):
     posts = Post.objects.all()

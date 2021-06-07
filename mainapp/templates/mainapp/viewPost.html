@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>Page Title</title>
-</head>
+  <head>
+    <title>Welcome to the homepage!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
 <body>
-<p>You can view posts here.</p>
-<label>Post Id:</label>
-{{ post.id }}
+  <div class="container">
+    <label>Post Id:</label>
+    {{ post.id }}
     <br>
     <label>Post owner:</label>
     {{post.posterid}}
@@ -17,18 +22,144 @@
     <label>Post description:</label>
     {{post.description}}
     <br>
-    {% for data_field in data_fields %}
-    <label>{{ data_field.name }}</label>
-    {%if data_field.type == "text" %}
-    <p>{{ data_field.content.text }}</p>
-    {% elif data_field.type == "image" %}
-    <img src="{{ data_field.content.url }}">
-    {% elif data_field.type == "video" %}
-    <iframe src="{{ data_field.content.url }}">
-    {%endif%}
-    {%endfor%}
+  </div>
+    <div class="container">
+      <section id="data_field_section">
+      </section>
+    </div>
+    <div class="container">
+      <div id="results_section">
+      </div>
+  </div>
     <hr>
+<script>
+    var tag = document.createElement('script');
+    const section = document.getElementById("results_section");
+    const data_field_section = document.getElementById("data_field_section");
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+      
+    var player;
+    var post_id ={{ post.id }};
+    var postData;//JSON.parse("{{postJson|escapejs}}");
+    window.onload = function() {
+      //getPostData();
+    };
+    function getPostData(){
+        url="/mainapp/getPost?post_id="+post_id;
+        fetch(url).then(function (result) {
+          return result.json();
+        }).then(function (json) {
+          postData=json;
+          displayResults(json);
+          displayDataFields();
+        });
+    }
+    function displayDataFields(){
+      while (data_field_section.firstChild) {
+                data_field_section.removeChild(data_field_section.firstChild);
+            }
+            var dataFields=postData["dataFields"];
+            for(let i=1;;i++){
+                const field = dataFields[i];
+                if (field == undefined)
+                    break;
+                newDiv=document.createElement('div');
+                newDiv.id="data_field"+i;
+                if(field["type"]=="text"){
+                  label=document.createElement('label');
+                  label.innerHTML=field["name"];
+                  newDiv.appendChild(label);
+                  newDiv.appendChild(document.createElement("br"));
+                  text=document.createElement("p")
+                  text.innerHTML=field["content"]["text"];
+                  newDiv.appendChild(text);
+
+                }else if(field["type"]=="image"){
+                  label=document.createElement('label');
+                  label.innerHTML=field["name"];
+                  newDiv.appendChild(label);
+                  newDiv.appendChild(document.createElement("br"));
+                  img=document.createElement("img")
+                  img.src=field["content"]["url"];
+                  newDiv.appendChild(img);
+
+                }else if(field["type"]=="video"){
+                  label=document.createElement('label');
+                  label.innerHTML=field["name"];
+                  newDiv.appendChild(label);
+                  newDiv.appendChild(document.createElement("br"));
+                  player=document.createElement('div')
+                  player.id="player"+i;
+                  newDiv.appendChild(player);
+                }
+              data_field_section.appendChild(newDiv);
+
+            }
+    }  
+    function onYouTubeIframeAPIReady() {
+      loadPage();
+    }
+      
+
+    function displayResults(json) {
+      while (section.firstChild) {
+        section.removeChild(section.firstChild);
+      }
+      const para = document.createElement('pre');
+      para.textContent = JSON.stringify(json, undefined, '\t')
+      section.appendChild(para);
+
+      const line = document.createElement('p');
+      if (Object.keys(json).length === 0 && json.constructor === Object) {
+        line.textContent = "Post is not found:(";
+      } else {
+        line.textContent = "Post found!";
+      }
+      section.appendChild(line);
+    }
+    async function loadPage(){
+      console.log("Im here0")
+      if(postData==undefined){
+        console.log("Im here1"); 
+        var url="/mainapp/getPost?post_id="+post_id;
+         await fetch(url).then(function (result) {
+          return result.json();
+        }).then(function (json) {
+          postData=json;
+          displayResults(json);
+          displayDataFields();
+        });
+      }
+      var i=1;
+      while(true){
+        console.log("Im here2")  
+        var dataFields=postData["dataFields"];
+          var currentField=dataFields[i];
+          if (currentField == undefined)
+            break;
+          if(currentField["type"]!="video"){
+            i++;
+            continue;
+          }
+            
+          console.log("Im here4")
+          var playerStr="player"+i;
+          player = new YT.Player(playerStr, {
+            height: '390',
+            width: '640',
+            videoId: currentField["content"]["url"] ,
+            playerVars: {
+              "playsinline" : 1,
+              "origin": "https://www.youtube.com/embed/l-"
+            }});
+            i++;
+          }
+
+    }
+</script>
 
 
 
