@@ -24,6 +24,7 @@ urlpatterns = [
     path("joinCommunity/",views.joinCommunity,name="joinCommunity"),
     path("checkVideo", views.checkVideo, name="checkVideo"),
     path("getPost",views.getPost,name="getPost"),
-    path("getPostTemplate",views.getPostTemplate,name="getPostTemplate")
+    path("getPostTemplate",views.getPostTemplate,name="getPostTemplate"),
+    path("getGifs/",views.getGifs,name="getGifs"),
     
 ]
