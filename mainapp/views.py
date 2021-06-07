@@ -100,22 +100,22 @@ def viewPost_ui(request):
 
 
 def leaveCommunity_ui(req):
-    #TODO: Update Html file
+    # TODO: Update Html file
     if req.method == "GET":
-        user_id=req.session["id"]
-        user=Person.objects.get(pk=user_id)
-        community_id=req.session["community_id"]
-        currentCommunity=Community.objects.get(pk=community_id)
-        context={
-            "personfirst":req.session["firstname"],
-            "personlast":req.session["lastname"],
+        user_id = req.session["id"]
+        user = Person.objects.get(pk=user_id)
+        community_id = req.session["community_id"]
+        currentCommunity = Community.objects.get(pk=community_id)
+        context = {
+            "personfirst": req.session["firstname"],
+            "personlast": req.session["lastname"],
         }
         if user in currentCommunity.joinedUsers.all():
             user.joinedCommunities.remove(currentCommunity)
-            return render(req, "mainapp/leaveCommunity.html",context)
+            return render(req, "mainapp/leaveCommunity.html", context)
         else:
-            return render(req, "mainapp/leaveCommunity.html",context)
-    
+            return render(req, "mainapp/leaveCommunity.html", context)
+
 
 def createCommunity(req):
 
@@ -176,6 +176,7 @@ def leaveCommunity(req):
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"success": False})
+
 
 def getAllPostsOfCommunity(req):
     if req.method == "GET":
@@ -355,7 +356,8 @@ def createPost(request):
             newField.type = temps.type
             newField.content = request.GET[temp.id+"_content"]
             newField.save()
-        post.community = Community.objects.get(pk=req.session["community_id"])
+        post.community = Community.objects.get(
+            pk=request.session["community_id"])
         post.posterid = request.session["id"]
         post.title = title
         post.description = description
