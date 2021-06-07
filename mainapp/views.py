@@ -101,19 +101,21 @@ def viewPost_ui(request):
 
 def leaveCommunity_ui(req):
     #TODO: Update Html file
-    user_id=req.session["id"]
-    user=Person.objects.get(pk=user_id)
-    community_id=req.session["community_id"]
-    currentCommunity=Community.objects.get(pk=community_id)
-    context={
-        "personfirst":req.session["firstname"],
-        "personlast":req.session["lastname"],
+    if req.method == "GET":
+        user_id=req.session["id"]
+        user=Person.objects.get(pk=user_id)
+        community_id=req.session["community_id"]
+        currentCommunity=Community.objects.get(pk=community_id)
+        context={
+            "personfirst":req.session["firstname"],
+            "personlast":req.session["lastname"],
         }
-    if user in currentCommunity.joinedUsers.all():
-        user.joinedCommunities.remove(currentCommunity)
-        return render(req, "mainapp/leaveCommunity.html",context)
-    else:
-        return render(req, "mainapp/leaveCommunity.html",context)
+        if user in currentCommunity.joinedUsers.all():
+            user.joinedCommunities.remove(currentCommunity)
+            return render(req, "mainapp/leaveCommunity.html",context)
+        else:
+            return render(req, "mainapp/leaveCommunity.html",context)
+    
 
 def createCommunity(req):
 
@@ -151,7 +153,7 @@ def deleteCommunity(req):
 
 
 def joinCommunity(req):
-    if req.method == "POST":
+    if req.method == "GET":
         user_id = req.session["id"]
         user = Person.objects.get(pk=user_id)
         community_id = req.session["community_id"]
@@ -160,7 +162,7 @@ def joinCommunity(req):
             user.joinedCommunities.add(currentCommunity)
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False})
+            return JsonResponse({"success": False, "Error Message": "This community is private. You can not join without invitation."})
 
 
 def leaveCommunity(req):
