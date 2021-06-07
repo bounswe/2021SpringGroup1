@@ -34,8 +34,10 @@ class PostTemplate(models.Model):
     def __str__(self) -> str:
         dataFields=self.dataFieldTemplates.all()
         dataFieldDict={}
+        i=1
         for d in dataFields:
-            dataFieldDict[d.id]=d.__str__()
+            dataFieldDict[i]=d.__str__()
+            i+=1
         
         data = {
             "id": self.id,
@@ -58,9 +60,10 @@ class Post(models.Model):
     def __str__(self) -> str:
         dataFieldsList=self.dataFields.all()
         dataFieldDict={}
+        i=1
         for d in dataFieldsList:
-            dataFieldDict[d.id]=d.__str__()
-        
+            dataFieldDict[i]=d.__str__()
+            i+=1
         data = {
             "id": self.id,
             "posterid": self.posterid,

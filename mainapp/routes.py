@@ -27,4 +27,7 @@ urlpatterns = [
     path("createPost/", views.createPost, name="createPost"),
     path("viewPost_ui/", views.viewPost_ui, name="viewPost_ui"),
     path("createPerson", views.createPerson, name="createperson"),
+    path("checkVideo", views.checkVideo, name="checkVideo"),
+    path("getPost",views.getPost,name="getPost"),
+    path("getPostTemplate",views.getPostTemplate,name="getPostTemplate")
 ]
