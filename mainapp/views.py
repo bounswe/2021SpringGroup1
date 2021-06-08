@@ -364,19 +364,23 @@ def createPostTemplate(request):
         except ValueError as e:
             return JsonResponse({"Error":"data_field_temps is in wrong format."})
         
-        if PostTemplate.objects.filter(name=templateName):
-            return JsonResponse({"Error":"Template name is already in use."})
-        
         newTemplate = PostTemplate()
         newTemplate.name = templateName
         newTemplate.description = templateDesc
         
-
         if "community_id" in request.session:
             newTemplate.community = Community.objects.get(
             pk=request.session["community_id"])
         else:
             return JsonResponse({})
+        
+        if PostTemplate.objects.filter(name=templateName,community=newTemplate.community):
+            return JsonResponse({"Error":"Template name is already in use."})
+        
+        
+        
+
+        
         
         newTemplate.save()
         candidateFieldNames=[]

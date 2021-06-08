@@ -18,7 +18,7 @@
         <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
             <h1> Create a post template.</h1>
         </div>
-
+    <div class="container">
         <form id="postTemplateForm" name="postTemplateForm" action="{% url 'mainapp:createPostTemplate' %}"
             method="post">
             {% csrf_token %}
@@ -47,6 +47,7 @@
             <div id="results_section">
             </div>
         </div>
+    </div>
     </div>
 
     <script>
@@ -167,7 +168,7 @@
         }
         function createJsonList() {
             var formData = document.getElementById("addedFields").childNodes;
-            var dict = []; // create an empty array
+            var dict = []; 
             for (let index = 1; index <= formData.length; ++index) {
                 let value = formData[index-1];
                 console.log(value.tagName)
