@@ -20,6 +20,7 @@
 <br>
 <label>Description of your post</label>
 <input name="description" placeholder="your description goes here" required></input>
+<fieldset id="dataFields">
 {% for temp in data_field_temps %}
     <br>
     <label>{{temp.name}}:</label>        
@@ -28,16 +29,22 @@
     {% elif temp.type == "image" %} 
         <input id="{{temp.id}}_urlcontent" name="{{temp.id}}_urlcontent" placeholder="enter image url" required></input>
     {% elif temp.type == "video" %}
-        <input id="{{temp.id}}_urlcontent" name="{{temp.id}}_urlcontent" placeholder="enter video url" required></input>
+        <input id="{{temp.id}}_urlcontent" name="{{temp.id}}_urlcontent" placeholder="enter youtube video id" required></input>
     {% endif %}
 {% endfor %}
+</fieldset>
 <br>
 <input type="hidden" name="post_template_id" value="{{template_id}}">
 
 </form>
 <button id="formSubmit" type="submit" name="post"  value="create">Create Post</button>
-
+<div class="container">
+            <div id="results_section">
+            </div>
+        </div>
 <script>
+var CSRF_TOKEN='{{csrf_token}}';
+const section=document.getElementById("results_section");
 var form=document.getElementById("PostForm");
 document.getElementById("formSubmit").addEventListener("click", onSubmitClicked);
 var template_id={{template_id}};
@@ -58,8 +65,44 @@ function getPostTemplateData(){
 function onSubmitClicked(e){
     checkValidity();
 }
+function createPost(){
+            url='/mainapp/createPost/'
+            /*
+                
+            fetch(url,{
+                method: "POST",
+                headers: {"Content-Type":'application/json',
+                            'X-CSRFToken': CSRF_TOKEN},
+                body: JSON.stringify(new FormData(form)),
+                data:{
+                    "csrfmiddlewaretoken":CSRF_TOKEN,
+                    }
+                }
+            ).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+            */
+            document.getElementById("PostForm").submit();
+}
 async function checkValidity(){
     var isValid=true;
+            var inputs=document.getElementById("PostForm").getElementsByTagName('input');
+            for(let i=0;i<inputs.length;i++){
+                if(inputs[i].hasAttribute("required")){
+                    if(inputs[i].value==""){
+                        alert("Some fields are empty!");
+                        isValid=false;
+                        break;
+                    }
+                }
+            }
+    if(!isValid){
+        alert("Some fields are empty!");
+        return;
+    }
+    
     var reason="";
     console.log("Im herehere");
     for(let i=1;;i++){
@@ -97,12 +140,21 @@ async function checkValidity(){
 
             }
     }if(isValid){
-        form.submit();
+        createPost();
     }else{
         console.log("Im here2");
         alert("Creation failed: "+reason);
     }
 };
+function displayResults(json) {
+            console.log(json);
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const para = document.createElement('pre');
+            para.textContent = JSON.stringify(json, undefined, '\t')
+            section.appendChild(para);
+}
 </script>
 
 

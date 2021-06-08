@@ -123,8 +123,7 @@ def createPostTemplate_ui(request):
 
 def viewPost_ui(request):
     post = Post.objects.get(pk=request.GET["id"])
-    post.dataFields.all()
-    return render(request, "mainapp/viewPost.html", {"post": post, "postJson": "{}"})
+    return render(request, "mainapp/viewPost.html", {"post": post})
 
 
 def createCommunity(req):
@@ -190,19 +189,30 @@ def leaveCommunity(req):
 
 def getAllPostsOfCommunity(req):
     if req.method == "GET":
-        user_id = req.session["id"]
-        user = Person.objects.get(pk=user_id)
-        community_id = req.session["community_id"]
+        if "community_id" in req.session:
+            community_id = req.session["community_id"]
+        elif "community_id" in req.GET:
+            community_id = req.GET["community_id"]
         currentCommunity = Community.objects.get(pk=community_id)
+        if not currentCommunity:
+            return JsonResponse({})
+        if currentCommunity.isPrivate:
+            if "id" in req.session:
+                user_id = req.session["id"]
+            else:
+                return JsonResponse({})
+            user = Person.objects.get(pk=user_id)
+            if not user in currentCommunity.joinedUsers.all():
+                return JsonResponse({})
+        
         postsDict = {}
         i = 1
         for post in currentCommunity.posts.all():
             postsDict[i] = post.__str__()
             i += 1
-        if user in currentCommunity.joinedUsers.all():
-            return JsonResponse(postsDict)
-        else:
-            return JsonResponse({})
+           
+        return JsonResponse(postsDict)
+      
 
 
 def getFirst(req):
@@ -304,8 +314,24 @@ def getGifs(req):
 
 def getCommunityTemplates(request):
     if request.method == "GET":
-        community_id = request.session["community_id"]
+        if "community_id" in request.session:
+            community_id = request.session["community_id"]
+        elif "community_id" in request.GET:
+            community_id=request.GET["community_id"]
+        else:
+            return JsonResponse({})
         currentCommunity = Community.objects.get(pk=community_id)
+        if not currentCommunity:
+            return JsonResponse({})
+        if currentCommunity.isPrivate:
+            if "id" in request.session:
+                user_id = request.session["id"]
+                user = Person.objects.get(pk=user_id)
+                if not user in community.joinedUsers.all():
+                    return JsonResponse({})
+            else:
+                return JsonResponse({})
+        
         templates = currentCommunity.post_templates.all()
         templatesDict = {}
         i = 1
@@ -317,42 +343,97 @@ def getCommunityTemplates(request):
         return JsonResponse({})
 
 
+
+
+
 def createPostTemplate(request):
     if request.method == "POST":
+        isValidRequest=True
+        if not "template_name" in request.POST:
+            return JsonResponse({"Error":"Bad request."})
+        if not "description" in request.POST:
+            return JsonResponse({"Error":"Bad request."})
+        if not "data_field_temps" in request.POST:
+            return JsonResponse({"Error":"Bad request."})
+
         templateName = request.POST["template_name"]
         templateDesc = request.POST["description"]
         data_field_temps = request.POST["data_field_temps"]
-        dataFieldTempsData = json.loads(request.POST["data_field_temps"])
-
+        try:
+            dataFieldTempsData = json.loads(request.POST["data_field_temps"])
+        except ValueError as e:
+            return JsonResponse({"Error":"data_field_temps is in wrong format."})
+        
+        if PostTemplate.objects.filter(name=templateName):
+            return JsonResponse({"Error":"Template name is already in use."})
+        
         newTemplate = PostTemplate()
         newTemplate.name = templateName
         newTemplate.description = templateDesc
-        newTemplate.community = Community.objects.get(
-            pk=request.session["community_id"])
-        newTemplate.save()
+        
 
+        if "community_id" in request.session:
+            newTemplate.community = Community.objects.get(
+            pk=request.session["community_id"])
+        else:
+            return JsonResponse({})
+        
+        newTemplate.save()
+        candidateFieldNames=[]
+        index=1
         for i in dataFieldTempsData:
             newFieldTemp = DataFieldTemp()
-            newFieldTemp.name = i["value"]["name"]
-            newFieldTemp.type = i["value"]["type"]
+            if not "name" in i:
+                isValidRequest=False
+                break
+            if not "type" in i:
+                isValidRequest=False
+                break
+            newFieldTemp.name = i["name"]
+            newFieldTemp.type = i["type"]
+            if not newFieldTemp.type in ["text","image","video"]:
+                isValidRequest=False
+                break
+            if newFieldTemp.name in candidateFieldNames:
+                isValidRequest=False
+                break
             newFieldTemp.form_content = {}
             newFieldTemp.postTemplate = newTemplate
             newFieldTemp.save()
-        newTemplate.save()
-    return HttpResponse(JsonResponse(newTemplate.__str__()))
+        if not isValidRequest:
+            newTemplate.delete()
+            return JsonResponse({"Error":"Somethings gone wrong with field names."})
+        
+    return JsonResponse(newTemplate.__str__())
 
 
 def createPost(request):
     if request.method == "POST":
+        isValidRequest=True
+        if not "title" in request.POST:
+            return JsonResponse({"Error":"Bad request."})
+        if not "description" in request.POST:
+            return JsonResponse({"Error":"Bad request."})
+        if not "post_template_id" in request.POST:
+            return JsonResponse({"Error":"Bad request."})
+        
         title = request.POST["title"]
         description = request.POST["description"]
         postTempID = request.POST["post_template_id"]
         post = Post()
         postTemp = PostTemplate.objects.get(pk=postTempID)
         temps = postTemp.dataFieldTemplates.all()
-        post.community = Community.objects.get(
+        
+        if "community_id" in request.session:
+            post.community = Community.objects.get(
             pk=request.session["community_id"])
-        post.posterid = request.session["id"]
+        else:
+            post.community=postTemp.community
+        if "id" in request.session:
+            post.posterid = request.session["id"]
+        else:
+            return JsonResponse({"Error":"Bad request."})
+        
         post.title = title
         post.description = description
         post.postTemplate = postTemp
@@ -366,17 +447,39 @@ def createPost(request):
             newField.type = temp.type
             contentDict = {}
             if temp.type == "text":
-                contentDict["text"] = request.POST[str(temp.id)+"_textcontent"]
-                allText = allText + " " + request.POST[str(temp.id)+"_textcontent"]
+                if str(temp.id)+"_textcontent" in request.POST:
+                    contentDict["text"] = request.POST[str(temp.id)+"_textcontent"]
+                    allText = allText + " " + request.POST[str(temp.id)+"_textcontent"]
+                else:
+                    isValidRequest=False
+                    break
             elif temp.type == "image":
-                contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
+                if str(temp.id)+"_urlcontent" in request.POST:
+                    contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
+                else:
+                    isValidRequest=False
+                    break
             elif temp.type == "video":
-                contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
+                if str(temp.id)+"_urlcontent" in request.POST:
+                    contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
+                else:
+                    isValidRequest=False
+                    break
+            else:
+                isValidRequest=False
+                break
             newField.content = contentDict
             newField.save()
+        if not isValidRequest:
+            post.delete()
+            return JsonResponse({})
         myResponse= requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(str(DETECT_LANGUAGE_KEY),'12345'), data={'q':allText})
+        if not myResponse.ok:
+            return JsonResponse(post.__str__())
+        
         resultsJson = myResponse.json()
         languageList= []
+        
         for element in resultsJson['data']['detections']:
             languageList.append(element['language'])
         languagesString = ','.join(languageList)
@@ -389,41 +492,53 @@ def createPost(request):
         contentDict["text"] = languagesString
         languageField.content= contentDict
         languageField.save()
-        post.save()
+        
         return JsonResponse(post.__str__())
 
 
 def getPost(req):
     if req.method == "GET":
-        post = Post.objects.get(pk=req.GET["post_id"])
-        user = Person.objects.get(pk=req.session["id"])
-        community = Community.objects.get(pk=req.session["community_id"])
-        if post.community == community:
-            return JsonResponse(post.__str__())
+        if "post_id" in req.GET:
+            post = Post.objects.get(pk=req.GET["post_id"])
+            if not post:
+                return JsonResponse({})
         else:
             return JsonResponse({})
+        if post.community.isPrivate:
+            if "id" in req.session and "community_id" in req.session:
+                user = Person.objects.get(pk=req.session["id"])
+                community = Community.objects.get(pk=req.session["community_id"])
+                if not user in community.joinedUsers.all():
+                    return JsonResponse({})
+        return JsonResponse(post.__str__())
+     
 
 def getPostTemplate(req):
     if req.method == "GET":
-        postTemplate = PostTemplate.objects.get(pk=req.GET["template_id"])
-        user = Person.objects.get(pk=req.session["id"])
-        community = Community.objects.get(pk=req.session["community_id"])
-        if postTemplate.community == community:
-            return JsonResponse(postTemplate.__str__())
+        if "template_id" in req.GET:
+            postTemplate = PostTemplate.objects.get(pk=req.GET["template_id"])
+            if not postTemplate:
+                return JsonResponse({})
         else:
             return JsonResponse({})
+        if postTemplate.community.isPrivate:
+            if "id" in req.session and "community_id" in req.session:
+                user = Person.objects.get(pk=req.session["id"])
+                community = Community.objects.get(pk=req.session["community_id"])
+                if not user in community.joinedUsers.all():
+                    return JsonResponse({})
+        return JsonResponse(postTemplate.__str__())
 
-def getDataFieldsOfPost(req):
-    pass
-
-
-def getDataFieldTempsOfTemplate(req):
-    pass
 
 def checkVideo(req):
     if req.method == "GET":
-        url = req.GET["url"]
+        if "url" in req.GET:
+            url = req.GET["url"]
+        else:
+            return JsonResponse({"isValid":False,"Reason":"GET parameters are not valid."})
         res = requests.get(VIDEO_CHECK_API + "?part=contentDetails,status&id="+url+"&key="+YOUTUBE_API_KEY)
+        if not res.ok:
+            return JsonResponse({"isValid":False,"Reason":"Youtube API returned bad response."})
         myJson = res.content.decode('utf8')
         data = json.loads(myJson)
         if data["items"]:
@@ -445,7 +560,6 @@ def checkVideo(req):
             return JsonResponse({"isValid":False,"Reason":"Video is not found."})
 
         
-
 def viewAllPosts(request):
     posts = Post.objects.all()
     if request.method == "GET":
@@ -468,12 +582,20 @@ def viewAllPosts(request):
 
 
 def getAllCommunitiesOfUser(req):
-    user_id = req.session["id"]
-    user = Person.objects.get(pk=user_id)
-    joinedCommunities = user.joinedCommunities.all()
-    communityDict = {}
-    i = 1
-    for c in joinedCommunities:
-        communityDict[i] = c.__str__()
-        i += 1
-    return JsonResponse(communityDict)
+    if req.method=="GET":
+        if "id" in req.session:
+            user_id = req.session["id"]
+        elif "user_id" in req.GET:
+            user_id=req.GET["user_id"]
+        else:
+            return JsonResponse({})
+        user = Person.objects.get(pk=user_id)
+        if not user:
+            return JsonResponse({})
+        joinedCommunities = user.joinedCommunities.all()
+        communityDict = {}
+        i = 1
+        for c in joinedCommunities:
+            communityDict[i] = c.__str__()
+            i += 1
+        return JsonResponse(communityDict)
