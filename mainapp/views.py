@@ -19,12 +19,12 @@ CX = 'b53774e143a6ec2c1'
 # Search string after this.
 SEARCH_API = 'https://www.googleapis.com/customsearch/v1?key=' + \
     str(API_KEY) + '&cx=' + CX + '&q='
-YOUTUBE_API_KEY='AIzaSyAGiNnRprjzxUGBj0ANdhZSg6ym2Zx4lf4'
-VIDEO_CHECK_API='https://www.googleapis.com/youtube/v3/videos'
+YOUTUBE_API_KEY = 'AIzaSyAGiNnRprjzxUGBj0ANdhZSg6ym2Zx4lf4'
+VIDEO_CHECK_API = 'https://www.googleapis.com/youtube/v3/videos'
 CAT_FACT = 'https://catfact.ninja/fact'
 
 # Detect Language API key
-DETECT_LANGUAGE_KEY="10721f4865e0bf2914dee88d7a91c265"
+DETECT_LANGUAGE_KEY = "10721f4865e0bf2914dee88d7a91c265"
 # Detect Language URL
 DETECT_LANGUAGE_BASE_URL = "https://ws.detectlanguage.com/0.2/detect/"
 
@@ -44,6 +44,7 @@ def mainPage(req):
         "personlast": req.session["lastname"],
     }
     return render(req, "mainapp/homePage.html", context)
+
 
 def leaveCommunity_ui(req):
     # TODO: Update Html file
@@ -204,15 +205,14 @@ def getAllPostsOfCommunity(req):
             user = Person.objects.get(pk=user_id)
             if not user in currentCommunity.joinedUsers.all():
                 return JsonResponse({})
-        
+
         postsDict = {}
         i = 1
         for post in currentCommunity.posts.all():
             postsDict[i] = post.__str__()
             i += 1
-           
+
         return JsonResponse(postsDict)
-      
 
 
 def getFirst(req):
@@ -305,7 +305,7 @@ def getGifs(req):
             image_url.append(item["images"]["original"]["url"])
 
         response = {}
-        randomNumber = random.randint(0,2)
+        randomNumber = random.randint(0, 2)
         response["images"] = image_url[randomNumber]
         return JsonResponse(response)
     else:
@@ -317,7 +317,7 @@ def getCommunityTemplates(request):
         if "community_id" in request.session:
             community_id = request.session["community_id"]
         elif "community_id" in request.GET:
-            community_id=request.GET["community_id"]
+            community_id = request.GET["community_id"]
         else:
             return JsonResponse({})
         currentCommunity = Community.objects.get(pk=community_id)
@@ -327,11 +327,11 @@ def getCommunityTemplates(request):
             if "id" in request.session:
                 user_id = request.session["id"]
                 user = Person.objects.get(pk=user_id)
-                if not user in community.joinedUsers.all():
+                if not user in currentCommunity.joinedUsers.all():
                     return JsonResponse({})
             else:
                 return JsonResponse({})
-        
+
         templates = currentCommunity.post_templates.all()
         templatesDict = {}
         i = 1
@@ -343,18 +343,15 @@ def getCommunityTemplates(request):
         return JsonResponse({})
 
 
-
-
-
 def createPostTemplate(request):
     if request.method == "POST":
-        isValidRequest=True
+        isValidRequest = True
         if not "template_name" in request.POST:
-            return JsonResponse({"Error":"Bad request."})
+            return JsonResponse({"Error": "Bad request."})
         if not "description" in request.POST:
-            return JsonResponse({"Error":"Bad request."})
+            return JsonResponse({"Error": "Bad request."})
         if not "data_field_temps" in request.POST:
-            return JsonResponse({"Error":"Bad request."})
+            return JsonResponse({"Error": "Bad request."})
 
         templateName = request.POST["template_name"]
         templateDesc = request.POST["description"]
@@ -362,82 +359,77 @@ def createPostTemplate(request):
         try:
             dataFieldTempsData = json.loads(request.POST["data_field_temps"])
         except ValueError as e:
-            return JsonResponse({"Error":"data_field_temps is in wrong format."})
-        
+            return JsonResponse({"Error": "data_field_temps is in wrong format."})
+
         newTemplate = PostTemplate()
         newTemplate.name = templateName
         newTemplate.description = templateDesc
-        
+
         if "community_id" in request.session:
             newTemplate.community = Community.objects.get(
-            pk=request.session["community_id"])
+                pk=request.session["community_id"])
         else:
             return JsonResponse({})
-        
-        if PostTemplate.objects.filter(name=templateName,community=newTemplate.community):
-            return JsonResponse({"Error":"Template name is already in use."})
-        
-        
-        
 
-        
-        
+        if PostTemplate.objects.filter(name=templateName, community=newTemplate.community):
+            return JsonResponse({"Error": "Template name is already in use."})
+
         newTemplate.save()
-        candidateFieldNames=[]
-        index=1
+        candidateFieldNames = []
+        index = 1
         for i in dataFieldTempsData:
             newFieldTemp = DataFieldTemp()
             if not "name" in i:
-                isValidRequest=False
+                isValidRequest = False
                 break
             if not "type" in i:
-                isValidRequest=False
+                isValidRequest = False
                 break
             newFieldTemp.name = i["name"]
             newFieldTemp.type = i["type"]
-            if not newFieldTemp.type in ["text","image","video"]:
-                isValidRequest=False
+            if not newFieldTemp.type in ["text", "image", "video"]:
+                isValidRequest = False
                 break
             if newFieldTemp.name in candidateFieldNames:
-                isValidRequest=False
+                isValidRequest = False
                 break
             newFieldTemp.form_content = {}
             newFieldTemp.postTemplate = newTemplate
             newFieldTemp.save()
         if not isValidRequest:
             newTemplate.delete()
-            return JsonResponse({"Error":"Somethings gone wrong with field names."})
-        
+            return JsonResponse({"Error": "Somethings gone wrong with field names."})
+
     return JsonResponse(newTemplate.__str__())
 
 
 def createPost(request):
     if request.method == "POST":
-        isValidRequest=True
+        isValidRequest = True
         if not "title" in request.POST:
-            return JsonResponse({"Error":"Bad request."})
+            return JsonResponse({"Error": "Bad request."})
         if not "description" in request.POST:
-            return JsonResponse({"Error":"Bad request."})
+            return JsonResponse({"Error": "Bad request."})
         if not "post_template_id" in request.POST:
-            return JsonResponse({"Error":"Bad request."})
-        
+            return JsonResponse({"Error": "Bad request."})
+
         title = request.POST["title"]
         description = request.POST["description"]
         postTempID = request.POST["post_template_id"]
         post = Post()
         postTemp = PostTemplate.objects.get(pk=postTempID)
         temps = postTemp.dataFieldTemplates.all()
-        
+
         if "community_id" in request.session:
             post.community = Community.objects.get(
-            pk=request.session["community_id"])
+                pk=request.session["community_id"])
         else:
-            post.community=postTemp.community
+            post.community = postTemp.community
         if "id" in request.session:
             post.posterid = request.session["id"]
         else:
-            return JsonResponse({"Error":"Bad request."})
-        
+            return JsonResponse({"Error": "Bad request."})
+
         post.title = title
         post.description = description
         post.postTemplate = postTemp
@@ -452,51 +444,56 @@ def createPost(request):
             contentDict = {}
             if temp.type == "text":
                 if str(temp.id)+"_textcontent" in request.POST:
-                    contentDict["text"] = request.POST[str(temp.id)+"_textcontent"]
-                    allText = allText + " " + request.POST[str(temp.id)+"_textcontent"]
+                    contentDict["text"] = request.POST[str(
+                        temp.id)+"_textcontent"]
+                    allText = allText + " " + \
+                        request.POST[str(temp.id)+"_textcontent"]
                 else:
-                    isValidRequest=False
+                    isValidRequest = False
                     break
             elif temp.type == "image":
                 if str(temp.id)+"_urlcontent" in request.POST:
-                    contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
+                    contentDict["url"] = request.POST[str(
+                        temp.id)+"_urlcontent"]
                 else:
-                    isValidRequest=False
+                    isValidRequest = False
                     break
             elif temp.type == "video":
                 if str(temp.id)+"_urlcontent" in request.POST:
-                    contentDict["url"] = request.POST[str(temp.id)+"_urlcontent"]
+                    contentDict["url"] = request.POST[str(
+                        temp.id)+"_urlcontent"]
                 else:
-                    isValidRequest=False
+                    isValidRequest = False
                     break
             else:
-                isValidRequest=False
+                isValidRequest = False
                 break
             newField.content = contentDict
             newField.save()
         if not isValidRequest:
             post.delete()
             return JsonResponse({})
-        myResponse= requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(str(DETECT_LANGUAGE_KEY),'12345'), data={'q':allText})
+        myResponse = requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(
+            str(DETECT_LANGUAGE_KEY), '12345'), data={'q': allText})
         if not myResponse.ok:
             return JsonResponse(post.__str__())
-        
+
         resultsJson = myResponse.json()
-        languageList= []
-        
+        languageList = []
+
         for element in resultsJson['data']['detections']:
             languageList.append(element['language'])
         languagesString = ','.join(languageList)
 
         languageField = DataField()
-        languageField.name= 'Detected languages'
+        languageField.name = 'Detected languages'
         languageField.post = post
         languageField.type = 'text'
-        contentDict= {}
+        contentDict = {}
         contentDict["text"] = languagesString
-        languageField.content= contentDict
+        languageField.content = contentDict
         languageField.save()
-        
+
         return JsonResponse(post.__str__())
 
 
@@ -511,11 +508,12 @@ def getPost(req):
         if post.community.isPrivate:
             if "id" in req.session and "community_id" in req.session:
                 user = Person.objects.get(pk=req.session["id"])
-                community = Community.objects.get(pk=req.session["community_id"])
+                community = Community.objects.get(
+                    pk=req.session["community_id"])
                 if not user in community.joinedUsers.all():
                     return JsonResponse({})
         return JsonResponse(post.__str__())
-     
+
 
 def getPostTemplate(req):
     if req.method == "GET":
@@ -528,7 +526,8 @@ def getPostTemplate(req):
         if postTemplate.community.isPrivate:
             if "id" in req.session and "community_id" in req.session:
                 user = Person.objects.get(pk=req.session["id"])
-                community = Community.objects.get(pk=req.session["community_id"])
+                community = Community.objects.get(
+                    pk=req.session["community_id"])
                 if not user in community.joinedUsers.all():
                     return JsonResponse({})
         return JsonResponse(postTemplate.__str__())
@@ -539,31 +538,32 @@ def checkVideo(req):
         if "url" in req.GET:
             url = req.GET["url"]
         else:
-            return JsonResponse({"isValid":False,"Reason":"GET parameters are not valid."})
-        res = requests.get(VIDEO_CHECK_API + "?part=contentDetails,status&id="+url+"&key="+YOUTUBE_API_KEY)
+            return JsonResponse({"isValid": False, "Reason": "GET parameters are not valid."})
+        res = requests.get(
+            VIDEO_CHECK_API + "?part=contentDetails,status&id="+url+"&key="+YOUTUBE_API_KEY)
         if not res.ok:
-            return JsonResponse({"isValid":False,"Reason":"Youtube API returned bad response."})
+            return JsonResponse({"isValid": False, "Reason": "Youtube API returned bad response."})
         myJson = res.content.decode('utf8')
         data = json.loads(myJson)
         if data["items"]:
-            videoData=data["items"][0]
-            videoDurationStr=videoData["contentDetails"]["duration"]
-            strIndex=len(videoDurationStr)-1
-            duration=isodate.parse_duration(videoDurationStr)
-            
-            if not videoData["status"]["embeddable"]:
-                return JsonResponse({"isValid":False,"Reason":"Video is not embeddable."})
-            elif not videoData["status"]["privacyStatus"]=="public":
-                return JsonResponse({"isValid":False,"Reason":"Video is private."})
-            elif videoData["contentDetails"]["contentRating"]=="ytAgeRestricted":
-                return JsonResponse({"isValid":False,"Reason":"Video is age restricted."})
-            elif duration.total_seconds()>301:
-                return JsonResponse({"isValid":False,"Reason":"Video is longer than 5 minutes."})
-            return JsonResponse({"isValid":True,"Reason":""})
-        else:
-            return JsonResponse({"isValid":False,"Reason":"Video is not found."})
+            videoData = data["items"][0]
+            videoDurationStr = videoData["contentDetails"]["duration"]
+            strIndex = len(videoDurationStr)-1
+            duration = isodate.parse_duration(videoDurationStr)
 
-        
+            if not videoData["status"]["embeddable"]:
+                return JsonResponse({"isValid": False, "Reason": "Video is not embeddable."})
+            elif not videoData["status"]["privacyStatus"] == "public":
+                return JsonResponse({"isValid": False, "Reason": "Video is private."})
+            elif videoData["contentDetails"]["contentRating"] == "ytAgeRestricted":
+                return JsonResponse({"isValid": False, "Reason": "Video is age restricted."})
+            elif duration.total_seconds() > 301:
+                return JsonResponse({"isValid": False, "Reason": "Video is longer than 5 minutes."})
+            return JsonResponse({"isValid": True, "Reason": ""})
+        else:
+            return JsonResponse({"isValid": False, "Reason": "Video is not found."})
+
+
 def viewAllPosts(request):
     posts = Post.objects.all()
     if request.method == "GET":
@@ -586,11 +586,11 @@ def viewAllPosts(request):
 
 
 def getAllCommunitiesOfUser(req):
-    if req.method=="GET":
+    if req.method == "GET":
         if "id" in req.session:
             user_id = req.session["id"]
         elif "user_id" in req.GET:
-            user_id=req.GET["user_id"]
+            user_id = req.GET["user_id"]
         else:
             return JsonResponse({})
         user = Person.objects.get(pk=user_id)
