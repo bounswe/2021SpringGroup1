@@ -26,5 +26,8 @@ urlpatterns = [
     path("getPost",views.getPost,name="getPost"),
     path("getPostTemplate",views.getPostTemplate,name="getPostTemplate"),
     path("getGifs/",views.getGifs,name="getGifs"),
-    
+    path("getTrNews/",views.getTrNews,name="getTrNews"),
+    path("getFirst_news/",views.getFirst_news,name="getFirst_news"),
+    path("getLast_news/",views.getLast_news,name="getLast_news"),
+    path("newsPage/",views.newsPageUI,name="newsPageUI"),
 ]

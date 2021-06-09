@@ -105,3 +105,17 @@ class DataFieldTemp(models.Model):
         }
         return data
 
+
+class News(models.Model):
+    author = models.CharField(max_length = 50,verbose_name = "Author") 
+    title = models.CharField(max_length = 100,verbose_name = "Title")
+    descr = models.CharField(max_length = 300,verbose_name = "Descr")
+    url = models.CharField(max_length =  300 ,verbose_name = "Link")
+    url_to_img = models.CharField(max_length=300,verbose_name = "Img_link")
+
+
+    def __str__(self):
+        return "Yazar: {} <br> - Baslik : {} <br> - Tanim : {} <br>- link: {} <br>- img_link : {}".format(self.author,self.title,self.descr,self.url,self.url_to_img)
+
+
+

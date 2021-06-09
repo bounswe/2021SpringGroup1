@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Welcome to the News Page!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <nav style="margin-bottom: 0px; background-color:lavender; !important" class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="../mainPage">🏠</a>
+    </nav>
+    <div class="wrapper">
+    
+
+        <div class="container">
+            <div class="col-sm">
+                <button id="getTopNews" class="btn btn-primary">See Today's Most Popular 5 News</button>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="container">
+            <div class="col-sm">
+                <button id="getFirstNews" class="btn btn-primary">Get First News</button>
+            </div>
+            <br>
+            <div class="col-sm">
+                <button id="getLastNews" class="btn btn-primary">Get Last News</button>
+            </div>
+        </div>
+
+        <br>
+
+    </div>
+
+    <script>
+        const section = document.getElementById("results_section");
+        const templates_section = document.getElementById("templates_section");
+        let communities;
+
+
+        function getTopNews(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/getTrNews/';
+            let url = baseURL;
+            console.log(url);
+            window.location = url;
+        }
+
+        
+        function getFirstNews(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/getFirst_news/';
+            let url = baseURL;
+            console.log(url);
+            window.location = url;
+        }
+
+        function getLastNews(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/getLast_news/';
+            let url = baseURL;
+            console.log(url);
+            window.location = url;
+        }
+       
+        document.getElementById("getTopNews").addEventListener("click", getTopNews,false);
+
+        document.getElementById("getFirstNews").addEventListener("click", getFirstNews,false);
+
+        document.getElementById("getLastNews").addEventListener("click", getLastNews,false);
+
+    </script>
+
+</body>
+
+</html>

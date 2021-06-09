@@ -37,6 +37,12 @@
                 <button id="getUserCommunities" class="btn btn-primary">Press to see all your communities.</button>
             </div>
             <br>
+
+            <div class="col-news">
+                <button id="getNewsPage" class="btn btn-primary">See News Page</button>
+            </div>
+            <br>
+
             <!--  @yunus-topal if something goes wrong, delete this form to get rid of logout feature.-->
             <form method="POST" action="">
                 {% csrf_token %}
@@ -66,6 +72,7 @@
         let communities;
         document.getElementById("getUserCommunities").addEventListener("click", getUserCommunities);
         document.getElementById("createCommunity").addEventListener("click", createCommunity);
+        document.getElementById("getNewsPage").addEventListener("click", getNewsPage);
 
         function goToCommunity(e) {
             console.log(communities);
@@ -90,6 +97,16 @@
                 displayCommunities(json);
             });
         }
+
+        function getNewsPage(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/newsPage/';
+            let url = baseURL;
+            console.log(url);
+            window.location.href = url;
+        }
+
+
 
         function createCommunity(e) {
             e.preventDefault();

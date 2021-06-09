@@ -18,6 +18,11 @@
 <button type="submit" name="post" value="view">Create a Post Template</button>
 </form>
 
+<form method="POST" action="./newsPage">
+    {%csrf_token%}
+<button type="submit" name="post" value="view">See News Page</button>
+</form>
+
 <form method="POST" action="">
     {% csrf_token %}
     <button type="submit" name="post" value="logout">Log out</button>
