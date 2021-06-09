@@ -18,16 +18,16 @@
         <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
             <h1> Create a post template.</h1>
         </div>
-
+    <div class="container">
         <form id="postTemplateForm" name="postTemplateForm" action="{% url 'mainapp:createPostTemplate' %}"
             method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="template_name">Template name:</label>
-                <input name="template_name"></textarea>
+                <input id="template_name" name="template_name" required>
                 <br>
                 <label for="description">Template description:</label>
-                <input name="description" rows="3"></textarea>
+                <input id="description" name="description" rows="3" required>
             </div>
             <div class="container" id="addedFields">
             </div>
@@ -43,11 +43,18 @@
             <button id="addField" class="btn">Add Field</button>
         </div>
         <button id="submitTemplate" class="btn">Submit Post Template</button>
+        <div class="container">
+            <div id="results_section">
+            </div>
+        </div>
+    </div>
     </div>
 
     <script>
-        document.getElementById("addField").addEventListener("click", addField)
-        document.getElementById("submitTemplate").addEventListener("click", formValidation)
+        var CSRF_TOKEN='{{csrf_token}}';
+        const section=document.getElementById("results_section");
+        document.getElementById("addField").addEventListener("click", addField);
+        document.getElementById("submitTemplate").addEventListener("click", formValidation);
         function addField(e) {
             var obj = document.getElementById("AddFieldType");
             var container = document.getElementById("addedFields");
@@ -63,6 +70,7 @@
 
                 nameInput.type = "text";
                 nameInput.name = "name";
+                nameInput.required=true;
                 typeInput.type = "hidden";
                 typeInput.name = "type"
                 typeInput.value = "text";
@@ -77,11 +85,12 @@
                 div = document.createElement('form');
                 div.appendChild(document.createTextNode(i + ".Image field: "));
                 div.appendChild(document.createElement("br"));
-                var nameInput = document.createElement("input");
+                var nameInput = document.createElement("input").required=true;
                 var typeInput = document.createElement("input");
 
                 nameInput.type = "text";
                 nameInput.name = "name";
+                nameInput.required=true;
                 typeInput.type = "hidden";
                 typeInput.name = "type"
                 typeInput.value = "image";
@@ -101,6 +110,7 @@
 
                 nameInput.type = "text";
                 nameInput.name = "name";
+                nameInput.required=true;
                 typeInput.type = "hidden";
                 typeInput.name = "type"
                 typeInput.value = "video";
@@ -113,27 +123,62 @@
         };
 
         function formValidation(e) {
-            if (true) {
-                passJson();
-                if (true)
-                    document.getElementById("postTemplateForm").submit();
+            var isAllFieldsFilled=true;
+            var inputs=document.getElementById("postTemplateForm").getElementsByTagName('input');
+            for(let i=0;i<inputs.length;i++){
+                if(inputs[i].hasAttribute("required")){
+                    if(inputs[i].value==""){
+                        alert("Some fields are empty!");
+                        isAllFieldsFilled=false;
+                        break;
+                    }
+                }
+            }
+            if (isAllFieldsFilled) {
+                createJsonList();
+                createPostTemplate();
             }
         }
-        function passJson() {
+        function createPostTemplate(){
+            
+            var url='/mainapp/createPostTemplate/';
+            /*   
+            fetch(url,{
+                method: "POST",
+                headers: { 'X-CSRFToken': CSRF_TOKEN,
+                            'Content-Type':"application/x-www-form-urlencoded",
+                            },
+                body:{
+                    template_name : document.getElementById("template_name").value,
+                    description : document.getElementById("description").value,
+                    data_field_temps : document.getElementById("data_field_temps").value,
+
+                },
+                data:{
+                    "csrfmiddlewaretoken":CSRF_TOKEN,
+                    }
+                }
+            ).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+            */
+            document.getElementById("postTemplateForm").submit();
+        }
+        function createJsonList() {
             var formData = document.getElementById("addedFields").childNodes;
-            var dict = []; // create an empty array
-            for (let index = 0; index < formData.length; ++index) {
-                let value = formData[index];
+            var dict = []; 
+            for (let index = 1; index <= formData.length; ++index) {
+                let value = formData[index-1];
                 console.log(value.tagName)
                 if (value.tagName == "FORM") {
                     let data = {};
                     let formdata = new FormData(value);
-                    for (let tuple of formdata.entries()) data[tuple[0]] = tuple[1];
-
-                    dict.push({
-                        key: index,
-                        value: data
-                    });
+                    for (let pair of formdata.entries()){ 
+                        data[pair[0]] = pair[1];
+                    }
+                    dict.push(data);
                 }
 
             }
@@ -142,6 +187,15 @@
             console.log(dict);
             input.value = JSON.stringify(dict);
             console.log(input.value)
+        }
+         function displayResults(json) {
+            console.log(json);
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const para = document.createElement('pre');
+            para.textContent = JSON.stringify(json, undefined, '\t')
+            section.appendChild(para);
         }
     </script>
 
