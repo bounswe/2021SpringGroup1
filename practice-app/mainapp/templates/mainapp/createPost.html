@@ -94,6 +94,10 @@ function createPost(){
 }
 async function checkValidity(){
     var isValid=true;
+    /*For the input validation part, I took help from the source below.
+    https://stackoverflow.com/questions/18640051/check-if-html-form-values-are-empty-using-javascript
+    While I tried to implement it differently, I found out that this is a standard solution.
+    */
             var inputs=document.getElementById("PostForm").getElementsByTagName('input');
             for(let i=0;i<inputs.length;i++){
                 if(inputs[i].hasAttribute("required")){

@@ -5,6 +5,8 @@ from django.views import View
 from django.http import HttpResponse
 from django.http import JsonResponse
 from .forms import CreateNews
+from django.views.decorators import csrf
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 import random
@@ -31,6 +33,7 @@ DETECT_LANGUAGE_BASE_URL = "https://ws.detectlanguage.com/0.2/detect/"
 
 # News API
 NEWS_API = 'https://newsapi.org/v2/top-headlines?country=tr&apiKey=7bc3e21084b1473fa958c88f37848037'
+
 
 def mainPage(req):
     if "community_id" in req.session.keys():
@@ -84,6 +87,7 @@ def createPerson(req):
         person.imageUrl = req.POST["imgurl"]
         person.save()
         return HttpResponseRedirect("../")
+    return HttpResponse("something went wrong")
 
 
 def createCommunity_ui(req):
@@ -128,6 +132,7 @@ def createPostTemplate_ui(request):
 def viewPost_ui(request):
     post = Post.objects.get(pk=request.GET["id"])
     return render(request, "mainapp/viewPost.html", {"post": post})
+
 
 def newsPageUI(request):
     return render(request, "mainapp/newsPage.html")
@@ -591,7 +596,6 @@ def viewAllPosts(request):
         return render(request, "post/viewAllPosts.html", {"personfirst": request.session["firstname"], "personlast": request.session["lastname"], "allposts": Post.objects.all()})
 
 
-
 def getAllCommunitiesOfUser(req):
     if req.method == "GET":
         if "id" in req.session:
@@ -612,7 +616,6 @@ def getAllCommunitiesOfUser(req):
         return JsonResponse(communityDict)
 
 
-
 def getTrNews(req):
     res = requests.get(NEWS_API)
     myhs = res.content.decode('utf8')
@@ -627,12 +630,12 @@ def getTrNews(req):
         else:
             news_h.author = value["author"]
         news_h.title = value["title"]
-        
+
         if value["description"] is None:
-             news_h.descr = "Not Known"
-        else:     
+            news_h.descr = "Not Known"
+        else:
             news_h.descr = value["description"]
-        
+
         if value["url"] is None:
             news_h.url = "Not Known"
         else:
@@ -640,23 +643,26 @@ def getTrNews(req):
 
         if value["urlToImage"] is None:
             news_h.url_to_img = "Not Known"
-        else: 
+        else:
             news_h.url_to_img = value["urlToImage"]
         printed += (str(news_h) + "<br><br><br>")
         news_h.save()
         print(news_h)
-        
+
     return HttpResponse(printed)
+
 
 def getFirst_news(req):
     if req.method == "GET":
         news_a = News.objects.first()
         return HttpResponse(news_a)
 
+
 def getLast_news(req):
     if req.method == "GET":
         news_l = News.objects.last()
         return HttpResponse(news_l)
+
 
 def createNews(response):
     form = CreateNews()
@@ -680,10 +686,316 @@ def createNews_ui(req):
         #news_a.descr = descr1
         #news_a.url = url1
         #news_a.url_to_img = url_to_img1
-        news_a = News(author=author1, title=title1, descr=descr1, url=url1, url_to_img=url_to_img1)
+        news_a = News(author=author1, title=title1, descr=descr1,
+                      url=url1, url_to_img=url_to_img1)
         news_a.save()
         return HttpResponseRedirect("mainapp/newsPage.html")
-   
+
     else:
-        form = CreateNews() 
+        form = CreateNews()
     return render(req, "mainapp/createNews.html", {"form": form})
+# External RESTFUL API calls
+
+
+@csrf_exempt
+def external_api_getAllCommunities(req):
+    if req.method == "GET":
+        response = {}
+        query_set = Community.objects.all()
+        list_of_dicts = list(query_set)
+        for community in list_of_dicts:
+            response[community.id] = community.__str__()
+        return JsonResponse(response)
+    else:
+        return JsonResponse({})
+
+
+@csrf_exempt
+def external_api_createCommunity(req):
+    if Community.objects.filter(name=req.POST["name"]):
+        return JsonResponse({})
+    if req.method == "POST":
+        community = Community()
+        community.name = req.POST["name"]
+        community.isPrivate = (
+            req.POST["isPrivate"] == "true")  # Cast to boolean
+        person_id = req.POST["id"]
+        if (Person.objects.filter(id=person_id)):
+            community.moderator = Person.objects.get(pk=person_id)
+            community.numUsers = 1
+            community.numPosts = 0
+            community.save()
+            community.joinedUsers.add(Person.objects.get(pk=person_id))
+        else:
+            return JsonResponse({"error": "User id is false!"})
+        return JsonResponse(community.__str__())
+    else:
+        return JsonResponse({})
+
+
+@csrf_exempt
+def external_api_deleteCommunity(req):
+    response = {}
+    if req.method == "POST":
+        name_del = req.POST["name"]
+        to_delete = Community.objects.filter(name=name_del)
+        list_of_dicts = list(to_delete)
+        for community in list_of_dicts:
+            response[community.id] = community.__str__()
+        to_delete.delete()
+    else:
+        None
+    return JsonResponse(response)
+
+# Berke Argın
+
+
+def external_api_getPost(req):
+    if req.method == "GET":
+        if "post_id" in req.GET:
+            if Post.objects.filter(id=req.GET["post_id"]):
+                post = Post.objects.get(pk=req.GET["post_id"])
+            else:
+                return JsonResponse({"error": "Post not found."})
+        else:
+            return JsonResponse({})
+        if post.community.isPrivate:
+            return JsonResponse({"error": "This post is in private community."})
+        return JsonResponse(post.__str__())
+
+
+def external_api_getPostTemplate(req):
+    if req.method == "GET":
+        if "template_id" in req.GET:
+            if PostTemplate.objects.filter(id=req.GET["template_id"]):
+                postTemplate = PostTemplate.objects.get(
+                    pk=req.GET["template_id"])
+            else:
+                return JsonResponse({"error": "Template not found."})
+        else:
+            return JsonResponse({})
+        if postTemplate.community.isPrivate:
+            return JsonResponse({"error": "This template is in private community."})
+        return JsonResponse(postTemplate.__str__())
+
+
+@csrf_exempt
+def external_api_createPost(request):
+    if request.method == "POST":
+        isValidRequest = True
+        if not "title" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "description" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "post_template_id" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+
+        title = request.POST["title"]
+        description = request.POST["description"]
+        postTempID = request.POST["post_template_id"]
+        post = Post()
+        if PostTemplate.objects.filter(id=postTempID):
+            postTemp = PostTemplate.objects.get(pk=postTempID)
+        else:
+            return JsonResponse({"error": "Post Template does not exist."})
+        temps = postTemp.dataFieldTemplates.all()
+
+        post.community = postTemp.community
+        post.posterid = 0
+        post.title = title
+        post.description = description
+        post.postTemplate = postTemp
+        post.save()
+
+        allText = title + " " + description
+        for temp in temps:
+            newField = DataField()
+            newField.name = temp.name
+            newField.post = post
+            newField.type = temp.type
+            contentDict = {}
+            if temp.type == "text":
+                if str(temp.id)+"_textcontent" in request.POST:
+                    contentDict["text"] = request.POST[str(
+                        temp.id)+"_textcontent"]
+                    allText = allText + " " + \
+                        request.POST[str(temp.id)+"_textcontent"]
+                else:
+                    isValidRequest = False
+                    break
+            elif temp.type == "image":
+                if str(temp.id)+"_urlcontent" in request.POST:
+                    contentDict["url"] = request.POST[str(
+                        temp.id)+"_urlcontent"]
+                else:
+                    isValidRequest = False
+                    break
+            elif temp.type == "video":
+                if str(temp.id)+"_urlcontent" in request.POST:
+                    contentDict["url"] = request.POST[str(
+                        temp.id)+"_urlcontent"]
+                else:
+                    isValidRequest = False
+                    break
+            else:
+                isValidRequest = False
+                break
+            newField.content = contentDict
+            newField.save()
+        if not isValidRequest:
+            post.delete()
+            return JsonResponse({})
+        myResponse = requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(
+            str(DETECT_LANGUAGE_KEY), '12345'), data={'q': allText})
+        if not myResponse.ok:
+            return JsonResponse(post.__str__())
+
+        resultsJson = myResponse.json()
+        languageList = []
+
+        for element in resultsJson['data']['detections']:
+            languageList.append(element['language'])
+        languagesString = ','.join(languageList)
+
+        languageField = DataField()
+        languageField.name = 'Detected languages'
+        languageField.post = post
+        languageField.type = 'text'
+        contentDict = {}
+        contentDict["text"] = languagesString
+        languageField.content = contentDict
+        languageField.save()
+
+        return JsonResponse(post.__str__())
+
+
+@csrf_exempt
+def external_api_createPostTemplate(request):
+    if request.method == "POST":
+        isValidRequest = True
+        if not "template_name" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "description" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "data_field_temps" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+
+        templateName = request.POST["template_name"]
+        templateDesc = request.POST["description"]
+        data_field_temps = request.POST["data_field_temps"]
+        try:
+            dataFieldTempsData = json.loads(request.POST["data_field_temps"])
+        except ValueError as e:
+            return JsonResponse({"Error": "data_field_temps is in wrong format."})
+
+        newTemplate = PostTemplate()
+        newTemplate.name = templateName
+        newTemplate.description = templateDesc
+
+        if "community_id" in request.POST:
+            community_id = request.POST["community_id"]
+            if Community.objects.filter(id=community_id):
+                newTemplate.community = Community.objects.get(pk=community_id)
+                if newTemplate.community.isPrivate:
+                    return JsonResponse({"Error": "Community is private."})
+            else:
+                return JsonResponse({"Error": "Community is not found."})
+        else:
+            return JsonResponse({})
+
+        if PostTemplate.objects.filter(name=templateName, community=newTemplate.community):
+            return JsonResponse({"Error": "Template name is already in use."})
+
+        newTemplate.save()
+        candidateFieldNames = []
+        index = 1
+        for i in dataFieldTempsData:
+            newFieldTemp = DataFieldTemp()
+            if not "name" in i:
+                isValidRequest = False
+                break
+            if not "type" in i:
+                isValidRequest = False
+                break
+            newFieldTemp.name = i["name"]
+            newFieldTemp.type = i["type"]
+            if not newFieldTemp.type in ["text", "image", "video"]:
+                isValidRequest = False
+                break
+            if newFieldTemp.name in candidateFieldNames:
+                isValidRequest = False
+                break
+            newFieldTemp.form_content = {}
+            newFieldTemp.postTemplate = newTemplate
+            newFieldTemp.save()
+        if not isValidRequest:
+            newTemplate.delete()
+            return JsonResponse({"Error": "Somethings gone wrong with field names."})
+
+    return JsonResponse(newTemplate.__str__())
+
+
+# @yunus-topal
+@csrf_exempt
+def external_api_getUserCommunities(req):
+    if req.method == "GET":
+        if "user_id" in req.GET:
+            user_id = req.GET["user_id"]
+        else:
+            return JsonResponse({"Error": "no user id provided."})
+        user = Person.objects.get(pk=user_id)
+        if not user:
+            return JsonResponse({})
+        joinedCommunities = user.joinedCommunities.all()
+        communityDict = {}
+        i = 1
+        for c in joinedCommunities:
+            communityDict[i] = c.__str__()
+            i += 1
+        return JsonResponse(communityDict)
+    else:
+        return JsonResponse({"Error": "Bad request."})
+
+
+@csrf_exempt
+def external_api_createUser(req):
+    if req.method == 'POST':
+        person = Person()
+        if not "firstname" in req.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "lastname" in req.POST:
+            return JsonResponse({"Error": "Bad request."})
+
+        if not "location" in req.POST:
+            person.location = "unknown"
+        else:
+            person.location = req.POST["location"]
+
+        if not "email" in req.POST:
+            person.email = "{}@mail.com".format(req.POST["firstname"])
+        else:
+            person.email = req.POST["email"]
+
+        if not "age" in req.POST:
+            person.age = 0
+        else:
+            person.age = req.POST["age"]
+
+        if not "phone" in req.POST:
+            person.phone = "05554443322"
+        else:
+            person.phone = req.POST["phone"]
+
+        if not "imageUrl" in req.POST:
+            person.imageUrl = "image.url"
+        else:
+            person.imageUrl = req.POST["imgurl"]
+
+        person.title = req.POST["lastname"] + " title"
+        person.firstname = req.POST["firstname"]
+        person.lastname = req.POST["lastname"]
+
+        person.save()
+        return JsonResponse(person.json_return())
+    else:
+        return JsonResponse({"Error": "Bad request."})

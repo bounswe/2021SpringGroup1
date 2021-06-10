@@ -1,6 +1,7 @@
 from django.test import TestCase
 from mainapp.models import *
 from mainapp.views import *
+from rest_framework.test import APIRequestFactory
 # Create your tests here.
 import json
 class PostTestCase(TestCase):
@@ -184,6 +185,71 @@ class CommunityTestCase(TestCase):
         """Number of users in the community is checked."""
         community = Community.objects.get(id=1)
         self.assertIsNotNone(community.createdDate)
+    
+    def test_external_api_getAll_works_one_community(self):
+        """Restful API is checked."""
+        community = Community.objects.get(id=1)
+        factory = APIRequestFactory()
+        request = factory.get('/external/getAllCommunities')
+        response = external_api_getAllCommunities(request)
+        json_response = json.loads(response.content)
+        expected_response = community.__str__()
+        self.assertDictEqual(json_response["1"], expected_response)
+
+    def test_external_api_getAll_works_multiple_communities(self):
+        """Restful API is checked."""
+        #Create two extra communities.
+        for i in range(2,4):
+            Community.objects.create(
+            id=i,
+            name="Community " + str(i),
+            description="Description " + str(i),
+            numUsers=1,
+            numPosts=0,
+            moderator=self.moderator,
+            isPrivate=True,
+            )
+        factory = APIRequestFactory()
+        request = factory.get('/external/getAllCommunities')
+        response = external_api_getAllCommunities(request)
+        json_response = json.loads(response.content)
+        for i in range(1,4):
+            community = Community.objects.get(id=i)
+            expected_response = community.__str__()
+            self.assertDictEqual(json_response[str(i)], expected_response)
+
+    def test_external_api_create_community(self):
+        """Restful API is checked."""
+        factory = APIRequestFactory()
+        request = factory.post('/external/createCommunity', {'name': 'Bogazici Housing', 'isPrivate' : 'false', 'id' : self.moderator.id})
+        response = external_api_createCommunity(request)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response['name'], 'Bogazici Housing')
+        self.assertEqual(json_response['isPrivate'], False)
+        self.assertEqual(json_response['moderator_name'], self.moderator.firstname)
+    
+    def test_external_api_delete_community(self):
+        """Restful API is checked."""
+        Community.objects.create(
+            id=2,
+            name="Bogazici Housing",
+            description="Boun ogrencileri housing",
+            numUsers=1,
+            numPosts=0,
+            moderator=self.moderator,
+            isPrivate=True,
+        )
+        factory = APIRequestFactory()
+        request = factory.post('/external/deleteCommunity', {'name': 'Bogazici Housing'})
+        response = external_api_deleteCommunity(request)
+        json_response = json.loads(response.content)
+        self.assertNotEqual(json_response, {})
+
+        
+        
+
+
+
 
 # @yunus-topal Person creation testing.
 
