@@ -42,7 +42,10 @@
                 <button id="getNewsPage" class="btn btn-primary">See News Page</button>
             </div>
             <br>
-
+            <div class="col-sm">
+                <button id="getSameCountry" class="btn btn-primary">Press to see all the people from your hometown.</button>
+            </div>
+            <br>
             <!--  @yunus-topal if something goes wrong, delete this form to get rid of logout feature.-->
             <form method="POST" action="">
                 {% csrf_token %}
@@ -73,6 +76,7 @@
         document.getElementById("getUserCommunities").addEventListener("click", getUserCommunities);
         document.getElementById("createCommunity").addEventListener("click", createCommunity);
         document.getElementById("getNewsPage").addEventListener("click", getNewsPage);
+        document.getElementById("getSameCountry").addEventListener("click", getSameCountry);
 
         function goToCommunity(e) {
             console.log(communities);
@@ -148,6 +152,17 @@
             const para = document.createElement('pre');
             para.textContent = JSON.stringify(json, undefined, '\t')
             section.appendChild(para);
+        }
+
+        function getSameCountry(e){
+            e.preventDefault();
+            const baseURL = '/mainapp/getCountry';
+            let url = baseURL;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayCommunities(json);
+            });
         }
 
     </script>
