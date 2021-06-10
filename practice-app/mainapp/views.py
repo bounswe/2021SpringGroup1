@@ -659,9 +659,8 @@ def external_api_deleteCommunity(req):
     else:
         None
     return JsonResponse(response)
+
 # Berke Argın
-
-
 def external_api_getPost(req):
     if req.method == "GET":
         if "post_id" in req.GET:
@@ -680,7 +679,7 @@ def external_api_getPostTemplate(req):
     if req.method == "GET":
         if "template_id" in req.GET:
             if PostTemplate.objects.filter(id=req.GET["template_id"]):
-                postTemplate = Post.objects.get(pk=req.GET["template_id"])
+                postTemplate = PostTemplate.objects.get(pk=req.GET["template_id"])
             else:
                 return JsonResponse({"error": "Template not found."})
         else:
@@ -745,12 +744,6 @@ def external_api_createPost(request):
                 if str(temp.id)+"_urlcontent" in request.POST:
                     contentDict["url"] = request.POST[str(
                         temp.id)+"_urlcontent"]
-                    videoResponse = requests.get(
-                        "/mainapp/checkVideo?url="+contentDict["url"])
-                    resultJson = videoResponse.json()
-                    if not resultJson["isValid"]:
-                        isValidRequest = False
-                        break
                 else:
                     isValidRequest = False
                     break
