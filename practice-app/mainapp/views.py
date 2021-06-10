@@ -654,7 +654,7 @@ def external_api_deleteCommunity(req):
     else:
         None
     return JsonResponse(response)
-    
+#Berke Argın   
 def external_api_getPost(req):
     if req.method == "GET":
         if "post_id" in req.GET:
@@ -667,7 +667,6 @@ def external_api_getPost(req):
         if post.community.isPrivate:
             return JsonResponse({"error": "This post is in private community."})
         return JsonResponse(post.__str__())
-
 def external_api_getPostTemplate(req):
     if req.method == "GET":
         if "template_id" in req.GET:
@@ -680,7 +679,6 @@ def external_api_getPostTemplate(req):
         if postTemplate.community.isPrivate:
             return JsonResponse({"error": "This template is in private community."})
         return JsonResponse(postTemplate.__str__())
-
 @csrf_exempt
 def external_api_createPost(request):
     if request.method == "POST":
@@ -774,7 +772,6 @@ def external_api_createPost(request):
         languageField.save()
 
         return JsonResponse(post.__str__())
-
 @csrf_exempt
 def external_api_createPostTemplate(request):
     if request.method == "POST":
