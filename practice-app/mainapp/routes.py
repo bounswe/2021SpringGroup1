@@ -36,6 +36,7 @@ urlpatterns = [
     path("getLast_news/", views.getLast_news, name="getLast_news"),
     path("newsPage/", views.newsPageUI, name="newsPageUI"),
     path("createNews/", views.createNews_ui, name="createNews_ui"),
+    path("getCountry", views.getCountry, name="getCountry"),
     # RESTFUL API calls for external usage
     path("external/getAllCommunities",
          views.external_api_getAllCommunities, name="getAllCommunities"),

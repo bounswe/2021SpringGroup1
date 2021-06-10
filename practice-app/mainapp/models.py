@@ -114,8 +114,26 @@ class News(models.Model):
     url_to_img = models.CharField(max_length=300,verbose_name = "Img_link")
 
 
+
+
     def __str__(self):
         return "Yazar: {} <br> - Baslik : {} <br> - Tanim : {} <br>- link: {} <br>- img_link : {}".format(self.author,self.title,self.descr,self.url,self.url_to_img)
+
+
+
+class UserCountry(models.Model):
+    userid = models.CharField(max_length=10, primary_key=True)
+    country = models.CharField(max_length=2, verbose_name="Country Code")
+
+    def __str__(self) -> str:
+        data = {
+            "userid": self.userid,
+            "country": self.country
+        }
+        return data
+
+    class Meta:
+        ordering = ['userid']
 
 
 

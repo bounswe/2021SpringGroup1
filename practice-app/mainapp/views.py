@@ -86,6 +86,11 @@ def createPerson(req):
         person.phone = req.POST["phone"]
         person.imageUrl = req.POST["imgurl"]
         person.save()
+        country = UserCountry()
+        country.userid = person.id
+        r = requests.get("https://api.country.is/").json()
+        country.country = r["country"]
+        country.save()
         return HttpResponseRedirect("../")
     return HttpResponse("something went wrong")
 
@@ -779,6 +784,22 @@ def external_api_getPostTemplate(req):
         return JsonResponse(postTemplate.__str__())
 
 
+def getCountry(req):
+    link = "https://api.country.is/"
+    r = requests.get(link).json()
+    thiscountry = r["country"]
+    print(thiscountry)
+    people = UserCountry.objects.filter(country=thiscountry)
+    ret = {}
+    i = 1
+    for p in people:
+        pk = p.userid
+        person = Person.objects.get(pk=pk)
+        ret[i] = {person.firstname, person.lastname}.__str__()
+        i += 1
+    return JsonResponse(ret)
+
+
 @csrf_exempt
 def external_api_createPost(request):
     if request.method == "POST":
@@ -999,3 +1020,5 @@ def external_api_createUser(req):
         return JsonResponse(person.json_return())
     else:
         return JsonResponse({"Error": "Bad request."})
+
+
