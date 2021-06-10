@@ -650,7 +650,7 @@ def external_api_createCommunity(req):
 def external_api_deleteCommunity(req):
     response = {}
     if req.method == "POST":
-        name_del = req.GET["name"]
+        name_del = req.POST["name"]
         to_delete = Community.objects.filter(name=name_del)
         list_of_dicts = list(to_delete)
         for community in list_of_dicts:
