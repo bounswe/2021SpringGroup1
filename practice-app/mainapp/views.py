@@ -856,9 +856,7 @@ def external_api_createPostTemplate(request):
 @csrf_exempt
 def external_api_getUserCommunities(req):
     if req.method == "GET":
-        if "id" in req.session:
-            user_id = req.session["id"]
-        elif "user_id" in req.GET:
+        if "user_id" in req.GET:
             user_id = req.GET["user_id"]
         else:
             return JsonResponse({"Error": "no user id provided."})
@@ -880,14 +878,40 @@ def external_api_getUserCommunities(req):
 def external_api_createUser(req):
     if req.method == 'POST':
         person = Person()
+        if not "firstname" in req.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "lastname" in req.POST:
+            return JsonResponse({"Error": "Bad request."})
+
+        if not "location" in req.POST:
+            person.location = "unknown"
+        else:
+            person.location = req.POST["location"]
+
+        if not "email" in req.POST:
+            person.email = "{}@mail.com".format(req.POST["firstname"])
+        else:
+            person.email = req.POST["email"]
+
+        if not "age" in req.POST:
+            person.age = 0
+        else:
+            person.age = req.POST["age"]
+
+        if not "phone" in req.POST:
+            person.phone = "05554443322"
+        else:
+            person.phone = req.POST["phone"]
+
+        if not "imageUrl" in req.POST:
+            person.imageUrl = "image.url"
+        else:
+            person.imageUrl = req.POST["imgurl"]
+
         person.title = req.POST["lastname"] + " title"
         person.firstname = req.POST["firstname"]
         person.lastname = req.POST["lastname"]
-        person.location = req.POST["location"]
-        person.email = req.POST["email"]
-        person.age = req.POST["age"]
-        person.phone = req.POST["phone"]
-        person.imageUrl = req.POST["imgurl"]
+
         person.save()
         return JsonResponse(person.__str__())
     else:
