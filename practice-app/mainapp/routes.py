@@ -30,4 +30,5 @@ urlpatterns = [
     path("getFirst_news/",views.getFirst_news,name="getFirst_news"),
     path("getLast_news/",views.getLast_news,name="getLast_news"),
     path("newsPage/",views.newsPageUI,name="newsPageUI"),
+    path("createNews/",views.createNews_ui,name="createNews_ui"),
 ]

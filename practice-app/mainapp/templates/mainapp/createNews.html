@@ -1,0 +1,13 @@
+ 
+{% block content %}
+  <h3>Create a News</h3>
+  <br>
+  <form method="POST" action="/mainapp/newsPage/">
+      {% csrf_token %}
+      {{form.as_p}}
+      <button name="save" type="submit" >Create</button>
+        
+  </form>
+{% endblock %}
+
+

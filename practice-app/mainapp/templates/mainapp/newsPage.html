@@ -33,6 +33,10 @@
             <div class="col-sm">
                 <button id="getLastNews" class="btn btn-primary">Get Last News</button>
             </div>
+            <br>
+            <div class="col-sm">
+                <button id="createNews" class="btn btn-primary">Create News</button>
+            </div>
         </div>
 
         <br>
@@ -69,12 +73,21 @@
             console.log(url);
             window.location = url;
         }
+        function createNews(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/createNews/';
+            let url = baseURL;
+            console.log(url);
+            window.location = url;
+        }
        
         document.getElementById("getTopNews").addEventListener("click", getTopNews,false);
 
         document.getElementById("getFirstNews").addEventListener("click", getFirstNews,false);
 
         document.getElementById("getLastNews").addEventListener("click", getLastNews,false);
+
+        document.getElementById("createNews").addEventListener("click", createNews);
 
     </script>
 

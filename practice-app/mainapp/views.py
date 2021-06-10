@@ -4,6 +4,7 @@ from django.core.serializers import serialize
 from django.views import View
 from django.http import HttpResponse
 from django.http import JsonResponse
+from .forms import CreateNews
 
 from .models import *
 import random
@@ -622,23 +623,23 @@ def getTrNews(req):
     for value in data[:5]:
         news_h = News()
         if value["author"] is None:
-            news_h.author = "Not Know"
+            news_h.author = "Not Known"
         else:
             news_h.author = value["author"]
         news_h.title = value["title"]
         
         if value["description"] is None:
-             news_h.descr = "Not Know"
+             news_h.descr = "Not Known"
         else:     
             news_h.descr = value["description"]
         
         if value["url"] is None:
-            news_h.url = "Not Know"
+            news_h.url = "Not Known"
         else:
             news_h.url = value["url"]
 
         if value["urlToImage"] is None:
-            news_h.url_to_img = "Not Know"
+            news_h.url_to_img = "Not Known"
         else: 
             news_h.url_to_img = value["urlToImage"]
         printed += (str(news_h) + "<br><br><br>")
@@ -657,6 +658,32 @@ def getLast_news(req):
         news_l = News.objects.last()
         return HttpResponse(news_l)
 
+def createNews(response):
+    form = CreateNews()
+    return render(response, "mainapp/createNews.html", {"form": form})
 
 
+def createNews_ui(req):
+    if req.method == "POST":
+        form = CreateNews(req.POST)
 
+        author1 = form.POST["author"]
+        title1 = form.POST["title"]
+        descr1 = form.POST["descr"]
+        url1 = form.POST["url"]
+        url_to_img1 = form.POST["url_to_img"]
+
+        #news_a = News(author=author1, title=title1, descr=descr1, url=url1, url_to_img=url_to_img1)
+        #news_a = News()
+        #news_a.author = author1
+        #news_a.title = title1
+        #news_a.descr = descr1
+        #news_a.url = url1
+        #news_a.url_to_img = url_to_img1
+        news_a = News(author=author1, title=title1, descr=descr1, url=url1, url_to_img=url_to_img1)
+        news_a.save()
+        return HttpResponseRedirect("mainapp/newsPage.html")
+   
+    else:
+        form = CreateNews() 
+    return render(req, "mainapp/createNews.html", {"form": form})
