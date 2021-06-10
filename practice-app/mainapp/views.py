@@ -4,6 +4,7 @@ from django.core.serializers import serialize
 from django.views import View
 from django.http import HttpResponse
 from django.http import JsonResponse
+from .forms import CreateNews
 
 from .models import *
 import random
@@ -28,6 +29,8 @@ DETECT_LANGUAGE_KEY = "10721f4865e0bf2914dee88d7a91c265"
 # Detect Language URL
 DETECT_LANGUAGE_BASE_URL = "https://ws.detectlanguage.com/0.2/detect/"
 
+# News API
+NEWS_API = 'https://newsapi.org/v2/top-headlines?country=tr&apiKey=7bc3e21084b1473fa958c88f37848037'
 
 def mainPage(req):
     if "community_id" in req.session.keys():
@@ -125,6 +128,9 @@ def createPostTemplate_ui(request):
 def viewPost_ui(request):
     post = Post.objects.get(pk=request.GET["id"])
     return render(request, "mainapp/viewPost.html", {"post": post})
+
+def newsPageUI(request):
+    return render(request, "mainapp/newsPage.html")
 
 
 def createCommunity(req):
@@ -585,6 +591,7 @@ def viewAllPosts(request):
         return render(request, "post/viewAllPosts.html", {"personfirst": request.session["firstname"], "personlast": request.session["lastname"], "allposts": Post.objects.all()})
 
 
+
 def getAllCommunitiesOfUser(req):
     if req.method == "GET":
         if "id" in req.session:
@@ -603,3 +610,80 @@ def getAllCommunitiesOfUser(req):
             communityDict[i] = c.__str__()
             i += 1
         return JsonResponse(communityDict)
+
+
+
+def getTrNews(req):
+    res = requests.get(NEWS_API)
+    myhs = res.content.decode('utf8')
+    data = json.loads(myhs)
+    dataPretty = json.dumps(data, indent=2)
+    printed = ""
+    data = data["articles"]
+    for value in data[:5]:
+        news_h = News()
+        if value["author"] is None:
+            news_h.author = "Not Known"
+        else:
+            news_h.author = value["author"]
+        news_h.title = value["title"]
+        
+        if value["description"] is None:
+             news_h.descr = "Not Known"
+        else:     
+            news_h.descr = value["description"]
+        
+        if value["url"] is None:
+            news_h.url = "Not Known"
+        else:
+            news_h.url = value["url"]
+
+        if value["urlToImage"] is None:
+            news_h.url_to_img = "Not Known"
+        else: 
+            news_h.url_to_img = value["urlToImage"]
+        printed += (str(news_h) + "<br><br><br>")
+        news_h.save()
+        print(news_h)
+        
+    return HttpResponse(printed)
+
+def getFirst_news(req):
+    if req.method == "GET":
+        news_a = News.objects.first()
+        return HttpResponse(news_a)
+
+def getLast_news(req):
+    if req.method == "GET":
+        news_l = News.objects.last()
+        return HttpResponse(news_l)
+
+def createNews(response):
+    form = CreateNews()
+    return render(response, "mainapp/createNews.html", {"form": form})
+
+
+def createNews_ui(req):
+    if req.method == "POST":
+        form = CreateNews(req.POST)
+
+        author1 = form.POST["author"]
+        title1 = form.POST["title"]
+        descr1 = form.POST["descr"]
+        url1 = form.POST["url"]
+        url_to_img1 = form.POST["url_to_img"]
+
+        #news_a = News(author=author1, title=title1, descr=descr1, url=url1, url_to_img=url_to_img1)
+        #news_a = News()
+        #news_a.author = author1
+        #news_a.title = title1
+        #news_a.descr = descr1
+        #news_a.url = url1
+        #news_a.url_to_img = url_to_img1
+        news_a = News(author=author1, title=title1, descr=descr1, url=url1, url_to_img=url_to_img1)
+        news_a.save()
+        return HttpResponseRedirect("mainapp/newsPage.html")
+   
+    else:
+        form = CreateNews() 
+    return render(req, "mainapp/createNews.html", {"form": form})
