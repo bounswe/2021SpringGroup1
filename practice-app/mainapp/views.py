@@ -989,7 +989,7 @@ def external_api_createUser(req):
         if not "imageUrl" in req.POST:
             person.imageUrl = "image.url"
         else:
-            person.imageUrl = req.POST["imgurl"]
+            person.imageUrl = req.POST["imageUrl"]
 
         person.title = req.POST["lastname"] + " title"
         person.firstname = req.POST["firstname"]
