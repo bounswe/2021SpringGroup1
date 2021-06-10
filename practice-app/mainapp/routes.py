@@ -9,7 +9,6 @@ urlpatterns = [
     path("createPerson", views.createPerson, name="createperson"),
     path("createCommunity_ui/",views.createCommunity_ui,name="createCommunity_ui"),
     path("viewCommunity_ui/",views.viewCommunity_ui,name="viewCommunity_ui"),
-    #TODO:remove non-ui paths.
     path("getSuggestions/",views.getSuggestions,name="getSuggestions"),
     path("getAllCommunitiesOfUser/", views.getAllCommunitiesOfUser, name="getAllCommunitiesOfUser"),
     path("createCommunity/",views.createCommunity, name="createCommunity"),
@@ -26,5 +25,8 @@ urlpatterns = [
     path("getPost",views.getPost,name="getPost"),
     path("getPostTemplate",views.getPostTemplate,name="getPostTemplate"),
     path("getGifs/",views.getGifs,name="getGifs"),
-    
+    #RESTFUL API calls for external usage
+    path("external/getAllCommunities",views.external_api_getAllCommunities,name="getAllCommunities"),
+    path("external/deleteCommunity",views.external_api_deleteCommunity,name="deleteCommunity"),
+    path("external/createCommunity",views.external_api_createCommunity,name="createCommunity"),
 ]

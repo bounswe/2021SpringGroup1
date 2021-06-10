@@ -4,6 +4,7 @@ from django.core.serializers import serialize
 from django.views import View
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
 import random
@@ -128,7 +129,7 @@ def viewPost_ui(request):
 
 
 def createCommunity(req):
-
+    
     if Community.objects.filter(name=req.GET["name"]):
         return JsonResponse({})
     if req.method == "POST":
@@ -603,3 +604,54 @@ def getAllCommunitiesOfUser(req):
             communityDict[i] = c.__str__()
             i += 1
         return JsonResponse(communityDict)
+
+#External RESTFUL API calls
+
+@csrf_exempt
+def external_api_getAllCommunities(req):
+    if req.method == "GET":
+        response = {}
+        query_set = Community.objects.all()
+        list_of_dicts = list(query_set)
+        for community in list_of_dicts:
+            response[community.id] = community.__str__()
+        return JsonResponse(response)
+    else:
+        return JsonResponse({})
+
+@csrf_exempt
+def external_api_createCommunity(req):
+    if Community.objects.filter(name=req.POST["name"]):
+        return JsonResponse({})
+    if req.method == "POST":
+        community = Community()
+        community.name = req.POST["name"]
+        community.isPrivate = (
+            req.POST["isPrivate"] == "true")  # Cast to boolean
+        person_id = req.POST["id"]
+        if (Person.objects.filter(id=person_id)):
+            community.moderator = Person.objects.get(pk=person_id)
+            community.numUsers = 1
+            community.numPosts = 0
+            community.save()
+            community.joinedUsers.add(Person.objects.get(pk=person_id))
+        else:
+            return JsonResponse({"error" : "User id is false!"})
+        return JsonResponse(community.__str__())
+    else:
+        return JsonResponse({})
+
+@csrf_exempt
+def external_api_deleteCommunity(req):
+    response = {}
+    if req.method == "POST":
+        name_del = req.GET["name"]
+        to_delete = Community.objects.filter(name=name_del)
+        list_of_dicts = list(to_delete)
+        for community in list_of_dicts:
+            response[community.id] = community.__str__()
+        to_delete.delete()
+    else:
+        None
+    return JsonResponse(response)
+
