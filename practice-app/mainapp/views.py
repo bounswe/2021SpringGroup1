@@ -654,4 +654,188 @@ def external_api_deleteCommunity(req):
     else:
         None
     return JsonResponse(response)
+    
+def external_api_getPost(req):
+    if req.method == "GET":
+        if "post_id" in req.GET:
+            if Post.objects.filter(id=req.GET["post_id"]):
+                post = Post.objects.get(pk=req.GET["post_id"])
+            else:
+                return JsonResponse({"error": "Post not found."})
+        else:
+            return JsonResponse({})
+        if post.community.isPrivate:
+            return JsonResponse({"error": "This post is in private community."})
+        return JsonResponse(post.__str__())
 
+def external_api_getPostTemplate(req):
+    if req.method == "GET":
+        if "template_id" in req.GET:
+            if PostTemplate.objects.filter(id=req.GET["template_id"]):
+                postTemplate = Post.objects.get(pk=req.GET["template_id"])
+            else:
+                return JsonResponse({"error": "Template not found."})
+        else:
+            return JsonResponse({})
+        if postTemplate.community.isPrivate:
+            return JsonResponse({"error": "This template is in private community."})
+        return JsonResponse(postTemplate.__str__())
+
+@csrf_exempt
+def external_api_createPost(request):
+    if request.method == "POST":
+        isValidRequest = True
+        if not "title" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "description" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "post_template_id" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+
+        title = request.POST["title"]
+        description = request.POST["description"]
+        postTempID = request.POST["post_template_id"]
+        post = Post()
+        if PostTemplate.objects.filter(id=postTempID):
+            postTemp = PostTemplate.objects.get(pk=postTempID)
+        else:
+            return JsonResponse({"error": "Post Template does not exist."})
+        temps = postTemp.dataFieldTemplates.all()
+        
+        post.community = postTemp.community
+        post.posterid=0
+        post.title = title
+        post.description = description
+        post.postTemplate = postTemp
+        post.save()
+
+        allText = title + " " + description
+        for temp in temps:
+            newField = DataField()
+            newField.name = temp.name
+            newField.post = post
+            newField.type = temp.type
+            contentDict = {}
+            if temp.type == "text":
+                if str(temp.id)+"_textcontent" in request.POST:
+                    contentDict["text"] = request.POST[str(
+                        temp.id)+"_textcontent"]
+                    allText = allText + " " + \
+                        request.POST[str(temp.id)+"_textcontent"]
+                else:
+                    isValidRequest = False
+                    break
+            elif temp.type == "image":
+                if str(temp.id)+"_urlcontent" in request.POST:
+                    contentDict["url"] = request.POST[str(
+                        temp.id)+"_urlcontent"]
+                else:
+                    isValidRequest = False
+                    break
+            elif temp.type == "video":
+                if str(temp.id)+"_urlcontent" in request.POST:
+                    contentDict["url"] = request.POST[str(
+                        temp.id)+"_urlcontent"]
+                    videoResponse=requests.get("/mainapp/checkVideo?url="+contentDict["url"])
+                    resultJson=videoResponse.json()
+                    if not resultJson["isValid"]:
+                        isValidRequest = False
+                        break
+                else:
+                    isValidRequest = False
+                    break
+            else:
+                isValidRequest = False
+                break
+            newField.content = contentDict
+            newField.save()
+        if not isValidRequest:
+            post.delete()
+            return JsonResponse({})
+        myResponse = requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(
+            str(DETECT_LANGUAGE_KEY), '12345'), data={'q': allText})
+        if not myResponse.ok:
+            return JsonResponse(post.__str__())
+
+        resultsJson = myResponse.json()
+        languageList = []
+
+        for element in resultsJson['data']['detections']:
+            languageList.append(element['language'])
+        languagesString = ','.join(languageList)
+
+        languageField = DataField()
+        languageField.name = 'Detected languages'
+        languageField.post = post
+        languageField.type = 'text'
+        contentDict = {}
+        contentDict["text"] = languagesString
+        languageField.content = contentDict
+        languageField.save()
+
+        return JsonResponse(post.__str__())
+
+@csrf_exempt
+def external_api_createPostTemplate(request):
+    if request.method == "POST":
+        isValidRequest = True
+        if not "template_name" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "description" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+        if not "data_field_temps" in request.POST:
+            return JsonResponse({"Error": "Bad request."})
+
+        templateName = request.POST["template_name"]
+        templateDesc = request.POST["description"]
+        data_field_temps = request.POST["data_field_temps"]
+        try:
+            dataFieldTempsData = json.loads(request.POST["data_field_temps"])
+        except ValueError as e:
+            return JsonResponse({"Error": "data_field_temps is in wrong format."})
+
+        newTemplate = PostTemplate()
+        newTemplate.name = templateName
+        newTemplate.description = templateDesc
+
+        if "community_id" in request.POST:
+            community_id=request.POST["community_id"]
+            if Community.objects.filter(id=community_id):
+                newTemplate.community = Community.objects.get(pk=community_id)
+                if newTemplate.community.isPrivate:
+                    return JsonResponse({"Error": "Community is private."})
+            else:
+                return JsonResponse({"Error": "Community is not found."})
+        else:
+            return JsonResponse({})
+
+        if PostTemplate.objects.filter(name=templateName, community=newTemplate.community):
+            return JsonResponse({"Error": "Template name is already in use."})
+
+        newTemplate.save()
+        candidateFieldNames = []
+        index = 1
+        for i in dataFieldTempsData:
+            newFieldTemp = DataFieldTemp()
+            if not "name" in i:
+                isValidRequest = False
+                break
+            if not "type" in i:
+                isValidRequest = False
+                break
+            newFieldTemp.name = i["name"]
+            newFieldTemp.type = i["type"]
+            if not newFieldTemp.type in ["text", "image", "video"]:
+                isValidRequest = False
+                break
+            if newFieldTemp.name in candidateFieldNames:
+                isValidRequest = False
+                break
+            newFieldTemp.form_content = {}
+            newFieldTemp.postTemplate = newTemplate
+            newFieldTemp.save()
+        if not isValidRequest:
+            newTemplate.delete()
+            return JsonResponse({"Error": "Somethings gone wrong with field names."})
+
+    return JsonResponse(newTemplate.__str__())

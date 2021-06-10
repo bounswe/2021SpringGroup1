@@ -29,4 +29,8 @@ urlpatterns = [
     path("external/getAllCommunities",views.external_api_getAllCommunities,name="getAllCommunities"),
     path("external/deleteCommunity",views.external_api_deleteCommunity,name="deleteCommunity"),
     path("external/createCommunity",views.external_api_createCommunity,name="createCommunity"),
+    path("external/getPost",views.external_api_getPost,name="external_api_getPost"),
+    path("external/getPostTemplate",views.external_api_getPostTemplate,name="external_api_getPostTemplate"),
+    path("external/createPost",views.external_api_createPost,name="external_api_createPost"),
+    path("external/createPostTemplate",views.external_api_createPostTemplate,name="external_api_createPostTemplate"),
 ]
