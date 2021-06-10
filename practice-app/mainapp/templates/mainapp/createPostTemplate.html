@@ -176,6 +176,10 @@
                 if (value.tagName == "FORM") {
                     let data = {};
                     let formdata = new FormData(value);
+                    /* For this small part below, I took help from the sources below to turn a form data to a dictionary. 
+                    https://stackoverflow.com/questions/1255948/post-data-in-json-format
+                    https://developer.mozilla.org/en-US/docs/Web/API/FormData/FormData
+                    */
                     for (let pair of formdata.entries()){ 
                         data[pair[0]] = pair[1];
                     }
