@@ -913,6 +913,6 @@ def external_api_createUser(req):
         person.lastname = req.POST["lastname"]
 
         person.save()
-        return JsonResponse(person.__str__())
+        return JsonResponse(person.json_return())
     else:
         return JsonResponse({"Error": "Bad request."})
