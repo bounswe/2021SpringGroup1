@@ -4,6 +4,7 @@ from django.core.serializers import serialize
 from django.views import View
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.views.decorators import csrf
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import *
@@ -82,6 +83,7 @@ def createPerson(req):
         person.imageUrl = req.POST["imgurl"]
         person.save()
         return HttpResponseRedirect("../")
+    return HttpResponse("something went wrong")
 
 
 def createCommunity_ui(req):
@@ -129,7 +131,7 @@ def viewPost_ui(request):
 
 
 def createCommunity(req):
-    
+
     if Community.objects.filter(name=req.GET["name"]):
         return JsonResponse({})
     if req.method == "POST":
@@ -605,7 +607,8 @@ def getAllCommunitiesOfUser(req):
             i += 1
         return JsonResponse(communityDict)
 
-#External RESTFUL API calls
+# External RESTFUL API calls
+
 
 @csrf_exempt
 def external_api_getAllCommunities(req):
@@ -618,6 +621,7 @@ def external_api_getAllCommunities(req):
         return JsonResponse(response)
     else:
         return JsonResponse({})
+
 
 @csrf_exempt
 def external_api_createCommunity(req):
@@ -636,10 +640,11 @@ def external_api_createCommunity(req):
             community.save()
             community.joinedUsers.add(Person.objects.get(pk=person_id))
         else:
-            return JsonResponse({"error" : "User id is false!"})
+            return JsonResponse({"error": "User id is false!"})
         return JsonResponse(community.__str__())
     else:
         return JsonResponse({})
+
 
 @csrf_exempt
 def external_api_deleteCommunity(req):
@@ -654,7 +659,9 @@ def external_api_deleteCommunity(req):
     else:
         None
     return JsonResponse(response)
-#Berke Argın   
+# Berke Argın
+
+
 def external_api_getPost(req):
     if req.method == "GET":
         if "post_id" in req.GET:
@@ -667,6 +674,8 @@ def external_api_getPost(req):
         if post.community.isPrivate:
             return JsonResponse({"error": "This post is in private community."})
         return JsonResponse(post.__str__())
+
+
 def external_api_getPostTemplate(req):
     if req.method == "GET":
         if "template_id" in req.GET:
@@ -679,6 +688,8 @@ def external_api_getPostTemplate(req):
         if postTemplate.community.isPrivate:
             return JsonResponse({"error": "This template is in private community."})
         return JsonResponse(postTemplate.__str__())
+
+
 @csrf_exempt
 def external_api_createPost(request):
     if request.method == "POST":
@@ -699,9 +710,9 @@ def external_api_createPost(request):
         else:
             return JsonResponse({"error": "Post Template does not exist."})
         temps = postTemp.dataFieldTemplates.all()
-        
+
         post.community = postTemp.community
-        post.posterid=0
+        post.posterid = 0
         post.title = title
         post.description = description
         post.postTemplate = postTemp
@@ -734,8 +745,9 @@ def external_api_createPost(request):
                 if str(temp.id)+"_urlcontent" in request.POST:
                     contentDict["url"] = request.POST[str(
                         temp.id)+"_urlcontent"]
-                    videoResponse=requests.get("/mainapp/checkVideo?url="+contentDict["url"])
-                    resultJson=videoResponse.json()
+                    videoResponse = requests.get(
+                        "/mainapp/checkVideo?url="+contentDict["url"])
+                    resultJson = videoResponse.json()
                     if not resultJson["isValid"]:
                         isValidRequest = False
                         break
@@ -772,6 +784,8 @@ def external_api_createPost(request):
         languageField.save()
 
         return JsonResponse(post.__str__())
+
+
 @csrf_exempt
 def external_api_createPostTemplate(request):
     if request.method == "POST":
@@ -796,7 +810,7 @@ def external_api_createPostTemplate(request):
         newTemplate.description = templateDesc
 
         if "community_id" in request.POST:
-            community_id=request.POST["community_id"]
+            community_id = request.POST["community_id"]
             if Community.objects.filter(id=community_id):
                 newTemplate.community = Community.objects.get(pk=community_id)
                 if newTemplate.community.isPrivate:
@@ -836,3 +850,45 @@ def external_api_createPostTemplate(request):
             return JsonResponse({"Error": "Somethings gone wrong with field names."})
 
     return JsonResponse(newTemplate.__str__())
+
+
+# @yunus-topal
+@csrf_exempt
+def external_api_getUserCommunities(req):
+    if req.method == "GET":
+        if "id" in req.session:
+            user_id = req.session["id"]
+        elif "user_id" in req.GET:
+            user_id = req.GET["user_id"]
+        else:
+            return JsonResponse({"Error": "no user id provided."})
+        user = Person.objects.get(pk=user_id)
+        if not user:
+            return JsonResponse({})
+        joinedCommunities = user.joinedCommunities.all()
+        communityDict = {}
+        i = 1
+        for c in joinedCommunities:
+            communityDict[i] = c.__str__()
+            i += 1
+        return JsonResponse(communityDict)
+    else:
+        return JsonResponse({"Error": "Bad request."})
+
+
+@csrf_exempt
+def external_api_createUser(req):
+    if req.method == 'POST':
+        person = Person()
+        person.title = req.POST["lastname"] + " title"
+        person.firstname = req.POST["firstname"]
+        person.lastname = req.POST["lastname"]
+        person.location = req.POST["location"]
+        person.email = req.POST["email"]
+        person.age = req.POST["age"]
+        person.phone = req.POST["phone"]
+        person.imageUrl = req.POST["imgurl"]
+        person.save()
+        return JsonResponse(person.__str__())
+    else:
+        return JsonResponse({"Error": "Bad request."})
