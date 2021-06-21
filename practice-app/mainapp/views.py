@@ -124,6 +124,10 @@ def deleteCommunity_ui(req):
 def getSuggestions_ui(req):
     return render(req, "community/getSuggestions.html")
 
+def detectLanguagesInString_ui(req):
+    return render(req, "mainapp/detectLanguagesInString.html")
+
+
 
 def createPost_ui(request):
     template = PostTemplate.objects.get(pk=request.GET["template_id"])
@@ -417,6 +421,26 @@ def createPostTemplate(request):
             return JsonResponse({"Error": "Somethings gone wrong with field names."})
 
     return JsonResponse(newTemplate.__str__())
+
+def detectLanguagesInString(request):
+    if request.method == "GET":
+        isValidRequest = True
+        if not "text" in request.GET:
+            return JsonResponse({"Error": "Bad request."})
+        text = request.GET["text"]
+        myResponse = requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(str(DETECT_LANGUAGE_KEY), '12345'), data={'q': text})
+        if not myResponse.ok:
+            return JsonResponse({"Error": "Bad request."})
+
+        resultsJson = myResponse.json()
+        languageList = []
+
+        for element in resultsJson['data']['detections']:
+            languageList.append(element['language'])
+        languagesString = ','.join(languageList)
+        return JsonResponse({"Detected languages": languagesString})
+
+        
 
 
 def createPost(request):
@@ -799,6 +823,24 @@ def getCountry(req):
         i += 1
     return JsonResponse(ret)
 
+@csrf_exempt
+def external_api_detectLanguagesInString(request):
+    if request.method == "GET":
+        isValidRequest = True
+        if not "text" in request.GET:
+            return JsonResponse({"Error": "Bad request."})
+        text = request.GET["text"]
+        myResponse = requests.post(str(DETECT_LANGUAGE_BASE_URL), auth=(str(DETECT_LANGUAGE_KEY), '12345'), data={'q': text})
+        if not myResponse.ok:
+            return JsonResponse({"Error": "Bad request."})
+
+        resultsJson = myResponse.json()
+        languageList = []
+
+        for element in resultsJson['data']['detections']:
+            languageList.append(element['language'])
+        languagesString = ','.join(languageList)
+        return JsonResponse({"Detected languages": languagesString})
 
 @csrf_exempt
 def external_api_createPost(request):

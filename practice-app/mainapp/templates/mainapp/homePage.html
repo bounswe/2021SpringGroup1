@@ -43,6 +43,10 @@
             </div>
             <br>
             <div class="col-sm">
+                <button id="detectLanguages" class="btn btn-primary">Press to detect languages in a string.</button>
+            </div>
+            <br>
+            <div class="col-sm">
                 <button id="getSameCountry" class="btn btn-primary">Press to see all the people from your hometown.</button>
             </div>
             <br>
@@ -77,6 +81,7 @@
         document.getElementById("createCommunity").addEventListener("click", createCommunity);
         document.getElementById("getNewsPage").addEventListener("click", getNewsPage);
         document.getElementById("getSameCountry").addEventListener("click", getSameCountry);
+        document.getElementById("detectLanguages").addEventListener("click", getDetectLanguagesPage);
 
         function goToCommunity(e) {
             console.log(communities);
@@ -109,7 +114,13 @@
             console.log(url);
             window.location.href = url;
         }
-
+        function getDetectLanguagesPage(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/detectLanguagesInString_ui/';
+            let url = baseURL;
+            console.log(url);
+            window.location.href = url;
+        }
 
 
         function createCommunity(e) {

@@ -1,3 +1,5 @@
+from django.db.models.fields import TextField
+from django.http import response
 from django.test import TestCase
 from mainapp.models import *
 from mainapp.views import *
@@ -370,3 +372,129 @@ class JoinAndLeaveTestCase(TestCase):
         self.assertIn(person2, currentCommunity.joinedUsers.all())
         person2.joinedCommunities.remove(currentCommunity)
         self.assertNotIn(person2, currentCommunity.joinedUsers.all())
+
+
+# @emiroztoprak testing detect language in external DetectLanguagesInString GET function.
+
+class DetectLanguageInStringTestCase(TestCase):
+    
+    # testing detectLanguageInString GET function with empty string
+    def test_external_api_detectLanguagesInString_empty_string(self):
+        """Restful API is checked."""
+        factory = APIRequestFactory()
+        request = factory.get('external/detectLanguagesInString', {'text': ""})
+        response = external_api_detectLanguagesInString(request)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response, {"Detected languages": ""})
+
+    # testing detectLanguageInString GET function with English only
+    def test_external_api_detectLanguagesInString_English_string(self):
+        factory = APIRequestFactory()
+        request = factory.get('external/detectLanguagesInString', {'text': """
+        It was the best of times, it was the worst of times, it was the age of wisdom,
+        it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, 
+        it was the season of light, it was the season of darkness, it was the spring of hope, 
+        it was the winter of despair
+        """})
+        response = external_api_detectLanguagesInString(request)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response, {"Detected languages": "en"})
+
+    # testing detectLanguageInString GET function with Turkish only
+    def test_external_api_detectLanguagesInString_Turkish_string(self):
+        factory = APIRequestFactory()
+        request = factory.get('external/detectLanguagesInString', {'text': """
+        Zamanların en iyisiydi, zamanların en kötüsüydü, hem akıl çağıydı, 
+        hem aptallık, hem inanç devriydi, hem de kuşku, Aydınlık mevsimiydi, 
+        Karanlık mevsimiydi, hem umut baharı, hem de umutsuzluk kışıydı.
+        """})
+        response = external_api_detectLanguagesInString(request)
+        json_response = json.loads(response.content)
+        self.assertEqual(json_response, {"Detected languages": "tr"})
+
+
+    # testing detectLanguageInString GET function with English and Turkish together
+    def test_external_api_detectLanguagesInString_Turkish_And_English_Mixed(self):
+        factory = APIRequestFactory()
+        request = factory.get('external/detectLanguagesInString', {'text': """
+        It was the best of times, it was the worst of times, it was the age of wisdom,
+        it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, 
+        it was the season of light, it was the season of darkness, it was the spring of hope, 
+        it was the winter of despair.
+
+        Zamanların en iyisiydi, zamanların en kötüsüydü, hem akıl çağıydı, 
+        hem aptallık, hem inanç devriydi, hem de kuşku, Aydınlık mevsimiydi, 
+        Karanlık mevsimiydi, hem umut baharı, hem de umutsuzluk kışıydı.
+        """})
+        response = external_api_detectLanguagesInString(request)
+        json_response = json.loads(response.content)
+        self.assertTrue(json_response =={"Detected languages": "en,tr"} or json_response =={"Detected languages": "tr,en"})
+
+# @emiroztoprak testing detect language in external createPost POST function.
+
+class DetectLanguageInCreatePostTestCase(TestCase):
+    def setUp(self):
+        self.moderator = Person.objects.create(
+            id=5,
+            title="Mr",
+            firstname="Kanye",
+            lastname="West",
+            location="Chicago",
+            email="kanye.west@gmail.com",
+            age=30,
+            phone="01234567890",
+            imageUrl="www.xxx.yyy.zzz",
+            createdDate=models.DateTimeField(auto_now_add=True)
+        )
+        self.community= Community.objects.create(
+            id=3,
+            name="test_community",
+            description="community for testing",
+            numUsers=1,
+            numPosts=0,
+            moderator=self.moderator,
+            isPrivate=False,
+        )
+        self.questionPostTemplate=PostTemplate.objects.create(
+            id=1,
+            name="Question",
+            description="Use this to ask questions.",
+            community=self.community,
+        )
+        self.questionTempField1=DataFieldTemp.objects.create(
+            id=1,
+            name="Question",
+            type="text",
+            form_content=json.loads("{}"),
+            postTemplate=self.questionPostTemplate,
+            )
+    
+
+    # testing createPost POST function in only English
+    def test_external_api_createPost_In_English(self):
+        """Restful API is checked."""
+        factory = APIRequestFactory()
+        request = factory.post('external/createPost', {'post_template_id': '1','description': 'the description is in English','title': 'title is in English','1_textcontent':'What is your name?'})
+        response = external_api_createPost(request)
+        json_response = json.loads(response.content)
+        post_id = json_response['id']
+        dataFields = DataField.objects.filter(post_id=post_id)
+        textFields = dataFields.filter(type='text')
+        languageField = textFields.filter(name='Detected languages') 
+        resultLanguages=languageField.first().content['text']
+        self.assertEqual(resultLanguages, "en")
+    
+    # testing createPost POST function in English and Turkish together
+    def test_external_api_createPost_In_Turkish_And_English_Mixed(self):
+        """Restful API is checked."""
+        factory = APIRequestFactory()
+        request = factory.post('external/createPost', {'post_template_id': '1','description': 'Bu kısmı Türkçe dolduruyorum.','title': 'İngilizce Türkçe karışık soru','1_textcontent':'This part will be in English. I wonder if our API will detect the correct languages, I am excited.'})
+        response = external_api_createPost(request)
+        json_response = json.loads(response.content)
+        post_id = json_response['id']
+        dataFields = DataField.objects.filter(post_id=post_id)
+        textFields = dataFields.filter(type='text')
+        languageField = textFields.filter(name='Detected languages') 
+        resultLanguages=languageField.first().content['text']
+        self.assertTrue(resultLanguages== "en,tr" or resultLanguages== "tr,en")
+   

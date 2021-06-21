@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <title>Welcome to Detect Language page!</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class=wrapper>
+        <div style="background-color:lavender; !important" class="jumbotron text-center bg-primary">
+            <h1> Welcome to the Detect Language page.</h1>
+            <p>
+                Please enter a string below and Detect Language API will try to find the languages used in the text.
+            </p>
+        </div>
+
+        <div class="container">
+            <div class="col-sm">
+                    <label for="text">Input text:</label>
+                    <textarea id="text" name="text" rows="4" cols="50"></textarea>
+                    <br><br>
+                    <button id="submitbutton" name="submit">Detect Languages</button>
+            </div>
+        </div>
+        <br>
+
+        <div class="container">
+            <div class="results">
+              <section id="results_section">
+              </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+
+        document.getElementById("submitbutton").addEventListener("click", submitText);
+        const text = document.getElementById("text");
+        const section = document.getElementById("results_section");
+
+        function submitText(e) {
+            e.preventDefault();
+            const baseURL = '/mainapp/detectLanguagesInString/';
+            let url = baseURL + "?text=" + text.value;
+            fetch(url).then(function (result) {
+                return result.json();
+            }).then(function (json) {
+                displayResults(json);
+            });
+        }
+
+        function displayResults(json) {
+            while (section.firstChild) {
+                section.removeChild(section.firstChild);
+            }
+            const para = document.createElement('pre');
+            para.textContent = JSON.stringify(json, undefined, '\t')
+            section.appendChild(para);
+        }
+    </script>
+
+</body>
+
+</html>

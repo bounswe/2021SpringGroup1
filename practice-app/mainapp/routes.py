@@ -36,6 +36,8 @@ urlpatterns = [
     path("getLast_news/", views.getLast_news, name="getLast_news"),
     path("newsPage/", views.newsPageUI, name="newsPageUI"),
     path("createNews/", views.createNews_ui, name="createNews_ui"),
+    path("detectLanguagesInString/", views.detectLanguagesInString, name="detectLanguagesInString"),
+    path("detectLanguagesInString_ui/", views.detectLanguagesInString_ui, name="detectLanguagesInString_ui"),
     path("getCountry", views.getCountry, name="getCountry"),
     # RESTFUL API calls for external usage
     path("external/getAllCommunities",
@@ -56,4 +58,6 @@ urlpatterns = [
          name="external_api_getUserCommunities"),
     path("external/createUser", views.external_api_createUser,
          name="external_api_createUser"),
+    path("external/detectLanguagesInString", views.external_api_detectLanguagesInString,
+         name="external_api_detectLanguagesInString"),
 ]
