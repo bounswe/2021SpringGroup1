@@ -17,10 +17,11 @@ Fundamentals of Software Engineering focuses on teaching tools, practices and is
  ## 🟩 Instructor & Teaching Assistants
  - **Instructor**: Suzan Üsküdarlı 
  - **Teaching Assistants**
- - - Emre Bilgili 
- - - Egemen İşgüder (In charge of us.)
- - - Gökhan Çapan
- - - Serdar Metin
+ - Emre Bilgili 
+ - **Egemen İşgüder** (In charge of us.)
+ -  Zeynep Yirmibeşoğlu
+ -  ~~Gökhan Çapan~~  
+ -  ~~Serdar Metin~~
 
 ## 📷 Photo from our First Meeting!
 ![photo](https://user-images.githubusercontent.com/56560206/112762359-ebca3300-9007-11eb-90f1-eb7076169739.jpeg)
