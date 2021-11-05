@@ -5,6 +5,15 @@ help.txt
 cmpe352/__pycache__/**
 cmpe352/migrations/__pycache__/**
 
+cmpe352/__pycache__/**
+cmpe352/migrations/__pycache__/**
+
+cmpe451/cmpe451/__pycache__/**
+cmpe451/cmpe451/migrations/__pycache__/**
+
+cmpe451/protopost/__pycache__/**
+cmpe451/protopost/migrations/__pycache__/**
+
 login/__pycache__/**
 login/migrations/__pycache__/**
 
