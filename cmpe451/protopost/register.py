@@ -41,8 +41,12 @@ def try_register(req):
 		return JsonResponse({"Success":True,"Message":"Successfully registered."})
 
 def test_auth(req):
-	return JsonResponse({"Is logon" : req.user.is_authenticated})
+	return JsonResponse({"Is_logon" : req.user.is_authenticated})
 
 def try_logout(req):
 	logout(req)
 	return JsonResponse({"Message" : "Logged out successfully."})
+
+#TODO
+def try_change_password(req):
+	pass

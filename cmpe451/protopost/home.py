@@ -47,8 +47,31 @@ def get_all_communities(req):
             community_array.append(community.__str__())
         return JsonResponse(community_array)
 
+
+#TODO: Berke
+def try_create_post(req):
+    pass
+
+#TODO: Berke
+def try_create_post_template(req):
+    pass
+
+#TODO: Emrah
+def get_community_data(req):
+    pass
+
+#TODO: Emrah
+def try_create_community(req):
+    pass
+
+#TODO: Emrah
+def set_subscription_status(req):
+    pass
+
+#TODO: Emrah
 def search_communities(req):
     pass
+
 def get_user_posts(req):
     if req.method == 'GET':
         if req.user.is_authenticated:
