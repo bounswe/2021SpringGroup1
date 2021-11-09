@@ -5,5 +5,6 @@ from . import register
 
 urlpatterns = [
 	path("", views.home, name="home_pages"),
-	path("register", register.try_register, name= "register_func" )
+	path("try_register", register.try_register, name= "try_register" ),
+	path("try_login", register.try_login, name= "try_login" )
 ]
