@@ -8,9 +8,9 @@ class Community(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     description = models.TextField(max_length=max)
-    community_image_url = models.CharField(max_length=200)
-    moderator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='moderator') #A community has only one moderator.
-    is_private = models.BooleanField()
+    community_image_url = models.CharField(max_length=200, blank=True, null=True)
+    moderator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='moderator', blank=True, null=True) #A community has only one moderator.
+    is_private = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add = True,verbose_name = "Oluşturulma tarihi")
     joined_users=models.ManyToManyField(User,related_name='joined_communities')
     #TODO:Update this string.
@@ -27,7 +27,7 @@ class PostTemplate(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
     description = models.TextField(max_length=max, verbose_name='Description')
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='post_templates') #A post can be in only one community.
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='post_templates', blank=True, null=True) #A post can be in only one community.
     
     def __str__(self) -> str:
         dataFields=self.data_field_templates.all()
@@ -47,11 +47,11 @@ class PostTemplate(models.Model):
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
-    poster = models.ForeignKey(User,on_delete=models.CASCADE,related_name='posts')
+    poster = models.ForeignKey(User,on_delete=models.CASCADE,related_name='posts', blank=True, null=True)
     title = models.CharField(max_length=50, verbose_name='Title')
     created_date = models.DateTimeField(auto_now_add=True, verbose_name="Created Date")
-    post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts') #A post can be in only one community.
+    post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, blank=True, null=True)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts', blank=True, null=True) #A post can be in only one community.
     
     def __str__(self) -> str:
         dataFieldsList=self.data_fields.all()
@@ -71,7 +71,7 @@ class Post(models.Model):
 
 class DataField(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
-    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='data_fields')
+    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='data_fields', blank=True, null=True)
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type')
     content=models.JSONField(max_length=max, verbose_name='Data')
@@ -90,7 +90,7 @@ class DataFieldTemp(models.Model):
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type')
     form_content=models.JSONField(max_length=max, verbose_name='Data')
-    post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, related_name='data_field_templates')
+    post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, related_name='data_field_templates', blank=True, null=True)
     def __str__(self) -> str:
         data = {
             "id": self.id,

@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 
 @csrf_exempt
@@ -30,12 +30,19 @@ def try_register(req):
 			username=req.POST["username"]
 			email=req.POST["email"]
 			password=req.POST["password"]
-		user=User.objects.create_user(username, email, password)
+		
+		user=User.objects.filter(username=username)
 		if user:
-			return JsonResponse({"Success":True,"Message":"Successfully logged in."})
-		else:
-			return JsonResponse({"Success":False,"Message":"Username and/or email not avaible."})
+			return JsonResponse({"Success":False,"Message":"Username not avaible."})
+		user=User.objects.filter(email=email)
+		if user:
+			return JsonResponse({"Success":False,"Message":"Email not avaible."})
+		User.objects.create_user(username,email,password)
+		return JsonResponse({"Success":True,"Message":"Successfully registered."})
 
+def test_auth(req):
+	return JsonResponse({"Is logon" : req.user.is_authenticated})
 
-
-
+def try_logout(req):
+	logout(req)
+	return JsonResponse({"Message" : "Logged out successfully."})
