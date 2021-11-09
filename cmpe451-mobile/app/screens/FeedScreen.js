@@ -1,11 +1,14 @@
 import React from 'react';
 import { View , Text, StyleSheet } from 'react-native';
 
-function HomeScreen(props) {
+
+
+function FeedScreen({navigation}) {
     return (
         <View>
-            <Text style={styles.title}>This will be your home page</Text>
+            <Text>asfasfsa</Text>
         </View>
+   
     );
 }
 
@@ -16,4 +19,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default HomeScreen;
+export default FeedScreen;
