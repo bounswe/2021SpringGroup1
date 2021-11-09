@@ -7,19 +7,19 @@ function WelcomeScreen({ navigation }) {
         style={styles.background}>
             <View style={styles.logoContainer}>
                 <Image style={styles.logo} source={require("../assets/favicon.png")} />
-                <Text>React Tutorialllllllllllll</Text>
+                <Text>React Tutorial</Text>
             </View>
             <View style={styles.loginButton}>
                 <Button
                     title="Log in"
-                    color="white"
+                    color="red"
                     onPress={() => navigation.navigate('Login')}
                 />
             </View>
             <View style={styles.registerButton}>
                 <Button
                     title="Register"
-                    color="white"
+                    color="blue"
                     onPress={() => navigation.navigate('Register')}
                 />
             </View>

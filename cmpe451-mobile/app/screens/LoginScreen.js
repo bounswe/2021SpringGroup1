@@ -9,7 +9,7 @@ function LoginScreen({navigation}) {
             <Text style={styles.title}>Your password</Text>
             <TextInput style={styles.textInput}></TextInput>
             <Button title="Log in"
-                    color="white"
+                    color="blue"
                     onPress={() => navigation.navigate("Home")}/>
         </View>
     );

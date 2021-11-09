@@ -16,13 +16,13 @@ function RegisterScreen({navigation}) {
 
             <Button 
                 title="Register"
-                color="white"
-                onPress={() => Alert.alert("Registration","Successful, i guess") }
+                color="blue"
+                onPress={() => Alert.alert("Registration","There is no registration check yet") }
                 />
             <Button 
                 title="Go to Login Page"
-                color="white" 
-                onPress={() => navigation.navigate('Welcome')}
+                color="blue" 
+                onPress={() => navigation.navigate('Login')}
                 />
         </View>
     );
