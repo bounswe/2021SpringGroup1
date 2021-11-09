@@ -169,3 +169,4 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 .DS_Store
+cmpe451/protopost/migrations/0002_auto_20211109_1329.py
