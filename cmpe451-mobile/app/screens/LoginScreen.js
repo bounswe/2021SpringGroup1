@@ -29,7 +29,7 @@ function LoginScreen({navigation}) {
 
 // this function should make an api call in the future
 function checkCredential(username,password){
-    if (username === "ali" && password === "veli"){
+    if (username === "A" && password === "B"){
         return true;
     }
     return false;

@@ -2,11 +2,12 @@ import React from 'react';
 
 import {Button, View} from "react-native";
 
-function SettingsScreen(props) {
+function SettingsScreen({navigation}) {
     return (
         <View>
             <Button 
-                title="Log out" />
+                title="Log out"
+                onPress={ ()=> navigation.navigate("Welcome")} />
         </View>
     );
 }
