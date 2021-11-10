@@ -113,6 +113,7 @@ def try_create_post_template(req,community_id):
             try:
                 community=req.user.joined_communities.get(pk=community_id)
             except ObjectDoesNotExist:
+                community=None
 
             if not community:
                 return JsonResponse({"Success" : False})
