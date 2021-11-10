@@ -170,3 +170,4 @@ dmypy.json
 cython_debug/
 .DS_Store
 cmpe451/protopost/migrations/0002_auto_20211109_1329.py
+cmpe451/protopost/migrations/0002_auto_20211109_2247.py
