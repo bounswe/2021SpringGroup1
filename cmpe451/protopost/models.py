@@ -6,7 +6,7 @@ import json
 
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50,unique=True)
     description = models.TextField(max_length=max)
     community_image_url = models.CharField(max_length=200, blank=True, null=True)
     moderator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='moderator', blank=True, null=True) #A community has only one moderator.
@@ -19,7 +19,7 @@ class Community(models.Model):
         data = {
             "id": self.id,
             "name": self.name,
-            "moderator_name": self.moderator.firstname,
+            "moderator_name": self.moderator.username,
         }
         return data
 
@@ -64,7 +64,7 @@ class Post(models.Model):
             "id": self.id,
             "poster": self.poster.username,
             "title": self.title,
-            "created_date": self.created_date,
+            "created_date": str(self.created_date),
             "data_fields":dataFieldDict
         }
         return data
@@ -89,7 +89,7 @@ class DataFieldTemp(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type')
-    form_content=models.JSONField(max_length=max, verbose_name='Data')
+    form_content=models.JSONField(max_length=max, verbose_name='Data', blank=True, null=True)
     post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, related_name='data_field_templates', blank=True, null=True)
     def __str__(self) -> str:
         data = {
