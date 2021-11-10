@@ -166,8 +166,16 @@ def get_community_data(req):
     pass
 
 #TODO: Emrah
+@csrf_exempt
 def try_create_community(req):
-    pass
+    if req.method == 'POST':
+        fields_ = Community.get_all_fields_names()
+        if check_required_fields(Community.required_keys(), req):
+            kwargs_ = make_kwargs(fields_, req)
+            community_object = Community(**kwargs_)
+            community_object.save()
+            return JsonResponse({"message" : "success"})
+    return JsonResponse({"message" : "Wrong request method"})
 
 #TODO: Emrah
 def set_subscription_status(req):
@@ -185,3 +193,10 @@ def get_user_posts(req):
             for post in posts:
                 post_array.append(post.__str__())
             return JsonResponse(post_array)
+
+
+def check_required_fields(fields, request):
+    return all(field in request.POST for field in fields)
+
+def make_kwargs(fields, request):
+    return {field: request.POST[field] for field in fields if field in request.POST}

@@ -23,6 +23,12 @@ class Community(models.Model):
         }
         return data
 
+    def get_all_fields_names():
+        return [f.name for f in Community._meta.get_fields()]
+    
+    def required_keys():
+        return ["name"]
+
 class PostTemplate(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
