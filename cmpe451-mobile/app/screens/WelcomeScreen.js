@@ -3,7 +3,7 @@ import { Button, Image, ImageBackground, StyleSheet, Text, View} from 'react-nat
 
 function WelcomeScreen({ navigation }) {
     return (
-        <ImageBackground source={require("../assets/background.jpg")}
+        <View 
         style={styles.background}>
             <View style={styles.logoContainer}>
                 <Image style={styles.logo} source={require("../assets/logo.png")} />
@@ -23,7 +23,7 @@ function WelcomeScreen({ navigation }) {
                     onPress={() => navigation.navigate('Register')}
                 />
             </View>
-        </ImageBackground>
+        </View>
     );
 }
 
@@ -31,7 +31,9 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         justifyContent: "flex-end",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: "white"
+        
     },
     loginButton: {
         width: "100%",
