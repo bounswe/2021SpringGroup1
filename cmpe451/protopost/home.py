@@ -9,8 +9,9 @@ from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.contrib.auth.models import Group
 from rest_framework.decorators import api_view
+from drf_yasg.utils import swagger_auto_schema
 import json
-
+@swagger_auto_schema
 @api_view(['GET'])
 def get_user_home_feed(req):
     if req.method == 'GET':
