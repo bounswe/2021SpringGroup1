@@ -180,8 +180,6 @@ class PostTemplateCreationTestCase(TestCase):
         )
 
 
-
-
     def test_post_template_creation_in_community(self):
         self.client.login(username="John",email="john@gmail.com",password="123abc")
         response = self.client.post("/communities/%s/try_create_post_template" % (str(self.john_community.id)),
@@ -207,3 +205,34 @@ class PostTemplateCreationTestCase(TestCase):
             "data_field_temps": json.dumps([{"name": "JohnText","type":"text"}])
             })
         self.assertEqual(response.json()["Success"],False)
+
+
+class CommunityTestCase(TestCase):
+    def setUp(self) :
+        self.client=Client()
+    
+    def test_community_creation(self):
+        response = self.client.post("/create_community",
+            {"name":"test_grubu",
+            "description":"Test grub description.",
+            "is_private":False
+            })
+        self.assertEqual(response.json()["Success"],True)
+
+    def test_search_community(self):
+        community_test_number = 2
+        for i in range(1,community_test_number+1):
+            self.client.post("/create_community", {"name":f"test_grubu_{i}","description":f"Test grub {i} description.","is_private":False})
+        
+        response = self.client.get("/search_communities", {"name":"test_grubu"})
+        self.assertEqual(response.json()["Success"],True)
+        self.assertEqual(len(response.json()["Communities"]), community_test_number)
+
+    def test_getting_community_data(self):
+        self.client.post("/create_community", {"name":"test_grubu_1","description":"Test grub 1 description.","is_private":False})
+        response = self.client.get("/communities/get_community_data", {"group_name":"test_grubu_1"})
+
+        self.assertEqual(response.json()["Success"],True)
+        self.assertEqual(response.json()["Community"][0]["name"], "test_grubu_1")
+        self.assertEqual(response.json()["Community"][0]["description"], "Test grub 1 description.")
+        self.assertEqual(response.json()["Community"][0]["is_private"], False)
