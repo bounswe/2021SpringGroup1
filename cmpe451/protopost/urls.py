@@ -4,8 +4,10 @@ from django.urls.resolvers import URLPattern
 from . import views,home,register
 
 
+
+
 urlpatterns = [
-	path("", views.home, name="home_pages"),
+	#path("", views.home, name="home_pages"),
 	path("try_register", register.try_register, name= "try_register" ),
 	path("try_login", register.try_login, name= "try_login" ),
 	path("test_auth",register.test_auth, name="test_auth"),
@@ -22,6 +24,5 @@ urlpatterns = [
 	path("get_post",home.get_post,name="get_post"),
 	path("get_user_communities",home.get_user_communities,name="get_user_communities"),
 	path("get_all_communities",home.get_all_communities,name="get_all_communities"),
-
 
 ]

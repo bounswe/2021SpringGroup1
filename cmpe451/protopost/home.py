@@ -8,8 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.contrib.auth.models import Group
+from rest_framework.decorators import api_view
 import json
 
+@api_view(['GET'])
 def get_user_home_feed(req):
     if req.method == 'GET':
         if req.user.is_authenticated:
@@ -25,7 +27,7 @@ def get_user_home_feed(req):
         else:
             return JsonResponse({})
 
-
+@api_view(['GET'])
 def get_post(req):
     if req.method == 'GET':
         if "id" in req.GET:
@@ -34,7 +36,7 @@ def get_post(req):
                 return JsonResponse(post.__str__())
             else:
                 return JsonResponse({})
-
+@api_view(['GET'])
 def get_user_communities(req):
     if req.method == 'GET':
         if req.user.is_authenticated:
@@ -43,7 +45,7 @@ def get_user_communities(req):
             for community in communities:
                 community_array.append(community.__str__())
             return JsonResponse(community_array)
-
+@api_view(['GET'])
 def get_all_communities(req):
     if req.method == 'GET':
         communities=Community.objects.all()
@@ -54,6 +56,7 @@ def get_all_communities(req):
 
 
 #TODO: Berke
+@api_view(['POST'])
 def try_create_post(req,community_id):
     if req.method=="POST":
         if req.user.is_authenticated:
@@ -108,6 +111,7 @@ def try_create_post(req,community_id):
         return JsonResponse({"Success" : True, "Post" : json.dumps(post.__str__())})
 
 #TODO: Berke
+@api_view(['POST'])
 def try_create_post_template(req,community_id):
     if req.method=="POST":
         if req.user.is_authenticated:
@@ -163,6 +167,7 @@ def try_create_post_template(req,community_id):
         return JsonResponse({"Success" : True, "PostTemplate" : json.dumps(post_template.__str__())})
 
 #TODO: Emrah
+@api_view(['GET'])
 def get_community_data(req,community_id):
     if req.method == 'GET':
         try:
@@ -174,6 +179,7 @@ def get_community_data(req,community_id):
     return JsonResponse({"Success" : False, "Error": "Wrong request method."})
 
 #TODO: Emrah
+@api_view(['POST'])
 @csrf_exempt
 def try_create_community(req):
     if req.method == 'POST':
@@ -189,6 +195,7 @@ def try_create_community(req):
         return JsonResponse({"Success" : False, "Error":"User is not signed in"})
     return JsonResponse({"Success" :False , "Error":"Wrong request method"})
 
+@api_view(['GET'])
 def get_subscription_status(req,community_id):
     if req.method == 'GET':
         if req.user.is_authenticated:
@@ -205,6 +212,7 @@ def get_subscription_status(req,community_id):
         return JsonResponse({"Success":False, "Error": "User is not authenticated"})
 
 #TODO: Emrah
+@api_view(['POST'])
 def set_subscription_status(req,community_id):
     if req.method == 'POST':
         if "subscribe" in req.POST:
@@ -232,6 +240,7 @@ def set_subscription_status(req,community_id):
             return JsonResponse({"Success":False, "Error": "User is not authenticated"})
 
 #TODO: Emrah
+@api_view(['GET'])
 def search_communities(req):
     if req.method == 'GET':
         if "name" in req.GET:
@@ -242,7 +251,7 @@ def search_communities(req):
             return JsonResponse({"Success" : True, "Communities": community_array})
         return JsonResponse({"Success" : False, "Error": "'name' parameter is missing for search."})
         
-
+@api_view(['GET'])
 def get_user_posts(req):
     if req.method == 'GET':
         if req.user.is_authenticated:

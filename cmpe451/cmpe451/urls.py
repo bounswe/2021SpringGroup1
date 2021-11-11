@@ -15,9 +15,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls import url
 import protopost
+from rest_framework.renderers import CoreJSONRenderer
+from rest_framework.schemas import get_schema_view
+
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='Pastebin API')
+
+# schema_view = get_schema_view(
+    
+#         title="Snippets API",
+#         description="Test description",
+# )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("", include("protopost.urls"))
+    path('api/v1/protopost/', include("protopost.urls")),
+    url(r'^$', schema_view),
+    #url(r'^redoc/$', schema_view('redoc', cache_timeout=0), name='schema-redoc'),
 ]
+
