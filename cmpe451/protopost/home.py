@@ -163,40 +163,73 @@ def try_create_post_template(req,community_id):
         return JsonResponse({"Success" : True, "PostTemplate" : json.dumps(post_template.__str__())})
 
 #TODO: Emrah
-def get_community_data(req):
+def get_community_data(req,community_id):
     if req.method == 'GET':
-        if "group_name" not in req.GET: return JsonResponse({"Success" : False, "Error": "'group_name' parameter is missing for search."})
-        community = Community.objects.get(name= req.GET["group_name"])
-        returned_fields = list(set(Community.get_all_fields_names()) - set(["moderator", "joined_users","posts", "post_templates", "created_date", "id"]))
-        community_array = [get_field_values(returned_fields, community)]
-        return JsonResponse({"Success" : True, "Community": community_array})
+        try:
+            community = Community.objects.get(pk = community_id)
+        except:
+            return JsonResponse({"Success" : False, "Error": "Community is not found."})    
+        
+        return JsonResponse({"Success" : True, "Community": community.__str__()}) // {}
     return JsonResponse({"Success" : False, "Error": "Wrong request method."})
 
 #TODO: Emrah
 @csrf_exempt
 def try_create_community(req):
     if req.method == 'POST':
-        if check_required_fields(["name"], req):
-            fields_ = Community.get_all_fields_names()
-            kwargs_ = make_kwargs(fields_, req)
-            community_object = Community(**kwargs_)
-            community_object.save()
-            return JsonResponse({"Success" : True})
-        return JsonResponse({"Success" : False, "Error":"Fill all required keys"})
+        if req.user.is_authenticated:
+            if check_required_fields(["name"], req):
+                fields_ = Community.get_all_fields_names()
+                kwargs_ = make_kwargs(fields_, req)
+                kwargs_["moderator"]=req.user
+                community_object = Community(**kwargs_)
+                community_object.save()
+                return JsonResponse({"Success" : True, "Community" : community_object.__str__()})
+            return JsonResponse({"Success" : False, "Error":"Fill all required keys"})
+        return JsonResponse({"Success" : False, "Error":"User is not signed in"})
     return JsonResponse({"Success" :False , "Error":"Wrong request method"})
 
-#TODO: Emrah
-def set_subscription_status(req):
+def get_subscription_status(req,community_id):
     if req.method == 'GET':
         if req.user.is_authenticated:
-            communities=req.user.joined_communities.all()
-            #if communities.filter(name=group_name):
-                #communities.remove()
-            if len(communities) == 0:
-                group_name= req.GET["group_name"]
-                req.user.joined_communities.add(group_name)
-                return JsonResponse({"Success":True})             
+            try:
+                community = Community.objects.get(pk = community_id)
+            except:
+                return JsonResponse({"Success" : False, "Error": "Community is not found."})
+            
+            if community in req.user.joined_communities:
+                return JsonResponse({"Success" : True, "IsJoined": True})
+            else:
+                return JsonResponse({"Success" : True, "IsJoined": False})
+                        
         return JsonResponse({"Success":False, "Error": "User is not authenticated"})
+
+#TODO: Emrah
+def set_subscription_status(req,community_id):
+    if req.method == 'POST':
+        if "subscribe" in req.POST:
+            if req.user.is_authenticated:
+                try:
+                    community = Community.objects.get(pk = community_id)
+                except:
+                    return JsonResponse({"Success" : False, "Error": "Community is not found."})
+                if req.POST["subscribe"]:
+                    if community in req.user.joined_communities:
+                        return JsonResponse({"Success" : False, "Error": "User is already in community."})
+                    else:
+                        community.joined_users.add(req.user)
+                        community.save()
+                        return JsonResponse({"Success" : True, "IsJoined": True})
+                else:
+                    if community in req.user.joined_communities:
+                        community.joined_users.remove(req.user)
+                        community.save()
+                        return JsonResponse({"Success" : True, "IsJoined": False})
+                    else:
+                        return JsonResponse({"Success" : False, "Error": "User is not in community."})
+
+                            
+            return JsonResponse({"Success":False, "Error": "User is not authenticated"})
 
 #TODO: Emrah
 def search_communities(req):

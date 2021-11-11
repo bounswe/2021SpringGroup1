@@ -19,7 +19,11 @@ class Community(models.Model):
         data = {
             "id": self.id,
             "name": self.name,
-            "moderator_name": self.moderator.username,
+            "description": self.description,
+            "community_image_url" : self.community_image_url,
+            "is_private" : self.is_private,
+            "created_date": str(self.created_date),
+            "moderator_name": self.moderator.username if self.moderator else "No Moderator"
         }
         return data
 

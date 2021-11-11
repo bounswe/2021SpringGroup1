@@ -13,5 +13,5 @@ urlpatterns = [
 	path("communities/<int:community_id>/try_create_post_template",home.try_create_post_template,name="try_create_post_template"),
 	path("create_community", home.try_create_community, name="try_create_community"),
 	path("search_communities", home.search_communities, name="search_communities"),
-	path("communities/get_community_data",home.get_community_data,name="get_community_data"),
+	path("communities/<int:community_id>/get_community_data",home.get_community_data,name="get_community_data"),
 ]
