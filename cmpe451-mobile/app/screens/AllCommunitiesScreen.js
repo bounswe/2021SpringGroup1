@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, FlatList, StyleSheet, Button } from 'react-native';
 
-function CommunitiesScreen(props) {
+function AllCommunitiesScreen({navigation}) {
 
     const items = getAllCommunities();
 
@@ -15,8 +15,9 @@ function CommunitiesScreen(props) {
                     //keyExtractor={(item) => item.id}
                     data={items}
                     renderItem={({ item }) => (
-                        //<Text style={styles.item}>{item.name}</Text>
-                        <Button title={item.name}/>
+                        <Button title={item.name}
+                        style={styles.item}
+                        onPress={() => navigation.navigate("Community", {communData:item})}/>
                     )}
                 />
             </View>
@@ -61,4 +62,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default CommunitiesScreen;
+export default AllCommunitiesScreen;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View , Text, StyleSheet, FlatList, Button } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 
@@ -17,10 +18,11 @@ function FeedScreen({navigation}) {
                     style={styles.flatList}
                     data={items}
                     renderItem={({ item }) => (
-                        <View style={styles.postContainer}>
+                        <TouchableOpacity style={styles.postContainer}
+                            onPress={() => navigation.navigate("Post",{postData: item})}>
                             <Text style={styles.postTitle}>{item.title}</Text>
                             <Text style={styles.postDescription}> {item.description} </Text>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 />
             </View>
@@ -31,7 +33,7 @@ function FeedScreen({navigation}) {
 
 // this should be an api call that returns a json like this.
 function getUserFeed(){
-    return [{title: "title1", description: "desc1", data_fields:[]},
+    return [{title: "title1", description: "This is a description for this post", data_fields:[]},
     {title: "title2", description: "desc2", data_fields:[]},
     {title: "title3", description: "desc3", data_fields:[]},
     {title: "title4", description: "desc4", data_fields:[]},
@@ -57,21 +59,22 @@ const styles = StyleSheet.create({
         top: 50,
         alignItems: "center",
         backgroundColor: "white",
-        width: "80%",
+        width: "90%",
         height: "80%"
     
     },
     postContainer: {
         margin:5,
-        backgroundColor: "yellow",
+        backgroundColor: "lightblue",
         alignItems: "center",
-        width: "90%"
+        height: 75
     },
     postTitle: {
         fontSize:20
     },
     postDescription: {
-        fontSize:15
+        fontSize:15,
+        textAlign: "center"
     },
     flatList: {
         width: "100%"

@@ -1,6 +1,6 @@
 import React from 'react';
 import FeedScreen from './FeedScreen';
-import CommunitiesScreen from './CommunitiesScreen';
+import AllCommunitiesScreen from './AllCommunitiesScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import UserCommunitiesScreen from './UserCommunitiesScreen';
 import UserPostsScreen from './UserPostsScreen';
@@ -13,7 +13,7 @@ function Home(props) {
     return (
         <Drawer.Navigator initialRouteName="Feed">
             <Drawer.Screen name="Feed" component={FeedScreen} />
-            <Drawer.Screen name="Communities" component={CommunitiesScreen} />
+            <Drawer.Screen name="Communities" component={AllCommunitiesScreen} />
             <Drawer.Screen name="UserPosts" component={UserPostsScreen}/>
             <Drawer.Screen name="UserCommunities" component={UserCommunitiesScreen}/>
             <Drawer.Screen name="Settings" component={SettingsScreen}/>

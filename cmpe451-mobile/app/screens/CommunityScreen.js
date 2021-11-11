@@ -1,20 +1,23 @@
 import React from 'react';
-import { View , Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, Button, FlatList, TouchableOpacity} from "react-native";
 
 
-function UserPostsScreen({navigation}) {
-    const items = getUserPosts();
+function CommunityScreen({route, navigation}) {
+    const {communData} = route.params;
+    const posts = getCommunityPosts();
 
     return (
+        
         <View style={styles.background}>
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>Users Posts</Text>
+            <View style={styles.banner}>
+                <Text style={styles.commTitle}>{communData.name}</Text>
+                <Button title="Subscribe"></Button>
             </View>
-            <View style={styles.listContainer}>
+            <View style={styles.body}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     style={styles.flatList}
-                    data={items}
+                    data={posts}
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.postContainer}
                         onPress={() => navigation.navigate("Post",{postData: item})}>
@@ -28,10 +31,8 @@ function UserPostsScreen({navigation}) {
     );
 }
 
-
-// this should be an api call that returns a json like this.
-function getUserPosts(){
-    return [{title: "title1", description: "desc1", data_fields:[]},
+function getCommunityPosts(){
+    return [{title: "comm1post1", description: "desc1", data_fields:[]},
     {title: "title2", description: "desc2", data_fields:[]},
     {title: "title3", description: "desc3", data_fields:[]},
     {title: "title4", description: "desc4", data_fields:[]},
@@ -39,30 +40,37 @@ function getUserPosts(){
     {title: "title6", description: "desc6", data_fields:[]},
     ];
 }   
-  
 const styles = StyleSheet.create({
     background:{
-        backgroundColor: "dodgerblue",
         flex: 1,
         alignItems: "center"
     },
-    titleContainer: {
-        top: 40
+    banner: {
+        backgroundColor:"lightblue",
+        width:"100%",
+        height: "20%"
     },
-    title: {
+    body: {
+        
+        backgroundColor:"dodgerblue",
+        width:"100%",
+        height: "80%",
+        alignItems: "center"
+    },
+    commTitle: {
+        fontSize: 30,
+        padding: 15,
+        textAlign: "center"
+    },
+    commDescription: {
         fontSize: 20,
-        color: "white"
+        textAlign:"center"
     },
-    listContainer: {
-        top: 50,
-        alignItems: "center",
-        backgroundColor: "white",
-        width: "80%",
-        height: "80%"
-    
+    flatList: {
+        width: "100%"
     },
     postContainer: {
-        margin:5,
+        margin: 10,
         backgroundColor: "lightblue",
         alignItems: "center",
         height: 75
@@ -72,10 +80,8 @@ const styles = StyleSheet.create({
     },
     postDescription: {
         fontSize:15
-    },
-    flatList: {
-        width: "100%"
     }
+
 })
 
-export default UserPostsScreen;
+export default CommunityScreen;

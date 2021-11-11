@@ -2,7 +2,7 @@ import React from 'react';
 import { View , Text, StyleSheet, FlatList, Button } from 'react-native';
 
 
-function UserCommunitiesScreen(props) {
+function UserCommunitiesScreen({navigation}) {
     const items = getUserCommunities();
 
     return (
@@ -15,8 +15,9 @@ function UserCommunitiesScreen(props) {
                     //keyExtractor={(item) => item.id}
                     data={items}
                     renderItem={({ item }) => (
-                        //<Text style={styles.item}>{item.name}</Text>
-                        <Button title={item.name}/>
+                        <Button title={item.name}
+                        style={styles.item}
+                        onPress={() => navigation.navigate("Community", {communData:item})}/>
                     )}
                 />
             </View>
