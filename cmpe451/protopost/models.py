@@ -3,11 +3,14 @@ from django.contrib.auth.models import User
 
 import json
 # Create your models here.
-
+DATA_TYPES = (
+        ('text', 'Text'),
+        ('image', 'Image'),
+    )
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50,unique=True)
-    description = models.TextField(max_length=max)
+    description = models.CharField(max_length=200)
     community_image_url = models.CharField(max_length=200, blank=True, null=True)
     moderator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='moderator', blank=True, null=True) #A community has only one moderator.
     is_private = models.BooleanField(default=False)
@@ -21,14 +24,13 @@ class Community(models.Model):
             "name": self.name,
             "description": self.description,
             "community_image_url" : self.community_image_url,
-            "is_private" : self.is_private,
             "created_date": str(self.created_date),
             "moderator_name": self.moderator.username if self.moderator else "No Moderator"
         }
         return data
 
-    def get_all_fields_names():
-        return [f.name for f in Community._meta.get_fields()]
+    # def get_all_fields_names(self):
+    #     return [f.name for f in Community._meta.get_fields()]
 
 class PostTemplate(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
@@ -51,7 +53,14 @@ class PostTemplate(models.Model):
             "data_field_temps": dataFieldDict
         }
         return data
-
+  
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'community'],
+                name="Unique Post Template"
+            )
+        ]
 class Post(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     poster = models.ForeignKey(User,on_delete=models.CASCADE,related_name='posts', blank=True, null=True)
@@ -80,7 +89,7 @@ class DataField(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='data_fields', blank=True, null=True)
     name=models.CharField(max_length=50, verbose_name='Name')
-    type=models.CharField(max_length=50, verbose_name='Type')
+    type=models.CharField(max_length=50, verbose_name='Type',choices=DATA_TYPES)
     content=models.JSONField(max_length=max, verbose_name='Data')
     def __str__(self) -> str:
         data = {
@@ -95,7 +104,7 @@ class DataField(models.Model):
 class DataFieldTemp(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
-    type=models.CharField(max_length=50, verbose_name='Type')
+    type=models.CharField(max_length=50, verbose_name='Type',choices=DATA_TYPES)
     form_content=models.JSONField(max_length=max, verbose_name='Data', blank=True, null=True)
     post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, related_name='data_field_templates', blank=True, null=True)
     def __str__(self) -> str:
@@ -106,7 +115,13 @@ class DataFieldTemp(models.Model):
             "form_content": self.form_content
         }
         return data
-
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'post_template'],
+                name="Unique Data Fields"
+            )
+        ]
 
 
 

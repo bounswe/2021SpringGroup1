@@ -3,16 +3,29 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
+from rest_framework.schemas import AutoSchema
+from rest_framework.compat import coreapi
+from rest_framework import renderers,schemas
+from .serializers import *
 from .models import Community, DataField, DataFieldTemp, Post, PostTemplate, User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 from django.contrib.auth.models import Group
-from rest_framework.decorators import api_view
-from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import api_view,renderer_classes,schema
+from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 import json
-@swagger_auto_schema
+generator = schemas.SchemaGenerator(title='Bookings API')
+@api_view()
+@renderer_classes([renderers.OpenAPIRenderer])
+def schema_view(request):
+    schema = generator.get_schema(request)
+    return Response(schema)
+
 @api_view(['GET'])
+@renderer_classes([renderers.OpenAPIRenderer])
 def get_user_home_feed(req):
     if req.method == 'GET':
         if req.user.is_authenticated:
@@ -57,6 +70,8 @@ def get_all_communities(req):
 
 
 #TODO: Berke
+
+
 @api_view(['POST'])
 def try_create_post(req,community_id):
     if req.method=="POST":
@@ -112,6 +127,7 @@ def try_create_post(req,community_id):
         return JsonResponse({"Success" : True, "Post" : json.dumps(post.__str__())})
 
 #TODO: Berke
+
 @api_view(['POST'])
 def try_create_post_template(req,community_id):
     if req.method=="POST":
