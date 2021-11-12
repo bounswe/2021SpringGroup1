@@ -4,6 +4,9 @@ import Navigation from 'navigation/Navigation';
 import { Provider } from "react-redux";
 
 import {store} from 'store/store';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap';
+import SideBar from 'components/navbar/SiderBar';
 
 function App() {
   return (
