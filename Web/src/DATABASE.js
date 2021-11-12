@@ -7,6 +7,7 @@ export const urls = {
     'home':"/",
     'bootstrap':"/bootstrap",
     'profile':"/profile",
+    'landingPage':"/landingPage",
     
     //SPRINGBOOT
     'registration':URL+"/registration",

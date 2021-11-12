@@ -2,10 +2,11 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {urls} from 'DATABASE';
-
-import {Dropdown,ButtonGroup,Alert,Accordion,Button, DropdownButton,Spinner,Card, ProgressBar, Carousel} from 'react-bootstrap';
 import faker from 'faker/locale/tr';
 import { useSelector } from 'react-redux';
+import SideBar from 'components/navbar/SideBar';
+import {Dropdown,ButtonGroup,Alert,Accordion,Button, DropdownButton,Spinner,Card, ProgressBar, Carousel} from 'react-bootstrap';
+
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 
@@ -22,8 +23,6 @@ const Bootstrap = (props) => {
   const [value, setValue] = useState('female');
 
   return (
-
-    
     <div style={styles.parent} >
 
     <Button variant="contained" color="secondary" >
@@ -39,7 +38,9 @@ const Bootstrap = (props) => {
   <button type="button" class="btn btn-primary">Middle</button>
   <button type="button" class="btn btn-primary">Right</button>
 </div>
-
+<div>
+<SideBar />  
+    </div>
 <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
   <input type="checkbox" class="btn-check" id="btncheck1" autocomplete="off" />
   <label class="btn btn-outline-primary" for="btncheck1">Checkbox 1</label>

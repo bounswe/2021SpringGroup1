@@ -8,8 +8,7 @@ import {urls} from 'DATABASE';
 
 import home from 'screens/home';
 import bootstrap from 'screens/bootstrap';
-import SideBar from 'components/navbar/SiderBar';
-
+import landingPage from 'screens/landingPage';
 
 function withProps(Component, props) {
   return function(matchProps) {
@@ -26,13 +25,13 @@ const Navigation = (props) => {
 
   var ROUTES = <Switch>
                     <Route key={idd++} exact path={urls.home} component={home} />
-                    <Route key={idd++} exact path={urls.anasayfa} component={bootstrap} />
+                    <Route key={idd++} exact path={urls.bootstrap} component={bootstrap} />
+                    <Route key={idd++} exact path={urls.landingPage} component={landingPage} />
                     <Route key={idd++} path='/' component={home} />
                 </Switch>
     
     return (
             <Router>
-                <SideBar />  
                   {ROUTES}
           </Router>
     );

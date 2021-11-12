@@ -1,9 +1,10 @@
 import App from 'App';
 import React from 'react'
 import "../App.css"
-
+import { useHistory } from "react-router-dom";
 
 function Form() {
+  const history = useHistory();
     return (
         <div className='form-content-left'>
       <form className='form'>
@@ -31,7 +32,7 @@ function Form() {
             required="required"
           />
         </div>
-        <button className='form-input-btn' type='submit'>
+        <button className='form-input-btn' type='submit' onClick={()=>history.push('/landingPage')}>
           Login
         </button>
       </form>

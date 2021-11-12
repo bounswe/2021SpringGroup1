@@ -3,6 +3,8 @@ import 'react-pro-sidebar/dist/css/styles.css';
 import { FaGem, FaHeart, FaRegRegistered } from "react-icons/fa";
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
+
+
 export const SideBar = props => {
     const [isCollabsed, setIsCollabsed] = useState(true);
     const history = useHistory();
@@ -10,11 +12,10 @@ export const SideBar = props => {
     return (
         <ProSidebar collapsed={isCollabsed} style={{position: 'absolute'}} onMouseLeave={()=>setIsCollabsed(true)} onMouseOver={()=>setIsCollabsed(false)}>
             <Menu iconShape="square">
-                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>home</MenuItem>
-                <SubMenu title="Components" icon={<FaHeart />}>
-                    <MenuItem icon={<FaGem />} onClick={()=>history.push('/bootstrap')}>bootstrap</MenuItem>
-                    <MenuItem onClick={()=>history.push('/profile')}>profile</MenuItem>
-                </SubMenu>
+                <MenuItem onClick={()=>history.push('/landingPage')} icon={<FaGem />}>Feed</MenuItem>
+                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>Communities</MenuItem>
+                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>My Posts</MenuItem>
+                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>My Communities</MenuItem>
             </Menu>
         </ProSidebar>
     )
