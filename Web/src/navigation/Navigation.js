@@ -8,6 +8,7 @@ import {urls} from 'DATABASE';
 
 import home from 'screens/home';
 import bootstrap from 'screens/bootstrap';
+import SideBar from 'components/navbar/SiderBar';
 
 
 function withProps(Component, props) {
@@ -31,6 +32,7 @@ const Navigation = (props) => {
     
     return (
             <Router>
+                <SideBar />  
                   {ROUTES}
           </Router>
     );

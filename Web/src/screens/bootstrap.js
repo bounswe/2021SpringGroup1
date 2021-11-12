@@ -2,10 +2,10 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {urls} from 'DATABASE';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap';
-import {Dropdown,ButtonGroup,Alert,Accordion,Button, DropdownButton,Spinner,Card,} from 'react-bootstrap';
+
+import {Dropdown,ButtonGroup,Alert,Accordion,Button, DropdownButton,Spinner,Card, ProgressBar, Carousel} from 'react-bootstrap';
 import faker from 'faker/locale/tr';
+import { useSelector } from 'react-redux';
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 
@@ -19,7 +19,6 @@ const styles = {
 
 
 const Bootstrap = (props) => {
-
   const [value, setValue] = useState('female');
 
   return (
@@ -27,8 +26,7 @@ const Bootstrap = (props) => {
     
     <div style={styles.parent} >
 
-
-    <Button variant="contained" color="secondary">
+    <Button variant="contained" color="secondary" >
       Hello World
     </Button>
     <div className="shadow-lg p-3 mb-5 bg-body rounded">Larger shadow</div>
@@ -89,7 +87,51 @@ const Bootstrap = (props) => {
   </div>
 </div>
 
+<div>a</div>
+<ProgressBar now={60} />
+<div></div>
 
+
+
+<Carousel>
+  <Carousel.Item>
+    <img
+      className="d-block w-100"
+      src="https://productimages.hepsiburada.net/s/6/375/9713752801330.jpg"
+      alt="First slide"
+      width={'50px'}
+      height={'100px'}
+    />
+    <Carousel.Caption>
+      <h3>First slide label</h3>
+      <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+  <Carousel.Item>
+    <img
+      className="d-block w-100"
+      src="holder.js/800x400?text=Second slide&bg=282c34"
+      alt="Second slide"
+    />
+
+    <Carousel.Caption>
+      <h3>Second slide label</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+  <Carousel.Item>
+    <img
+      className="d-block w-100"
+      src="holder.js/800x400?text=Third slide&bg=20232a"
+      alt="Third slide"
+    />
+
+    <Carousel.Caption>
+      <h3>Third slide label</h3>
+      <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+    </Carousel.Caption>
+  </Carousel.Item>
+</Carousel>
 
 <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -149,7 +191,9 @@ const Bootstrap = (props) => {
         variant={variant.toLowerCase()}
         title={variant}
       >
-        <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+        <Dropdown.Item eventKey="1" onClick={()=>{
+          console.log('asdasdasdasd');
+        }} >Action</Dropdown.Item>
         <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
         <Dropdown.Item eventKey="3" active>
           Active Item
@@ -228,18 +272,10 @@ const Bootstrap = (props) => {
     </Accordion.Collapse>
   </Card>
 </Accordion>
-<Alert variant="success">
+
+<Alert variant="danger">
   <Alert.Heading>Hey, nice to see you</Alert.Heading>
-  <p>
-    Aww yeah, you successfully read this important alert message. This example
-    text is going to run a bit longer so that you can see how spacing within an
-    alert works with this kind of content.
-  </p>
-  <hr />
-  <p className="mb-0">
-    Whenever you need to, be sure to use margin utilities to keep things nice
-    and tidy.
-  </p>
+ <p>sadsa</p>
 </Alert>
 
 <>
