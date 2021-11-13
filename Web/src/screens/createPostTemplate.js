@@ -8,10 +8,25 @@ import { Card, Col, Container, Dropdown, DropdownButton, Form, FormGroup, FormLa
 
 
 
-
 function CreatePostTemplate(props) {
 
-    const [typeState, setTypeState] = useState("")
+    const [typeState, setTypeState] = useState(1)
+
+    let content = [];
+    for (let i = 0; i < typeState; i++) {
+        content.push(<Row>
+            <Col>
+                <DropdownButton style ={{margin: "10px"}} id="dropdown-basic-button" title="Select Field">
+                    <Dropdown.Item>Text</Dropdown.Item>
+                    <Dropdown.Item>Image</Dropdown.Item>
+                </DropdownButton>
+            </Col>
+            <Col style ={{margin: "15px"}}>
+                <input type="text" placeholder="Enter Field Name">
+                </input>
+            </Col>
+        </Row>);
+    }
 
     return (
 
@@ -32,23 +47,13 @@ function CreatePostTemplate(props) {
                     <Container>
                         <Row>
                             <Col>
-                                <DropdownButton id="dropdown-basic-button" title="Select Field">
-                                    <Dropdown.Item href="#/action-1">Text</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-2">Image</Dropdown.Item>
-                                    <Dropdown.Item href="#/action-3">Location</Dropdown.Item>
-                                </DropdownButton>
-                            </Col>
-                            <Col>
-                                <input type="text" placeholder="Enter Field Name">
-                                </input>
-                            </Col>
-                            <Col>
-                                <Button variant="primary" type="submit">
+                                <Button style ={{margin: "20px"}} variant="primary" type="submit" onClick={typeState < 6 ? () =>  setTypeState(typeState + 1) : undefined}>
                                     Add
                                 </Button>
                             </Col>
                         </Row>
-                        <Row style={{margin: "5px"}}>
+                        {content}
+                        <Row style={{ margin: "5px" }}>
 
                             <Button variant="primary" type="submit">
                                 Send
