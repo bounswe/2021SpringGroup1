@@ -78,11 +78,18 @@ class PostCreationTestCase(TestCase):
     def test_post_creation_in_community(self):
         self.client.login(username="John",email="john@gmail.com",password="123abc")
         response = self.client.post("/communities/%s/try_create_post" % (str(self.john_community.id)),
-            {"title":"JohnPost2",
-            "template_id":self.john_post_template.id,
-            "data_fields": json.dumps('{"%s_content": "Some new text"}' % (str(self.john_field_temp.id)))
+            {
+            "title": "JackPost2",
+            "post_template": self.john_post_template.id,
+            "data_fields": [
+                {
+                "name": "JohnText",
+                "type": "text",
+                "content": {"text":"hello"}
+                }
+            ]
             })
-        self.assertEqual(response.json()["Success"],True)
+        self.assertEqual(response["Success"],True)
     
     def test_post_creation_out_community(self):
         self.client.login(username="Jack",email="jack@gmail.com",password="123abc")
