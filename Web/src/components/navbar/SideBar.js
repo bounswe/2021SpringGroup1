@@ -8,17 +8,19 @@ import { useHistory } from "react-router-dom";
 export const SideBar = props => {
     const [isCollabsed, setIsCollabsed] = useState(true);
     const history = useHistory();
-    console.log('history: ' ,history);
+    console.log('history: ', history);
     return (
-        <ProSidebar collapsed={isCollabsed} style={{position: 'absolute'}} onMouseLeave={()=>setIsCollabsed(true)} onMouseOver={()=>setIsCollabsed(false)}>
+        <ProSidebar collapsed={isCollabsed} style={{ position: 'fixed' }} onMouseLeave={() => setIsCollabsed(true)} onMouseOver={() => setIsCollabsed(false)}>
             <Menu iconShape="square">
-                <MenuItem onClick={()=>history.push('/landingPage')} icon={<FaGem />}>Feed</MenuItem>
-                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>Communities</MenuItem>
-                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>My Posts</MenuItem>
-                <MenuItem onClick={()=>history.push('/')} icon={<FaGem />}>My Communities</MenuItem>
+                <MenuItem onClick={() => history.push('/landingPage')} icon={<FaGem />}>Feed</MenuItem>
+                <MenuItem onClick={() => history.push('/createPostTemplate')} icon={<FaGem />}>Communities</MenuItem>
+                <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>My Posts</MenuItem>
+                <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>My Communities</MenuItem>
+                <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>My Profile</MenuItem>
+                <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>Logout</MenuItem>
             </Menu>
         </ProSidebar>
     )
 }
- 
+
 export default SideBar

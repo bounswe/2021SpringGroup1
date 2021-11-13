@@ -1,19 +1,20 @@
 import App from 'App';
 import React from 'react'
 import "../App.css"
+import './SignUpLogin.css'
 
 
 function Form() {
-    return (
-        <div className='form-content-right'>
+  return (
+    <div className='form-content-right'>
       <form className='form'>
-          <h1>
-              Sign Up
+        <h1>
+          Sign Up
           <p>
-          Please create your account by providing necessary information.
-        </p>
-            </h1>
-        
+            Please create your account by providing necessary information.
+          </p>
+        </h1>
+
         <div className='form-inputs'>
           <label className='form-label'>Username</label>
           <input
@@ -59,7 +60,7 @@ function Form() {
         </button>
       </form>
     </div>
-    )
+  )
 }
 
 export default Form
