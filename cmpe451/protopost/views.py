@@ -172,12 +172,12 @@ class UserSubscriptionStatus(GenericAPIView):
         return Response({"Success":False, "Error": "User is not authenticated"})
 
 class ListPostTemplates(GenericAPIView):
-    serializer_class= PostTemplateReturningSerializer
+    serializer_class= PostTemplateSerializer
     def get(self,req, community_id):
         if req.user.is_authenticated or True:
             post_templates=PostTemplate.objects.filter(community_id=community_id)
-            post_templates=PostTemplateReturningSerializer(post_templates,many=True)
-            print(json.dumps(post_templates.data))
+            post_templates=PostTemplateSerializer(post_templates,many=True)
+            return Response(post_templates.data)
             try:
                 #return Response({"Success" : True, "Post_templates" : post_templates.__str__()})
                 return Response({"Success" : True, "Post_templates" : post_templates})
@@ -191,11 +191,8 @@ class ListCommunityPosts(GenericAPIView):
         if req.user.is_authenticated or True:
             #try:
             posts = Post.objects.filter(community_id = community_id)
-            posts = PostSerializer(data=posts, many=True)
-            if posts.is_valid():
-                return Response(posts.data)
-            #    return Response({"Success" : True, "Posts": posts.data})
-            return Response({"Success" : True, "Posts": "asfsadfsa"})
+            posts = PostSerializer(posts, many=True)
+            return Response(posts.data)
             #except:
             #    return Response({"Success" : False, "Error": "Community or Post is not found."})
         return Response({"Success":False, "Error": "No Authentication"})

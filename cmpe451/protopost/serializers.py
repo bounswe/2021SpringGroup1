@@ -89,10 +89,10 @@ class PostSerializer(serializers.ModelSerializer):
         return attrs
 
     
-class PostTemplateReturningSerializer(serializers.ModelSerializer):
-    data_field_templates=DataFieldTempSerializer(many=True, source="post_template_id")
-    class Meta:
-        model = PostTemplate
-        fields = ['id','community',"name","data_field_templates"]
-        read_only_fields=['id','community']
+# class PostTemplateReturningSerializer(serializers.ModelSerializer):
+#     data_field_templates=DataFieldTempSerializer(many=True, source="post_template_id")
+#     class Meta:
+#         model = PostTemplate
+#         fields = ['id','community',"name","data_field_templates"]
+#         read_only_fields=['id','community']
 
