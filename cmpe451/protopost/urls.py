@@ -31,5 +31,6 @@ urlpatterns = [
 	path("communities/<int:community_id>/create_post_template",views.CreatePostTemplate.as_view(),name="create_post_template"),
 	path("create_community",views.CreateCommunity.as_view(),name="create_community"),
 	path("list_communities",views.ListCommunities.as_view(),name="list_communities"),
+	path("get_community_data",views.GetCommunityData.as_view(),name="get_community_data")
 
 ]

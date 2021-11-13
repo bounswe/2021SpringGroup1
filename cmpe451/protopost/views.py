@@ -13,9 +13,22 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 
+from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
+from drf_spectacular.types import OpenApiTypes
 
 class Login(GenericAPIView):
     serializer_class=UserSerializer
+
+    @extend_schema(
+        parameters=[
+          OpenApiParameter("username", OpenApiTypes.STR, OpenApiParameter.QUERY),
+          OpenApiParameter("password", OpenApiTypes.STR, OpenApiParameter.QUERY),
+        ],
+        request=UserSerializer,
+        responses=None,
+
+
+    )
     def get(self,req,format=None):
         user = authenticate(username=req.query_params["username"], password=req.query_params["password"])
         if user:
@@ -59,10 +72,14 @@ class CreatePost(GenericAPIView):
                 return Response({"Success" : False,"Error": "User is not logged in."}) 
             post_serializer = PostSerializer(data=req.data)
             if post_serializer.is_valid():
-                post_serializer.save(poster=req.user,community=community)
-                return Response({"Success" : True, "Post" : post_serializer.data})
+                try:
+                    post_serializer.save(poster=req.user,community=community)
+                    return Response({"Success" : True, "Post" : post_serializer.data})
+                except:
+                    return Response({"Success" : False, "Error" : "Something went wrong, is field names unique?"})
+
             else:
-                return Response({"Success" : False, "Post" : post_serializer.errors})
+                return Response({"Success" : False, "Error" : post_serializer.errors})
 
 
 
@@ -76,13 +93,19 @@ class CreatePostTemplate(GenericAPIView):
                 return Response({"Success" : False,"Error": "User is not subscribed to this community."}) 
         post_template_serializer=PostTemplateSerializer(data=req.data)
         if post_template_serializer.is_valid():
-            post_template_serializer.save(community=community)
-            return Response({"Success" : True,"PostTemplate": post_template_serializer.data})
+            try:
+                post_template_serializer.save(community=community)
+                return Response({"Success" : True,"PostTemplate": post_template_serializer.data})
+            except:
+                return Response({"Success" : False, "Error" : "Something went wrong"})
         else:
             return Response({"Success" : False, "Error" : post_template_serializer.errors})
 
 class GetCommunityData(GenericAPIView):
     serializer_class=CommunitySerializer
+    @extend_schema(
+        request=None,
+    )
     def get(self,req,community_id):
         if req.user.is_authenticated:
             try:
@@ -91,10 +114,16 @@ class GetCommunityData(GenericAPIView):
                 return Response({"Success" : False, "Error": "Community is not found."})    
             return Response({"Success" : True, "Community": community.data})
         return Response({"Success" : False, "Error": "Wrong request method."})
-        
+      
 class ListCommunities(GenericAPIView):
     serializer_class=CommunitySerializer
     queryset=Community.objects.all()
+    @extend_schema(
+        parameters=[
+          OpenApiParameter("from", OpenApiTypes.STR, OpenApiParameter.QUERY),
+        ],
+        request=None,
+    )
     def get(self,req):
         if req.user.is_authenticated and "from" in req.GET:
             if req.GET["from"]=="all":
@@ -145,6 +174,7 @@ class UserSubscriptionStatus(GenericAPIView):
                 else:
                     return Response({"Success" : False, "Error": "User is not in community."})
         return Response({"Success":False, "Error": "User is not authenticated"})
+#TODO: Implementation required.
 class ListPostTemplates(GenericAPIView):
     pass
 class ListUserCreatedPosts(GenericAPIView):

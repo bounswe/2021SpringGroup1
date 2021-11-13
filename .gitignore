@@ -13,6 +13,7 @@ cmpe451/cmpe451/migrations/__pycache__/**
 
 cmpe451/protopost/__pycache__/**
 cmpe451/protopost/migrations/__pycache__/**
+cmpe451/protopost/migrations/**
 
 login/__pycache__/**
 login/migrations/__pycache__/**

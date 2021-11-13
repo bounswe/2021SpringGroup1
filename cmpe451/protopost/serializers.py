@@ -1,3 +1,4 @@
+from django.core.checks.messages import Error
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
@@ -33,6 +34,7 @@ class DataFieldTempSerializer(serializers.ModelSerializer):
         model = DataFieldTemp
         fields = ["name","type","post_template"]
         read_only_fields=["post_template"]
+    
 
 class PostTemplateSerializer(serializers.ModelSerializer):
     data_field_templates=DataFieldTempSerializer(many=True)
@@ -44,8 +46,15 @@ class PostTemplateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         data_field_templates=validated_data.pop('data_field_templates')
         post_template=PostTemplate.objects.create(**validated_data)
+        created_fields=[]
         for field in data_field_templates:
-            DataFieldTemp.objects.create(**field,post_template=post_template)
+            try:
+                created_fields.append(DataFieldTemp.objects.create(**field,post_template=post_template))
+            except:
+                for field in created_fields:
+                    field.delete()
+                post_template.delete()
+                raise Error
         return post_template
 
 class PostSerializer(serializers.ModelSerializer):
@@ -58,8 +67,15 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         data_fields=validated_data.pop('data_fields')
         post=Post.objects.create(**validated_data)
+        created_fields=[]
         for field in data_fields:
-            DataField.objects.create(**field,post=post)
+            try:
+                created_fields.append(DataField.objects.create(**field,post=post))
+            except:
+                for field in created_fields:
+                    field.delete()
+                post.delete()
+                raise Error
         return post
     def validate(self, attrs):
         attrs = super().validate(attrs)

@@ -16,7 +16,6 @@ class Community(models.Model):
     is_private = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add = True,verbose_name = "Oluşturulma tarihi")
     joined_users=models.ManyToManyField(User,related_name='joined_communities')
-    #TODO:Update this string.
 
     def __str__(self)-> str:
         data = {
@@ -36,7 +35,7 @@ class PostTemplate(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
     description = models.TextField(max_length=max, verbose_name='Description')
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='post_templates', blank=True, null=True) #A post can be in only one community.
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='post_templates', blank=True, null=True)
     
     def __str__(self) -> str:
         dataFields=self.data_field_templates.all()
