@@ -4,6 +4,9 @@ import {Link, Redirect} from 'react-router-dom';
 import {urls} from 'DATABASE';
 import 'assets/css/home.css';
 
+import SignUpForm from '../components/SignUpForm';
+import LoginForm from '../components/LoginForm';
+
 const styles = {
   anasayfa: {
     position:"absolute",
@@ -18,15 +21,21 @@ const styles = {
 }
 
 
+
 const Home = (props) => {
 
   return (
 
     <>
-    <div style={styles.anasayfa}>
-      <Link to={urls.bootstrap} style={styles.links}>Bootstrap</Link>
+    <div>
+    <div className='form-container'>
+        <span className='close-btn'>×</span>
+          <SignUpForm/>
+          <LoginForm/>
+      </div>
+      {/* <Link to={urls.bootstrap} style={styles.links}>Bootstrap</Link>
       <br />
-      <Link to={urls.profile} style={styles.links}>Profile</Link>
+      <Link to={urls.profile} style={styles.links}>Profile</Link> */}
     </div>
       </>
   );

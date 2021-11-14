@@ -1,19 +1,24 @@
 const PORT = 8081;
-const URL = "http://localhost:"+PORT;
+const URL = "http://localhost:" + PORT;
 
 export const urls = {
 
     //REACT
-    'home':"/",
-    'bootstrap':"/bootstrap",
-    'profile':"/profile",
+    'home': "/",
+    'bootstrap': "/bootstrap",
+    'profile': "/profile",
+    'landingPage': "/landingPage",
+    'createPostTemplate': "/createPostTemplate",
+    'createPostPage': "/createPostPage",
+    'myPosts': "/myPosts",
+
     
     //SPRINGBOOT
-    'registration':URL+"/registration",
-    'login':URL+"/login",
-    
-    
-    
+    'registration': URL + "/registration",
+    'login': URL + "/login",
+
+
+
 }
 
 
