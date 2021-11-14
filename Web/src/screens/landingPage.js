@@ -38,7 +38,7 @@ const landingPage = (props) => {
             </div>
             <div>
                 {exampleData.data.map((posts) => (
-                    <Card style={{ width: '50rem', margin: 'auto' }}>
+                    <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
                         <Row>
                             <Col>
                                 <Card.Title>{posts["title"]}</Card.Title>

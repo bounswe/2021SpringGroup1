@@ -22,7 +22,6 @@ const AllCommunitiesPage = props => {
 
 
   return (
-
     <>
       <div>
         <SideBar />
@@ -30,7 +29,7 @@ const AllCommunitiesPage = props => {
 
       <div>
         {exampleData.data.map((community) => (
-          <Container style={{ width: '55rem', margin: '30px auto', backgroundColor: "gainsboro" }}>
+          <Container style={{ width: '55rem', margin: '0px auto', backgroundColor: "gainsboro", marginBottom: "30px" }}>
             <div >
               <Row>
                 <Col>
