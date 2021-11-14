@@ -19,7 +19,16 @@ class CommunitySerializer(serializers.ModelSerializer):
         model = Community
         fields = ["name","description","community_image_url","moderator"]
         read_only_fields=["moderator"]
-
+    
+    def to_representation(self, instance):
+        representation = {}
+        if instance.name!='': #condition
+            representation['@context']= "http://schema.org/"
+            representation['@type']= "Organization"
+            representation.update(super().to_representation(instance))
+            return representation
+        return representation
+    
 
 class DataFieldSerializer(serializers.ModelSerializer):
     class Meta:
@@ -89,5 +98,10 @@ class PostSerializer(serializers.ModelSerializer):
         return attrs
 
     
-
+# class PostTemplateReturningSerializer(serializers.ModelSerializer):
+#     data_field_templates=DataFieldTempSerializer(many=True, source="post_template_id")
+#     class Meta:
+#         model = PostTemplate
+#         fields = ['id','community',"name","data_field_templates"]
+#         read_only_fields=['id','community']
 

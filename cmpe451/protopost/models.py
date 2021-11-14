@@ -118,7 +118,7 @@ class DataFieldTemp(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'post_template'],
-                name="Unique Data Fields"
+                name="Unique Data Field Templates"
             )
         ]
 
