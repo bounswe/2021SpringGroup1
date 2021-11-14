@@ -8,11 +8,12 @@ export const urls = {
     'bootstrap': "/bootstrap",
     'profile': "/profile",
     'landingPage': "/landingPage",
-    'createPostTemplate': "/createPostTemplate",
-    'createPostPage': "/createPostPage",
+    'createPostTemplate': "/community/createPostTemplate/:id",
+    'createPostPage': "/community/createPostPage/:id",
     'myPosts': "/myPosts",
-
-    
+    'allCommunities':"/allCommunities",
+    'myCommunities':"/myCommunities",
+    'community':"/community/:id",
     //SPRINGBOOT
     'registration': URL + "/registration",
     'login': URL + "/login",
