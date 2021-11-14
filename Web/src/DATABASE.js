@@ -10,6 +10,7 @@ export const urls = {
     'landingPage': "/landingPage",
     'createPostTemplate': "/community/createPostTemplate/:id",
     'createPostPage': "/community/createPostPage/:id",
+    'createCommunity': "/createCommunity",
     'myPosts': "/myPosts",
     'allCommunities':"/allCommunities",
     'myCommunities':"/myCommunities",
