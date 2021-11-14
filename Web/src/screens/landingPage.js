@@ -4,7 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Button, Card, ListGroup, ListGroupItem,Row,Col,Container,FormLabel } from 'react-bootstrap';
+import { Button, Card, ListGroup, ListGroupItem, Row, Col, Container, FormLabel } from 'react-bootstrap';
 
 
 const landingPage = (props) => {
@@ -38,7 +38,7 @@ const landingPage = (props) => {
             </div>
             <div>
                 {exampleData.data.map((posts) => (
-                    <Card style={{ width: '50rem', margin: 'auto' }}>
+                    <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
                         <Row>
                             <Col>
                                 <Card.Title>{posts["title"]}</Card.Title>
