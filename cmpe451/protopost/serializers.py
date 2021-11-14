@@ -19,7 +19,16 @@ class CommunitySerializer(serializers.ModelSerializer):
         model = Community
         fields = ["name","description","community_image_url","moderator"]
         read_only_fields=["moderator"]
-
+    
+    def to_representation(self, instance):
+        representation = {}
+        if instance.name!='': #condition
+            representation['@context']= "http://schema.org/"
+            representation['@type']= "Organization"
+            representation.update(super().to_representation(instance))
+            return representation
+        return representation
+    
 
 class DataFieldSerializer(serializers.ModelSerializer):
     class Meta:

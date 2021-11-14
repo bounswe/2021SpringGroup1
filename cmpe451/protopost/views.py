@@ -120,12 +120,13 @@ class ListCommunities(GenericAPIView):
         ],
         request=None,
     )
+
     def get(self,req):
         if req.user.is_authenticated and "from" in req.GET:
             if req.GET["from"]=="all":
                 communities=Community.objects.all()
                 communities=CommunitySerializer(communities,many=True)
-                return Response(communities.data)
+                return Response({"Communities" : communities.data})
             elif req.GET["from"]=="joined":
                 communities=req.user.joined_communities.all()
                 communities=CommunitySerializer(communities,many=True)
@@ -174,27 +175,25 @@ class UserSubscriptionStatus(GenericAPIView):
 class ListPostTemplates(GenericAPIView):
     serializer_class= PostTemplateSerializer
     def get(self,req, community_id):
-        if req.user.is_authenticated or True:
-            post_templates=PostTemplate.objects.filter(community_id=community_id)
-            post_templates=PostTemplateSerializer(post_templates,many=True)
-            return Response(post_templates.data)
+        if req.user.is_authenticated:
             try:
-                #return Response({"Success" : True, "Post_templates" : post_templates.__str__()})
-                return Response({"Success" : True, "Post_templates" : post_templates})
+                post_templates=PostTemplate.objects.filter(community_id=community_id)
+                post_templates=PostTemplateSerializer(post_templates,many=True)
+                return Response({"Success" : True, "Post_templates" : post_templates.data})
             except:
-                return Response({"Success" : False, "Error" : "There is no template"})
+                return Response({"Success" : False, "Error" : "There is no template or group"})
         return Response({"Success" : False, "Error": "No Authentication"})
 
 class ListCommunityPosts(GenericAPIView):
     serializer_class= PostSerializer
     def get(self, req,community_id):
-        if req.user.is_authenticated or True:
-            #try:
-            posts = Post.objects.filter(community_id = community_id)
-            posts = PostSerializer(posts, many=True)
-            return Response(posts.data)
-            #except:
-            #    return Response({"Success" : False, "Error": "Community or Post is not found."})
+        if req.user.is_authenticated:
+            try:
+                posts = Post.objects.filter(community_id = community_id)
+                posts = PostSerializer(posts, many=True)
+                return Response(posts.data)
+            except:
+                return Response({"Success" : False, "Error": "Community or Post is not found."})
         return Response({"Success":False, "Error": "No Authentication"})
 
 
