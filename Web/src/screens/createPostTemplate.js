@@ -10,7 +10,7 @@ import { useHistory } from "react-router-dom";
 
 
 function CreatePostTemplate(props) {
-    const history= useHistory();
+    const history = useHistory();
 
     const [typeState, setTypeState] = useState(1)
     const [value, setValue] = useState([]);
@@ -39,7 +39,6 @@ function CreatePostTemplate(props) {
     }
 
     return (
-
         <>
             <div>
                 <SideBar />
@@ -96,53 +95,53 @@ function CreatePostTemplate(props) {
                 </Card.Body>
             </Card>
             <div>
-            <Card style={{ width: '15rem', margin: 'auto',position:"absolute",right: "5px",top: "5px" }}>
-            <Card.Img variant="top" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" />
-            <Card.Body>
-            <Card.Title style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>Community Name</Card.Title>
-            <Card.Text>
-            Some quick example text to build on the card title and make up the bulk of
-            the card's content.
-            </Card.Text>
-            
+                <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
+                    <Card.Img variant="top" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" />
+                    <Card.Body>
+                        <Card.Title style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>Community Name</Card.Title>
+                        <Card.Text>
+                            Some quick example text to build on the card title and make up the bulk of
+                            the card's content.
+                        </Card.Text>
 
-        </Card.Body>
-        <ListGroup className="list-group-flush">
-            <ListGroupItem style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-        <Button variant="success">Subscribe</Button>{' '}
-        </ListGroupItem>
-        <ListGroupItem style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-        <Button  onClick={()=>history.push('/community/'+props.match.params.id)} variant="success">Feed Page</Button>{' '}
-        </ListGroupItem>
-        <ListGroupItem style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>    
-        <Button  onClick={()=>history.push('/community/createPostPage/'+props.match.params.id)} variant="success">Create Post</Button>{' '}
-        </ListGroupItem>
-        <ListGroupItem style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-        <Button variant="success">Create Post Template</Button>{' '}
-        </ListGroupItem>
-        </ListGroup>
-            </Card>
-        </div>
+
+                    </Card.Body>
+                    <ListGroup className="list-group-flush">
+                        <ListGroupItem style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <Button variant="success">Subscribe</Button>{' '}
+                        </ListGroupItem>
+                        <ListGroupItem style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <Button onClick={() => history.push('/community/' + props.match.params.id)} variant="success">Feed Page</Button>{' '}
+                        </ListGroupItem>
+                        <ListGroupItem style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <Button onClick={() => history.push('/community/createPostPage/' + props.match.params.id)} variant="success">Create Post</Button>{' '}
+                        </ListGroupItem>
+                        <ListGroupItem style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <Button variant="success">Create Post Template</Button>{' '}
+                        </ListGroupItem>
+                    </ListGroup>
+                </Card>
+            </div>
         </>
     );
 }
