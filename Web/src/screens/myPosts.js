@@ -31,20 +31,7 @@ const MyPosts = (props) => {
             "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
         }]
     };
-    // <Container style={{ width: '45rem', margin: '30px auto', backgroundColor: "gainsboro" }}>
-    //                         <div >
-    //                             <Row>
-    //                                 <Col>
-    //                                     <FormLabel style={{color: "black"}} > {posts["name"]} </FormLabel>
-    //                                 </Col>
-    //                                 {posts["dataType"] === "Text" && <Col xs={8}><input type="text" name="textField"></input></Col>} 
-    //                                 {posts["dataType"] === "Image" &&<Col xs={8}><input type="file" name="file" accept="image/*" onChange={(e) => onChangeFile(e)}></input>
-    //                                 </Col>}
-    //                             </Row>
-    //                         </div>
-    //                     </Container>
     return (
-
         <>
             <div>
                 <SideBar />
@@ -77,64 +64,8 @@ const MyPosts = (props) => {
                                 </div>
                             </Container>
                         ))}
-
-
                     </Card>
-
-
                 ))}
-
-                {/* <Card style={{ width: '50rem', margin: 'auto' }}>
-                    <Card.Title>Card Title</Card.Title>
-
-
-                    <div class="latest-photos">
-                        <div class="row"><div class="col-md-4">
-                            <figure> <img class="img-fluid" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" alt="" />
-                            </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" alt="" />
-                            </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" alt="" />
-                            </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="" />
-                            </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar5.png" alt="" />
-                            </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" />
-                            </figure></div><div class="col-md-4"> <figure class="mb-0"> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" />
-                            </figure></div><div class="col-md-4"> <figure class="mb-0"> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="" />
-                            </figure></div><div class="col-md-4"> <figure class="mb-0"> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar9.png" alt="" />
-                            </figure></div></div></div>
-                    <Card.Body>
-                        <Card.Text>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
-                        </Card.Text>
-                    </Card.Body>
-                    <ListGroup className="list-group-flush">
-                        <ListGroupItem>Cras justo odio</ListGroupItem>
-                        <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-                        <ListGroupItem>Vestibulum at eros</ListGroupItem>
-                    </ListGroup>
-                    <Card.Body>
-                        <Card.Link href="#">Card Link</Card.Link>
-                        <Card.Link href="#">Another Link</Card.Link>
-                    </Card.Body>
-                </Card>
-                <Card style={{ width: '50rem', margin: '30px auto' }}>
-                    <Card.Img variant="top" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" />
-                    <Card.Body>
-                        <Card.Title>Card Title</Card.Title>
-                        <Card.Text>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
-                        </Card.Text>
-                    </Card.Body>
-                    <ListGroup className="list-group-flush">
-                        <ListGroupItem>Cras justo odio</ListGroupItem>
-                        <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
-                        <ListGroupItem>Vestibulum at eros</ListGroupItem>
-                    </ListGroup>
-                    <Card.Body>
-                        <Card.Link href="#">Card Link</Card.Link>
-                        <Card.Link href="#">Another Link</Card.Link>
-                    </Card.Body>
-                </Card> */}
             </div>
         </>
     );
