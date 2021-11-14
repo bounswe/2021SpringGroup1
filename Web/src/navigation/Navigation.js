@@ -12,6 +12,9 @@ import landingPage from 'screens/landingPage';
 import CreatePostTemplate from 'screens/createPostTemplate';
 import CreatePostPage from 'screens/createPostPage';
 import MyPosts from 'screens/myPosts';
+import MyCommunitiesPage from 'screens/myCommunitiesPage';
+import AllCommunitiesPage from 'screens/allCommunitiesPage';
+import CommunityPage from 'screens/communityPage';
 
 
 function withProps(Component, props) {
@@ -34,7 +37,11 @@ const Navigation = (props) => {
     <Route key={idd++} exact path={urls.createPostTemplate} component={CreatePostTemplate} />
     <Route key={idd++} exact path={urls.createPostPage} component={CreatePostPage} />
     <Route key={idd++} exact path={urls.myPosts} component={MyPosts} />
-    <Route key={idd++} path='/' component={home} />
+    <Route key={idd++} exact path={urls.myCommunities} component={MyCommunitiesPage} />
+    <Route key={idd++} exact path={urls.allCommunities} component={AllCommunitiesPage} />
+    <Route key={idd++} exact path={urls.community} component={CommunityPage} />
+
+    <Route key={idd++} exact path='/' component={home} />
   </Switch>
 
   return (
