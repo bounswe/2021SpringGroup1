@@ -31,7 +31,7 @@ const MyCommunitiesPage = props => {
 
       <div>
       {exampleData.data.map((community) => (
-      <Container style={{ width: '55rem', margin: '30px auto', backgroundColor: "gainsboro" }}>
+      <Container style={{ width: '55rem', margin: '0px auto', backgroundColor: "gainsboro" }}>
       <div >
         <Row>
           <Col>
