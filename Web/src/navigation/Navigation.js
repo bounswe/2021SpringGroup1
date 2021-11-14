@@ -11,6 +11,7 @@ import bootstrap from 'screens/bootstrap';
 import landingPage from 'screens/landingPage';
 import CreatePostTemplate from 'screens/createPostTemplate';
 import CreatePostPage from 'screens/createPostPage';
+import MyPosts from 'screens/myPosts';
 
 
 function withProps(Component, props) {
@@ -32,6 +33,7 @@ const Navigation = (props) => {
     <Route key={idd++} exact path={urls.landingPage} component={landingPage} />
     <Route key={idd++} exact path={urls.createPostTemplate} component={CreatePostTemplate} />
     <Route key={idd++} exact path={urls.createPostPage} component={CreatePostPage} />
+    <Route key={idd++} exact path={urls.myPosts} component={MyPosts} />
     <Route key={idd++} path='/' component={home} />
   </Switch>
 

@@ -10,7 +10,9 @@ export const urls = {
     'landingPage': "/landingPage",
     'createPostTemplate': "/createPostTemplate",
     'createPostPage': "/createPostPage",
+    'myPosts': "/myPosts",
 
+    
     //SPRINGBOOT
     'registration': URL + "/registration",
     'login': URL + "/login",

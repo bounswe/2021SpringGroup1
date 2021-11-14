@@ -14,8 +14,8 @@ export const SideBar = props => {
             <Menu iconShape="square">
                 <MenuItem onClick={() => history.push('/landingPage')} icon={<FaGem />}>Feed</MenuItem>
                 <MenuItem onClick={() => history.push('/createPostTemplate')} icon={<FaGem />}>Communities</MenuItem>
-                <MenuItem onClick={() => history.push('/createPostPage')} icon={<FaGem />}>My Posts</MenuItem>
-                <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>My Communities</MenuItem>
+                <MenuItem onClick={() => history.push('/myPosts')} icon={<FaGem />}>My Posts</MenuItem>
+                <MenuItem onClick={() => history.push('/createPostPage')} icon={<FaGem />}>My Communities</MenuItem>
                 <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>My Profile</MenuItem>
                 <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>Logout</MenuItem>
             </Menu>
