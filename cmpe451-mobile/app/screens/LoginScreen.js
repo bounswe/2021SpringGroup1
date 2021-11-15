@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View , Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
 
 function LoginScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -7,42 +7,47 @@ function LoginScreen({navigation}) {
 
     return (
         <View style={styles.background}>
-            <Text style={styles.title}>Your username</Text>
-            <TextInput 
-                style={styles.textInput} 
+            <Text style={styles.title}>Username:</Text>
+            <TextInput
+                style={styles.textInput}
                 placeholder="enter your username"
                 onChangeText={name => setName(name)}
-                ></TextInput>
-            <Text style={styles.title} >Your password</Text>
-            <TextInput 
+            />
+            <Text style={styles.title}>Password:</Text>
+            <TextInput
+                secureTextEntry
                 style={styles.textInput}
                 placeholder="enter your password"
                 onChangeText={pass => setPass(pass)}
-                ></TextInput>
-            <Button title="Log in"
-                    color="blue"
-                    onPress={() => checkCredential(name,pass,navigation)}/>
+            />
+            <View style={{paddingBottom: 10}}/>
+            <View style={styles.buttonView}>
+                <Button title="LOG IN"
+                        color="white"
+                        onPress={() => checkCredential(name, pass, navigation)}/>
+            </View>
+            <View style={{paddingBottom: 200}}/>
         </View>
+
     );
 }
 
 // this function should make an api call in the future
 //  checkCredential(name,pass) ? navigation.navigate("Home") : Alert.alert("Login","failed")
 //      ? navigation.navigate("Home") : Alert.alert("Login","failed")
-async function checkCredential(username,password, navigation){
+async function checkCredential(username, password, navigation) {
     console.log(username);
     const response = await loginCall(username, password);
     console.log(response);
-    if(response["Success"]){
+    if (response["Success"]) {
         navigation.navigate("Home");
-    }
-    else{
-        Alert.alert("Login","failed");
+    } else {
+        Alert.alert("Can not log in.", "Please check your username or password.");
     }
     return true
 }
 
-async function loginCall(name, pass){
+async function loginCall(name, pass) {
     const uri = 'http://54.217.117.68:8000/api/v1/protopost/login?password=' + pass + "&username=" + name
     console.log(uri)
     const res = await fetch(uri, {
@@ -71,7 +76,8 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     title: {
-        fontSize: 20
+        fontSize: 20,
+        color: "white"
     },
     textInput: {
         width: "80%",
@@ -80,9 +86,15 @@ const styles = StyleSheet.create({
         fontSize: 20,
         borderWidth: 1,
         padding: 10,
-        backgroundColor: "white"        
-    }
-
+        backgroundColor: "white",
+        borderRadius: 10,
+    },
+    buttonView: {
+        backgroundColor: "blue",
+        width: '50%',
+        padding: 10,
+        borderRadius: 10
+    },
 })
 
 export default LoginScreen;

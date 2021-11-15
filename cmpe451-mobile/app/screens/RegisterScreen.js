@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View , Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
 
 function RegisterScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -9,46 +9,49 @@ function RegisterScreen({navigation}) {
 
     return (
         <View style={styles.background}>
-            <Text style={styles.title}>Fill the form</Text>
             <Text style={styles.title}>Your unique username</Text>
-            <TextInput 
-                style={styles.textInput} 
+            <TextInput
+                style={styles.textInput}
                 placeholder="enter your username"
                 onChangeText={name => setName(name)}
-                ></TextInput>
+            />
 
             <Text style={styles.title}>Your email address</Text>
 
             <TextInput
-                style={styles.textInput} 
+                style={styles.textInput}
                 placeholder="enter your email address"
                 onChangeText={mail => setMail(mail)}
-                ></TextInput>
+            />
 
             <Text style={styles.title}>Your password</Text>
 
-            <TextInput
-                style={styles.textInput} 
-                placeholder="enter your password"
-                onChangeText={pass => setPass(pass)}
-                ></TextInput>
+            <TextInput secureTextEntry
+                       style={styles.textInput}
+                       placeholder="enter your password"
+                       onChangeText={pass => setPass(pass)}
+            />
 
             <Text style={styles.title}>Confirm your password </Text>
 
-            <TextInput 
-                style={styles.textInput} 
-                placeholder="enter your password"
-                onChangeText={pass2 => setPass2(pass2)}
-                ></TextInput>
-
-            <Button 
-                title="Register"
-                color="blue"
-                onPress={() => makeRegistration(name,mail,pass)}
+            <TextInput secureTextEntry
+                       style={styles.textInput}
+                       placeholder="enter your password"
+                       onChangeText={pass2 => setPass2(pass2)}
+            />
+            <View style={{paddingBottom: 10}}/>
+            <View style={styles.buttonView}>
+                <Button
+                    title="REGISTER"
+                    color="white"
+                    onPress={() => makeRegistration(name, mail, pass)}
                 />
+            </View>
+            <View style={{paddingBottom: 100}}/>
         </View>
     );
 }
+
 // This needs an api call and before that, needs to make some checks:
 // password match
 // username and password length
@@ -62,11 +65,11 @@ function RegisterScreen({navigation}) {
 // })
 
 
-async function makeRegistration(name, mail, pass){
-    const response = await registerCall(name,mail,pass);
+async function makeRegistration(name, mail, pass) {
+    const response = await registerCall(name, mail, pass);
     //console.log(response)
-    if(response["Success"]){
-        Alert.alert("Registration","Registration Successful!")
+    if (response["Success"]) {
+        Alert.alert("Registration", "Registration Successful!")
         return true
     }
     console.log(response["Message"])
@@ -74,22 +77,22 @@ async function makeRegistration(name, mail, pass){
     let mailErrorMessage = ""
     let passErrorMessage = ""
     let message = "error"
-    if(response["Message"].hasOwnProperty('username')){
+    if (response["Message"].hasOwnProperty('username')) {
         userErrorMessage = "username: " + response["Message"]["username"][0] + "\n"
     }
-    if(response["Message"].hasOwnProperty('email')){
+    if (response["Message"].hasOwnProperty('email')) {
         mailErrorMessage = "email: " + response["Message"]["email"][0] + "\n"
     }
-    if(response["Message"].hasOwnProperty('password')){
+    if (response["Message"].hasOwnProperty('password')) {
         passErrorMessage = "password: " + response["Message"]["password"][0] + "\n"
     }
 
     message = userErrorMessage + mailErrorMessage + passErrorMessage
-    Alert.alert("Registration Error",message)
+    Alert.alert("Registration Error", message)
     return false
 }
 
-async function registerCall(name, mail, pass){
+async function registerCall(name, mail, pass) {
     const res = await fetch('http://54.217.117.68:8000/api/v1/protopost/register', {
         method: 'POST',
         headers: {
@@ -124,8 +127,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 10,
         backgroundColor: "white",
-        
-    }
-
+        borderRadius: 10
+    },
+    buttonView: {
+        backgroundColor: "blue",
+        width: '50%',
+        padding: 10,
+        borderRadius: 10
+    },
 })
 export default RegisterScreen;
