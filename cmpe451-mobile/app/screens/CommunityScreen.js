@@ -11,7 +11,7 @@ function CommunityScreen({route, navigation}) {
         <View style={styles.background}>
             <View style={styles.banner}>
                 <Text style={styles.commTitle}>{communData.name}</Text>
-                <Button title="Subscribe"></Button>
+                <Button style={styles.button}title="Subscribe"></Button>
             </View>
             <View style={styles.body}>
                 <FlatList
@@ -76,10 +76,13 @@ const styles = StyleSheet.create({
         height: 75
     },
     postTitle: {
-        fontSize:20
+        fontSize: 20
     },
     postDescription: {
         fontSize:15
+    },
+    button: {
+        width: "50%"
     }
 
 })

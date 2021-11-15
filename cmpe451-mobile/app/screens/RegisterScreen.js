@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { View , Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
 
 function RegisterScreen({navigation}) {
@@ -44,7 +44,7 @@ function RegisterScreen({navigation}) {
             <Button 
                 title="Register"
                 color="blue"
-                onPress={() => makeRegistration(name,mail,pass) ? Alert.alert("Registration","There is no registration check yet") : Alert.alert("Registration","failed") }
+                onPress={() => makeRegistration(name,mail,pass)}
                 />
         </View>
     );
@@ -54,11 +54,55 @@ function RegisterScreen({navigation}) {
 // username and password length
 // non special characters on username
 
-function makeRegistration(username, email, password){
-    if(username.length < 6 || email.length < 6 || password.length < 6){
-        return false;
+// const data = {foo:1, bar:2};
+
+// fetch(`https://api.parse.com/1/users?foo=${encodeURIComponent(data.foo)}&bar=${encodeURIComponent(data.bar)}`, {
+//   method: "GET",
+//   headers: headers,   
+// })
+
+
+async function makeRegistration(name, mail, pass){
+    const response = await registerCall(name,mail,pass);
+    //console.log(response)
+    if(response["Success"]){
+        Alert.alert("Registration","Registration Successful!")
+        return true
     }
-    return true
+    console.log(response["Message"])
+    let userErrorMessage = ""
+    let mailErrorMessage = ""
+    let passErrorMessage = ""
+    let message = "error"
+    if(response["Message"].hasOwnProperty('username')){
+        userErrorMessage = "username: " + response["Message"]["username"][0] + "\n"
+    }
+    if(response["Message"].hasOwnProperty('email')){
+        mailErrorMessage = "email: " + response["Message"]["email"][0] + "\n"
+    }
+    if(response["Message"].hasOwnProperty('password')){
+        passErrorMessage = "password: " + response["Message"]["password"][0] + "\n"
+    }
+
+    message = userErrorMessage + mailErrorMessage + passErrorMessage
+    Alert.alert("Registration Error",message)
+    return false
+}
+
+async function registerCall(name, mail, pass){
+    const res = await fetch('http://54.217.117.68:8000/api/v1/protopost/register', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            username: name,
+            email: mail,
+            password: pass
+        })
+    });
+    return await res.json();
 }
 
 const styles = StyleSheet.create({

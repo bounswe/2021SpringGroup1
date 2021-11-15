@@ -1,6 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { Button, View , Text, StyleSheet, TextInput, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View , Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
 
 function LoginScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -22,18 +21,46 @@ function LoginScreen({navigation}) {
                 ></TextInput>
             <Button title="Log in"
                     color="blue"
-                    onPress={() => checkCredential(name,pass) ? navigation.navigate("Home") : Alert.alert("Login","failed")}/>
+                    onPress={() => checkCredential(name,pass,navigation)}/>
         </View>
     );
 }
 
 // this function should make an api call in the future
-function checkCredential(username,password){
-    if (username === "A" && password === "B"){
-        return true;
+//  checkCredential(name,pass) ? navigation.navigate("Home") : Alert.alert("Login","failed")
+//      ? navigation.navigate("Home") : Alert.alert("Login","failed")
+async function checkCredential(username,password, navigation){
+    console.log(username);
+    const response = await loginCall(username, password);
+    console.log(response);
+    if(response["Success"]){
+        navigation.navigate("Home");
     }
-    return false;
+    else{
+        Alert.alert("Login","failed");
+    }
+    return true
 }
+
+async function loginCall(name, pass){
+    const uri = 'http://54.217.117.68:8000/api/v1/protopost/login?password=' + pass + "&username=" + name
+    console.log(uri)
+    const res = await fetch(uri, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+    });
+    return await res.json();
+}
+
+// const data = {foo:1, bar:2};
+
+// fetch(`https://api.parse.com/1/users?foo=${encodeURIComponent(data.foo)}&bar=${encodeURIComponent(data.bar)}`, {
+//   method: "GET",
+//   headers: headers,   
+// })
 
 const styles = StyleSheet.create({
     background: {
