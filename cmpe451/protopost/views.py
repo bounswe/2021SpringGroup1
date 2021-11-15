@@ -1,6 +1,7 @@
 from django.db.models import query
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework import response
 
 from .home import *
 from .register import *
@@ -44,6 +45,17 @@ class Register(GenericAPIView):
             return Response({"Success":True,"Message":"Successfully registered."})
         else:
             return Response({"Success":False,"Message":user_serializer.errors})
+
+class Logout(GenericAPIView):
+    serializer_class=UserSerializer
+    @extend_schema(
+        request=None,
+        response=None,
+    )
+    def post(self,req,format=None):
+        logout(req)
+        return Response({"Message" : "Logged out successfully."})
+
 
 class CreateCommunity(GenericAPIView):
     serializer_class=CommunitySerializer
@@ -107,7 +119,8 @@ class GetCommunityData(GenericAPIView):
             try:
                 community = Community.objects.get(pk = community_id)
             except:
-                return Response({"Success" : False, "Error": "Community is not found."})    
+                return Response({"Success" : False, "Error": "Community is not found."})
+            community=CommunitySerializer(community)    
             return Response({"Success" : True, "Community": community.data})
         return Response({"Success" : False, "Error": "Wrong request method."})
       
@@ -130,10 +143,15 @@ class ListCommunities(GenericAPIView):
             elif req.GET["from"]=="joined":
                 communities=req.user.joined_communities.all()
                 communities=CommunitySerializer(communities,many=True)
-                return Response(communities.data,safe=False)
+                return Response(communities.data)
         return Response({"Success" : False, "Error": "Wrong request."})
 
 class UserSubscriptionStatus(GenericAPIView):
+    serializer_class=User
+    @extend_schema(
+        request=None,
+        response=None,
+    )
     def get(self,req,community_id):
         if req.user.is_authenticated:
             try:
@@ -147,21 +165,29 @@ class UserSubscriptionStatus(GenericAPIView):
                 return Response({"Success" : True, "IsJoined": False})
                         
         return Response({"Success":False, "Error": "User is not authenticated"})
-    
+    @extend_schema(
+        parameters=[
+          OpenApiParameter("action", OpenApiTypes.STR, OpenApiParameter.QUERY),
+        ],
+        request=None,
+        response=None,
+    )
     def put(self,req,community_id):
         if req.user.is_authenticated:
             try:
                 community = Community.objects.get(pk = community_id)
             except:
                 return Response({"Success" : False, "Error": "Community is not found."})
-            if req.POST["subscribe"]:
+            if not "action" in req.GET:
+                return Response({"Success" : False, "Error": "Action is not defined."})
+            if req.GET["action"]=="join":
                 if community in req.user.joined_communities:
                     return Response({"Success" : False, "Error": "User is already in community."})
                 else:
                     community.joined_users.add(req.user)
                     community.save()
                     return Response({"Success" : True, "IsJoined": True})
-            else:
+            elif req.GET["action"]=="leave":
                 if community in req.user.joined_communities:
                     if community.moderator == req.user:
                         return Response({"Success" : False, "Error": "User is the moderator community."})
@@ -170,6 +196,8 @@ class UserSubscriptionStatus(GenericAPIView):
                     return Response({"Success" : True, "IsJoined": False})
                 else:
                     return Response({"Success" : False, "Error": "User is not in community."})
+            else:
+                return Response({"Success" : False, "Error": "Action if not specified correctly."})
         return Response({"Success":False, "Error": "User is not authenticated"})
 
 class ListPostTemplates(GenericAPIView):
@@ -197,9 +225,8 @@ class ListCommunityPosts(GenericAPIView):
         return Response({"Success":False, "Error": "No Authentication"})
 
 
-
-#TODO: Implementation required.
-class ListUserCreatedPosts(GenericAPIView):
+class GetUserHomeFeed(GenericAPIView):
+    serializer_class= PostSerializer
     def get(req):
         if req.user.is_authenticated:
             communities=req.user.joined_communities.all()
@@ -207,10 +234,19 @@ class ListUserCreatedPosts(GenericAPIView):
             for community in communities:
                 post_set.union(community.posts)
             ordered_set=post_set.order_by('created_date')
-            
-            return JsonResponse(post_array)
+            post_array=PostSerializer(ordered_set,many=True)
+            return Response(post_array.data)
         else:
-            return JsonResponse({})
+            return Response({"Success":False, "Error": "No Authentication"})
+
+class GetUserCreatedPosts(GenericAPIView):
+    serializer_class=PostSerializer
+    def get(req):
+        if req.user.is_authenticated:
+            post_array=PostSerializer(req.user.posts.all(),many=True)
+            return Response(post_array.data)
+        else:
+            return Response({"Success":False, "Error": "No Authentication"})
 
 
 

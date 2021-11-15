@@ -17,16 +17,15 @@ class UserSerializer(serializers.ModelSerializer):
 class CommunitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Community
-        fields = ["name","description","community_image_url","moderator"]
-        read_only_fields=["moderator"]
+        fields = ["id","name","description","community_image_url","moderator"]
+        read_only_fields=["moderator","id"]
     
     def to_representation(self, instance):
-        representation = {}
-        if instance.name!='': #condition
-            representation['@context']= "http://schema.org/"
-            representation['@type']= "Organization"
-            representation.update(super().to_representation(instance))
-            return representation
+        representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "Organization"
+        }
+        representation.update(super().to_representation(instance))
         return representation
     
 
@@ -90,18 +89,10 @@ class PostSerializer(serializers.ModelSerializer):
         attrs = super().validate(attrs)
         if "data_fields" in attrs and "post_template" in attrs:
             data_fields=attrs["data_fields"]
-            #post_template=PostTemplate.objects.get(pk=attrs["post_template"])
             df_name_value_pairs=[(df["name"],df["type"]) for df in data_fields]
             dft_name_value_pairs=[(dft.name,dft.type) for dft in attrs["post_template"].data_field_templates.all()]
             if not df_name_value_pairs == dft_name_value_pairs:
                 raise ValidationError("Data fields does not match")
         return attrs
 
-    
-# class PostTemplateReturningSerializer(serializers.ModelSerializer):
-#     data_field_templates=DataFieldTempSerializer(many=True, source="post_template_id")
-#     class Meta:
-#         model = PostTemplate
-#         fields = ['id','community',"name","data_field_templates"]
-#         read_only_fields=['id','community']
 
