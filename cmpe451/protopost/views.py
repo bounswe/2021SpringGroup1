@@ -50,7 +50,7 @@ class Logout(GenericAPIView):
     serializer_class=UserSerializer
     @extend_schema(
         request=None,
-        response=None,
+        responses=None,
     )
     def post(self,req,format=None):
         logout(req)
@@ -147,10 +147,10 @@ class ListCommunities(GenericAPIView):
         return Response({"Success" : False, "Error": "Wrong request."})
 
 class UserSubscriptionStatus(GenericAPIView):
-    serializer_class=User
+    serializer_class=UserSerializer
     @extend_schema(
         request=None,
-        response=None,
+        responses=None,
     )
     def get(self,req,community_id):
         if req.user.is_authenticated:
@@ -170,7 +170,7 @@ class UserSubscriptionStatus(GenericAPIView):
           OpenApiParameter("action", OpenApiTypes.STR, OpenApiParameter.QUERY),
         ],
         request=None,
-        response=None,
+        responses=None,
     )
     def put(self,req,community_id):
         if req.user.is_authenticated:
