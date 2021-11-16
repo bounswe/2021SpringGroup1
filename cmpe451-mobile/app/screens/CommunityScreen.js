@@ -72,7 +72,14 @@ function CommunityScreen({route, navigation}) {
                 }
             });
         } else {
-            axiosInstance.put(uri, {action: "join"}, {withCredentials: true}).then(async response => {
+            console.log(uri);
+            //console.log(axiosInstance.defaults.baseURL);
+            axiosInstance.put(uri, JSON.stringify({action: "join"}), {
+                withCredentials: true, headers: {
+                    'X-CSRFTOKEN': 'f2c2e43d816a5668da7f7c9bc54c8a7dd1f5be3f'
+                }
+            }).then(async response => {
+                console.log(2);
                 if (response.status === 200) {
                     if (response.data["Success"]) {
                         if (response.data["IsJoined"]) {
