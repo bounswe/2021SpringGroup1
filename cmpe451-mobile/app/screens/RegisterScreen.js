@@ -9,42 +9,37 @@ function RegisterScreen({navigation}) {
 
     return (
         <View style={styles.background}>
-            <Text style={styles.title}>Your unique username</Text>
             <TextInput
+                autoCapitalize="none"
                 style={styles.textInput}
-                placeholder="enter your username"
+                placeholder="unique username"
                 onChangeText={name => setName(name)}
             />
-
-            <Text style={styles.title}>Your email address</Text>
-
+            <View style={{paddingBottom: 5}}/>
             <TextInput
+                autoCapitalize="none"
                 style={styles.textInput}
-                placeholder="enter your email address"
+                placeholder="email address"
                 onChangeText={mail => setMail(mail)}
             />
-
-            <Text style={styles.title}>Your password</Text>
-
+            <View style={{paddingBottom: 5}}/>
             <TextInput secureTextEntry
                        style={styles.textInput}
-                       placeholder="enter your password"
+                       placeholder="password"
                        onChangeText={pass => setPass(pass)}
             />
-
-            <Text style={styles.title}>Confirm your password </Text>
-
+            <View style={{paddingBottom: 5}}/>
             <TextInput secureTextEntry
                        style={styles.textInput}
-                       placeholder="enter your password"
+                       placeholder="confirm password"
                        onChangeText={pass2 => setPass2(pass2)}
             />
-            <View style={{paddingBottom: 10}}/>
+            <View style={{paddingBottom: 20}}/>
             <View style={styles.buttonView}>
                 <Button
-                    title="REGISTER"
+                    title="Register"
                     color="white"
-                    onPress={() => makeRegistration(name, mail, pass)}
+                    onPress={() => makeRegistration(name, mail, pass, pass2)}
                 />
             </View>
             <View style={{paddingBottom: 100}}/>
@@ -65,14 +60,32 @@ function RegisterScreen({navigation}) {
 // })
 
 
-async function makeRegistration(name, mail, pass) {
+async function makeRegistration(name, mail, pass, pass2) {
+    if (pass !== pass2) {
+        Alert.alert("Can not register.", "The passwords do not match.");
+        return false;
+    }
+    if (pass.length < 4) {
+        Alert.alert("Can not register.", "The password is too short.");
+        return false;
+    }
+    let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+    if (!reg.test(mail)) {
+        Alert.alert("Can not register.", "Please enter a valid email address.");
+        return false;
+    }
+    reg = /^\w[\w.]{2,18}\w$/;
+    if (reg.test(name)) {
+        Alert.alert("Can not register.", "Please enter a valid username.");
+        return false;
+    }
     const response = await registerCall(name, mail, pass);
     //console.log(response)
     if (response["Success"]) {
-        Alert.alert("Registration", "Registration Successful!")
-        return true
+        Alert.alert("Registration", "Registration Successful!");
+        return true;
     }
-    console.log(response)
+    console.log(response);
     let userErrorMessage = ""
     let mailErrorMessage = ""
     let passErrorMessage = ""
@@ -112,7 +125,7 @@ const styles = StyleSheet.create({
     background: {
         width: "100%",
         height: "100%",
-        backgroundColor: "dodgerblue",
+        backgroundColor: "white",
         justifyContent: "center",
         alignItems: "center"
     },
@@ -124,16 +137,15 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 10,
         fontSize: 20,
-        borderWidth: 1,
+        borderWidth: 0.7,
         padding: 10,
         backgroundColor: "white",
-        borderRadius: 10
+        borderColor: "gray"
     },
     buttonView: {
-        backgroundColor: "blue",
+        backgroundColor: "rgb(39, 84, 125)",
         width: '50%',
         padding: 10,
-        borderRadius: 10
     },
 })
 export default RegisterScreen;

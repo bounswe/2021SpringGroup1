@@ -23,6 +23,35 @@ function UserCommunitiesScreen({navigation}) {
             }
         })
     }
+    /*
+    const techno = {
+        "community": 3,
+        "name": "Event",
+        "description": "A techno event taking place at a specific time and place.",
+        "data_field_templates": [
+            {
+                "name": "Organizer",
+                "type": "text",
+                "post_template": 1
+            },
+            {
+                "name": "Date",
+                "type": "text",
+                "post_template": 1
+            },
+            {
+                "name": "Venue",
+                "type": "text",
+                "post_template": 1
+            },
+            {
+                "name": "Poster",
+                "type": "image",
+                "post_template": 1
+            },
+        ]
+    };
+    */
 
 
     return (

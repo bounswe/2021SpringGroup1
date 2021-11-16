@@ -2,6 +2,10 @@ import React from 'react';
 import { Button, Image, ImageBackground, StyleSheet, Text, View} from 'react-native';
 
 function WelcomeScreen({ navigation }) {
+    const lightBlue = 'rgb(77, 160, 240)'
+    const midBlue = 'rgb(61, 130, 195)'
+    const darkBlue = 'rgb(39, 84, 125)'
+
     return (
         <View 
         style={styles.background}>
@@ -12,14 +16,14 @@ function WelcomeScreen({ navigation }) {
             <View style={styles.loginButton}>
                 <Button
                     title="Log in"
-                    color="red"
+                    color="white"
                     onPress={() => navigation.navigate('Login')}
                 />
             </View>
             <View style={styles.registerButton}>
                 <Button
                     title="Register"
-                    color="blue"
+                    color="white"
                     onPress={() => navigation.navigate('Register')}
                 />
             </View>
@@ -38,13 +42,13 @@ const styles = StyleSheet.create({
     loginButton: {
         width: "100%",
         height: 70,
-        backgroundColor: "#fc5c65",
+        backgroundColor: "rgb(77, 160, 240)",
         justifyContent: "center"
     },
     registerButton: {
         width: "100%",
         height: 70,
-        backgroundColor: "dodgerblue",
+        backgroundColor: "rgb(39, 84, 125)",
         justifyContent: "center"
     },
     logo: {
@@ -58,7 +62,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 40,
-        color: "#003366"
+        color: "rgb(39, 84, 125)",
+        fontWeight: "700"
     },
 })
 

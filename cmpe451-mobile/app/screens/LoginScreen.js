@@ -8,22 +8,22 @@ function LoginScreen({navigation}) {
 
     return (
         <View style={styles.background}>
-            <Text style={styles.title}>Username:</Text>
             <TextInput
+                autoCapitalize="none"
                 style={styles.textInput}
-                placeholder="enter your username"
+                placeholder="username"
                 onChangeText={name => setName(name)}
             />
-            <Text style={styles.title}>Password:</Text>
+            <View style={{paddingBottom: 5}}/>
             <TextInput
                 secureTextEntry
                 style={styles.textInput}
-                placeholder="enter your password"
+                placeholder="password"
                 onChangeText={pass => setPass(pass)}
             />
-            <View style={{paddingBottom: 10}}/>
+            <View style={{paddingBottom: 20}}/>
             <View style={styles.buttonView}>
-                <Button title="LOG IN"
+                <Button title="Log in"
                         color="white"
                         onPress={() => checkCredential(name, pass, navigation)}/>
             </View>
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     background: {
         width: "100%",
         height: "100%",
-        backgroundColor: "#fc5c65",
+        backgroundColor: "white",
         justifyContent: "center",
         alignItems: "center"
     },
@@ -89,16 +89,15 @@ const styles = StyleSheet.create({
         height: 50,
         margin: 10,
         fontSize: 20,
-        borderWidth: 1,
+        borderWidth: 0.7,
         padding: 10,
         backgroundColor: "white",
-        borderRadius: 10,
+        borderColor: "gray"
     },
     buttonView: {
-        backgroundColor: "blue",
+        backgroundColor: "rgb(77, 160, 240)",
         width: '50%',
         padding: 10,
-        borderRadius: 10
     },
 })
 
