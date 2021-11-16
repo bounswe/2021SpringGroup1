@@ -11,11 +11,11 @@ const Drawer = createDrawerNavigator();
 
 function Home(props) {
     return (
-        <Drawer.Navigator initialRouteName="UserPosts">
-            <Drawer.Screen name="Feed" component={FeedScreen} />
+        <Drawer.Navigator initialRouteName="User Posts">
+            <Drawer.Screen name="All Posts" component={FeedScreen} />
             <Drawer.Screen name="Communities" component={AllCommunitiesScreen} />
-            <Drawer.Screen name="UserPosts" component={UserPostsScreen}/>
-            <Drawer.Screen name="UserCommunities" component={UserCommunitiesScreen}/>
+            <Drawer.Screen name="User Posts" component={UserPostsScreen}/>
+            <Drawer.Screen name="User Communities" component={UserCommunitiesScreen}/>
             <Drawer.Screen name="Settings" component={SettingsScreen}/>
         </Drawer.Navigator>
 
