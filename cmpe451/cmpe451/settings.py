@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'coreapi',
     'drf_yasg',
+    'corsheaders',
 ]
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_CREDENTIALS=True
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Protopost API',
     'DESCRIPTION': 'Your project description',
@@ -53,6 +56,7 @@ SPECTACULAR_SETTINGS = {
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

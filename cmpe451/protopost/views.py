@@ -143,7 +143,7 @@ class ListCommunities(GenericAPIView):
                 communities=req.user.joined_communities.all()
                 communities=CommunitySerializer(communities,many=True)
                 return Response(communities.data)
-        return Response({"Success" : False, "Error": "Wrong request."})
+        return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class UserSubscriptionStatus(GenericAPIView):
     serializer_class=UserSerializer
@@ -226,21 +226,16 @@ class ListCommunityPosts(GenericAPIView):
 
 class GetUserHomeFeed(GenericAPIView):
     serializer_class= PostSerializer
-    def get(req):
+    def get(self,req):
         if req.user.is_authenticated:
-            communities=req.user.joined_communities.all()
-            post_set=QuerySet()
-            for community in communities:
-                post_set.union(community.posts)
-            ordered_set=post_set.order_by('created_date')
-            post_array=PostSerializer(ordered_set,many=True)
+            post_array=PostSerializer(Post.objects.all(),many=True)
             return Response(post_array.data)
         else:
             return Response({"Success":False, "Error": "No Authentication"})
 
 class GetUserCreatedPosts(GenericAPIView):
     serializer_class=PostSerializer
-    def get(req):
+    def get(self,req):
         if req.user.is_authenticated:
             post_array=PostSerializer(req.user.posts.all(),many=True)
             return Response(post_array.data)
