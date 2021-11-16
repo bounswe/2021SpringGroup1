@@ -1,12 +1,33 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { View , Text, StyleSheet, FlatList, Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
+import {axiosInstance} from "../service/axios_client_service";
 
 
 function FeedScreen({navigation}) {
-    const items = getUserFeed();
+    //const items = getUserFeed();
+    
+    const [userFeed, changeFeed] = useState([]);
 
+    useEffect(() => {
+            getUserFeed();
+        },[]
+    );
+
+    const getUserFeed = () => {
+        axiosInstance.get('get_user_home_feed'
+        ).then(async response => {
+            if (response.status === 200) {
+                console.log("getting user feed success!");
+                changeFeed(response.data);
+            }
+            else{
+                console.log("error on getUserFeed")
+            }
+        })
+    }
+
+    
     return (
         <View style={styles.background}>
             <View style={styles.titleContainer}>
@@ -16,12 +37,11 @@ function FeedScreen({navigation}) {
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     style={styles.flatList}
-                    data={items}
+                    data={userFeed}
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.postContainer}
                             onPress={() => navigation.navigate("Post",{postData: item})}>
                             <Text style={styles.postTitle}>{item.title}</Text>
-                            <Text style={styles.postDescription}> {item.description} </Text>
                         </TouchableOpacity>
                     )}
                 />
@@ -31,16 +51,16 @@ function FeedScreen({navigation}) {
 }
 
 
-// this should be an api call that returns a json like this.
-function getUserFeed(){
-    return [{title: "title1", description: "This is a description for this post", data_fields:[]},
-    {title: "title2", description: "desc2", data_fields:[]},
-    {title: "title3", description: "desc3", data_fields:[]},
-    {title: "title4", description: "desc4", data_fields:[]},
-    {title: "title5", description: "desc5", data_fields:[]},
-    {title: "title6", description: "desc6", data_fields:[]},
-    ];
-}   
+// // this should be an api call that returns a json like this.
+// function getUserFeed(){
+//     return [{title: "title1", description: "This is a description for this post", data_fields:[]},
+//     {title: "title2", description: "desc2", data_fields:[]},
+//     {title: "title3", description: "desc3", data_fields:[]},
+//     {title: "title4", description: "desc4", data_fields:[]},
+//     {title: "title5", description: "desc5", data_fields:[]},
+//     {title: "title6", description: "desc6", data_fields:[]},
+//     ];
+// }   
   
 const styles = StyleSheet.create({
     background:{
