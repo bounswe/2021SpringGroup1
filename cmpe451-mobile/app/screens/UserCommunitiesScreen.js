@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Button} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Button, Image} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
-import {Image} from "react-native-web";
 
 
 function UserCommunitiesScreen({navigation}) {
-    console.log("b");
     const [userCommunities, changeCommunities] = useState([]);
 
     useEffect(() => {
@@ -21,7 +19,7 @@ function UserCommunitiesScreen({navigation}) {
         }).then(async response => {
             if (response.status === 200) {
                 console.log("getting user communities success!");
-                changeCommunities(response.data["Communities"]);
+                changeCommunities(response.data);
             }
         })
     }
@@ -37,7 +35,8 @@ function UserCommunitiesScreen({navigation}) {
                     //keyExtractor={(item) => item.id}
                     data={userCommunities}
                     renderItem={({item}) => (
-                        <View>
+                        <View style={styles.comms}>
+                            <Image source={{uri: item["community_image_url"]}} style={styles.tinyLogo}/>
                             <Button title={item["name"]}
                                     style={styles.item}
                                     onPress={() => navigation.navigate("Community", {communData: item})}/>
@@ -73,7 +72,16 @@ const styles = StyleSheet.create({
     item: {
         fontSize: 20,
         padding: 5
-    }
+    },
+    tinyLogo: {
+        width: 35,
+        height: 35,
+    },
+    comms: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 5
+    },
 })
 
 export default UserCommunitiesScreen;
