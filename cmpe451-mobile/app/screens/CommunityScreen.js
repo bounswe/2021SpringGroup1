@@ -61,7 +61,7 @@ function CommunityScreen({route, navigation}) {
     async function communitySubscribe() {
         let uri = 'communities/' + commData["id"] + '/user_subscription';
         if (subscriptionStatus) {
-            axiosInstance.put(uri, JSON.stringify({action: "leave"})).then(async response => {
+            axiosInstance.put(uri, {action: "leave"}, {withCredentials: true}).then(async response => {
                 if (response.status === 200) {
                     if (response.data["Success"]) {
                         if (!response.data["IsJoined"]) {
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     banner: {
         backgroundColor: "lightblue",
         width: "100%",
-        height: "20%"
+        height: "30%"
     },
     body: {
         backgroundColor: "dodgerblue",

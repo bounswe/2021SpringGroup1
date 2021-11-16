@@ -31,7 +31,7 @@ function FeedScreen({navigation}) {
     return (
         <View style={styles.background}>
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>User Feed</Text>
+                <Text style={styles.title}>All Posts</Text>
             </View>
             <View style={styles.listContainer}>
                 <FlatList
