@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
+import {axiosInstance} from "../service/axios_client_service";
 
 function LoginScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -48,16 +49,18 @@ async function checkCredential(username, password, navigation) {
 }
 
 async function loginCall(name, pass) {
-    const uri = 'http://54.217.117.68:8000/api/v1/protopost/login?password=' + pass + "&username=" + name
-    console.log(uri)
-    const res = await fetch(uri, {
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        },
-    });
-    return await res.json();
+    //const uri = 'http://54.217.117.68:8000/api/v1/protopost/login?password=' + pass + "&username=" + name
+    //console.log(uri)
+    const res = axiosInstance.get(
+        'http://54.217.117.68:8000/api/v1/protopost/login', {
+            params: {
+                username: name,
+                password: pass
+            },
+            withCredentials: true
+        }
+    );
+    return (await res).data;
 }
 
 // const data = {foo:1, bar:2};

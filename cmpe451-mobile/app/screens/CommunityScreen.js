@@ -1,17 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Button, FlatList, TouchableOpacity} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
-
+import Cookies from 'js-cookie'
+import axios from "axios";
 
 function CommunityScreen({route, navigation}) {
-
+    const {communData} = route.params;
     const [posts, changePosts] = useState([]);
-    const [commData, changeCommData] = useState({
-        "name": "name",
-        "description": "description",
-        "community_image_url": "string",
-        "moderator": 0
-    });
+    const [commData, changeCommData] = useState(communData);
+    let [subscriptionStatus, changeSubscriptionStatus] = useState(false);
 
     useEffect(() => {
             getCommunityPosts();
@@ -23,32 +20,70 @@ function CommunityScreen({route, navigation}) {
         }, []
     );
 
+    useEffect(() => {
+            checkSubscriptionStatus();
+        }, []
+    );
+
     const getCommunityPosts = () => {
-        let uri = 'communities/' + 1 + '/list_community_posts';
-        axiosInstance.get(uri, {
-            params: {
-                community_id: 1
-            }
-        }).then(async response => {
+        let uri = 'communities/' + commData["id"] + '/list_community_posts';
+        axiosInstance.get(uri, {}).then(async response => {
             if (response.status === 200) {
-                console.log("getting comm posts success!");
-                //console.log(response.data);
+                //console.log("getting comm posts success!");
                 changePosts(response.data);
             }
         })
     }
     const getCommunityData = () => {
-        let uri = 'communities' + 1 + 'get_community_data';
+        let uri = 'communities/' + commData["id"] + '/get_community_data';
         axiosInstance.get(uri, {
-            params: {
-                community_id: 1
-            }
+            params: {}
         }).then(async response => {
             if (response.status === 200) {
-                console.log("getting comm data success!");
-                changeCommData(response.data);
+                //console.log("getting comm data success!");
+                changeCommData(response.data["Community"]);
             }
         })
+    }
+
+    const checkSubscriptionStatus = () => {
+        let uri = 'communities/' + commData["id"] + '/user_subscription';
+        axiosInstance.get(uri, {}).then(async response => {
+            if (response.status === 200) {
+                //console.log("getting subs data success!");
+                changeSubscriptionStatus(response.data["IsJoined"]);
+            }
+        })
+    }
+
+    //gives an error with code 403. could not get it to work.
+    //presumably, to get it to work we need to pass a header called 'X-CSRFTOKEN'
+    async function communitySubscribe() {
+        let uri = 'communities/' + commData["id"] + '/user_subscription';
+        if (subscriptionStatus) {
+            axiosInstance.put(uri, JSON.stringify({action: "leave"})).then(async response => {
+                if (response.status === 200) {
+                    if (response.data["Success"]) {
+                        if (!response.data["IsJoined"]) {
+                            console.log("successfully left community");
+                            subscriptionStatus = false;
+                        }
+                    }
+                }
+            });
+        } else {
+            axiosInstance.put(uri, {action: "join"}, {withCredentials: true}).then(async response => {
+                if (response.status === 200) {
+                    if (response.data["Success"]) {
+                        if (response.data["IsJoined"]) {
+                            console.log("successfully joined community");
+                            subscriptionStatus = true;
+                        }
+                    }
+                }
+            });
+
+        }
     }
 
     return (
@@ -56,7 +91,8 @@ function CommunityScreen({route, navigation}) {
         <View style={styles.background}>
             <View style={styles.banner}>
                 <Text style={styles.commTitle}>{commData["name"]}</Text>
-                <Button style={styles.button} title="Subscribe"/>
+                <Button style={styles.button} title={subscriptionStatus ? "Leave" : "Subscribe"}
+                        onPress={() => communitySubscribe()}/>
                 <Text style={styles.commDescription}> {commData["description"]}</Text>
             </View>
             <View style={styles.body}>
@@ -100,7 +136,6 @@ const styles = StyleSheet.create({
         height: "20%"
     },
     body: {
-
         backgroundColor: "dodgerblue",
         width: "100%",
         height: "80%",
@@ -133,7 +168,6 @@ const styles = StyleSheet.create({
     button: {
         width: "50%"
     }
-
 })
 
 export default CommunityScreen;
