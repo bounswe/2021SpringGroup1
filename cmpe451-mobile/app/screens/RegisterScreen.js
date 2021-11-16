@@ -72,7 +72,7 @@ async function makeRegistration(name, mail, pass) {
         Alert.alert("Registration", "Registration Successful!")
         return true
     }
-    console.log(response["Message"])
+    console.log(response)
     let userErrorMessage = ""
     let mailErrorMessage = ""
     let passErrorMessage = ""
@@ -93,7 +93,7 @@ async function makeRegistration(name, mail, pass) {
 }
 
 async function registerCall(name, mail, pass) {
-    const res = await fetch('http://54.217.117.68:8000/api/v1/protopost/register', {
+    const res = await fetch('http://3.249.82.166:8000/api/v1/protopost/register', {
         method: 'POST',
         headers: {
             Accept: 'application/json',
