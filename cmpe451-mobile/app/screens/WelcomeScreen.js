@@ -6,8 +6,8 @@ function WelcomeScreen({ navigation }) {
         <View 
         style={styles.background}>
             <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require("../assets/logo.png")} />
-                <Text>Protopost</Text>
+                <Image style={styles.logo} source={{uri: "https://allisonpastordesigns.com/wp-content/uploads/2018/09/pp-logo-blue-03.png"}} />
+                <Text style={styles.title}>Protopost</Text>
             </View>
             <View style={styles.loginButton}>
                 <Button
@@ -55,7 +55,11 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 70,
         alignItems: "center"
-    }
+    },
+    title: {
+        fontSize: 40,
+        color: "#003366"
+    },
 })
 
 export default WelcomeScreen;
