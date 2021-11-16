@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Text, View, FlatList, StyleSheet, Button } from 'react-native';
+import {axiosInstance} from "../service/axios_client_service";
 
 function AllCommunitiesScreen({navigation}) {
 
-    const items = getAllCommunities();
+    console.log("c");
+    const [allCommunities, changeCommunities] = useState([]);
+
+    useEffect(() => {
+            getUserCommunities();
+        }, []
+    );
+
+    const getUserCommunities = () => {
+        axiosInstance.get('list_communities', {
+            params: {
+                from: "all"
+            }
+        }).then(async response => {
+            if (response.status === 200) {
+                console.log("getting all communities success!");
+                changeCommunities(response.data["Communities"]);
+            }
+        })
+    }
+
 
     return (
         <View style={styles.background}>
@@ -13,11 +34,13 @@ function AllCommunitiesScreen({navigation}) {
             <View style={styles.listContainer}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
-                    data={items}
-                    renderItem={({ item }) => (
-                        <Button title={item.name}
-                        style={styles.item}
-                        onPress={() => navigation.navigate("Community", {communData:item})}/>
+                    data={allCommunities}
+                    renderItem={({item}) => (
+                        <View>
+                            <Button title={item["name"]}
+                                    style={styles.item}
+                                    onPress={() => navigation.navigate("Community", {communData: item})}/>
+                        </View>
                     )}
                 />
             </View>
@@ -25,16 +48,6 @@ function AllCommunitiesScreen({navigation}) {
     );
 }
 
-// this should be an api call that returns a json like this.
-function getAllCommunities(){
-    return [{name: "comm1"},
-    {name: "comm2"},
-    {name: "comm3"},
-    {name: "comm4"},
-    {name: "comm5"},
-    {name: "comm66"}
-    ];
-}   
 const styles = StyleSheet.create({
     background:{
         backgroundColor: "dodgerblue",

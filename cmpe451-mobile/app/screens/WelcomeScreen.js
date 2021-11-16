@@ -7,7 +7,7 @@ function WelcomeScreen({ navigation }) {
         style={styles.background}>
             <View style={styles.logoContainer}>
                 <Image style={styles.logo} source={require("../assets/logo.png")} />
-                <Text>React Tutorial</Text>
+                <Text>Protopost</Text>
             </View>
             <View style={styles.loginButton}>
                 <Button
