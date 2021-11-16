@@ -12,7 +12,6 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
@@ -159,7 +158,7 @@ class UserSubscriptionStatus(GenericAPIView):
             except:
                 return Response({"Success" : False, "Error": "Community is not found."})
             
-            if community in req.user.joined_communities:
+            if community in req.user.joined_communities.all():
                 return Response({"Success" : True, "IsJoined": True})
             else:
                 return Response({"Success" : True, "IsJoined": False})
@@ -181,14 +180,14 @@ class UserSubscriptionStatus(GenericAPIView):
             if not "action" in req.GET:
                 return Response({"Success" : False, "Error": "Action is not defined."})
             if req.GET["action"]=="join":
-                if community in req.user.joined_communities:
+                if community in req.user.joined_communities.all():
                     return Response({"Success" : False, "Error": "User is already in community."})
                 else:
                     community.joined_users.add(req.user)
                     community.save()
                     return Response({"Success" : True, "IsJoined": True})
             elif req.GET["action"]=="leave":
-                if community in req.user.joined_communities:
+                if community in req.user.joined_communities.all():
                     if community.moderator == req.user:
                         return Response({"Success" : False, "Error": "User is the moderator community."})
                     community.joined_users.remove(req.user)

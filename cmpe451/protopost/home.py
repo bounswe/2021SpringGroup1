@@ -17,7 +17,6 @@ from django.contrib.auth.models import Group
 from rest_framework.decorators import api_view,renderer_classes,schema
 from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 import json
-generator = schemas.SchemaGenerator(title='Bookings API')
 @api_view()
 @renderer_classes([renderers.OpenAPIRenderer])
 def schema_view(request):
