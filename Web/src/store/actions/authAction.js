@@ -20,7 +20,7 @@ export const register = (data) => {
         url: ROOT_URL + '/register',//PRE_LOGIN_EMAIL_REQUEST,
         headers: API_HEADERS_UNAUTHORIZED,
         data: formData,
-        // withCredentials: true,
+        withCredentials: true,
       });
       const responseData = response.data;
       console.log('responseData: ' , responseData);

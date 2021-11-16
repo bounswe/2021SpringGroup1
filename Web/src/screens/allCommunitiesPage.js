@@ -21,6 +21,13 @@ const AllCommunitiesPage = props => {
       dispatch(getCommunities());
   },[])
 
+  const subscribeCall = (e, id) => {
+    e.preventDefault();
+    dispatch(getCommunities({id, id}));
+
+
+  } 
+
   const exampleData = {
     data: [{ "id": "1", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }
       , { "id": "2", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }]
@@ -34,7 +41,7 @@ const AllCommunitiesPage = props => {
       </div>
 
       <div>
-        {exampleData.data.map((community) => (
+        {communities.map((community) => (
           <Container style={{ width: '55rem', margin: '0px auto', backgroundColor: "gainsboro", marginBottom: "30px" }}>
             <div >
               <Row>
@@ -52,7 +59,7 @@ const AllCommunitiesPage = props => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <Button variant="success">Subscribe</Button>{' '}
+                  <Button variant="success" onClick={e=>subscribeCall(e, community?.id)}>Subscribe</Button>{' '}
                 </Col>
               </Row>
             </div>

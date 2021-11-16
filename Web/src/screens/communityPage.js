@@ -18,7 +18,7 @@ const CommunityPage = (props) => {
 
   const dispatch = useDispatch();
   const {communityData, communityPosts} = useSelector(state => state.community)
-  console.log('communityData: ' , communityData);
+  console.log('communityData: ' , communityData?.Community);
   console.log('communityPosts: ' , communityPosts);
   useEffect(()=>{
       dispatch(getCommunityData(id));
@@ -56,7 +56,7 @@ const CommunityPage = (props) => {
       </div>
 
       <div>
-        {exampleData.data.map((posts) => (
+        {exampleData?.data.map((posts) => (
           <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
             <Row>
               <Col>
@@ -94,10 +94,9 @@ const CommunityPage = (props) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}>Community Name</Card.Title>
+              }}>{communityData?.Community?.name}</Card.Title>
               <Card.Text>
-                Some quick example text to build on the card title and make up the bulk of
-                the card's content.
+                {communityData?.Community?.description}
               </Card.Text>
 
 

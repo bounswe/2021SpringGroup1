@@ -18,7 +18,7 @@ const MyCommunitiesPage = props => {
   const {myCommunities} = useSelector(state => state.community)
   console.log('myCommunities: ' , myCommunities);
   useEffect(()=>{
-      dispatch(getMyCommunities());
+      dispatch(getMyCommunities({from: 'joined'}));
   },[])
 
   const exampleData = {
