@@ -4,13 +4,19 @@ import {
   CREATE_TEMPLATE,
   JOIN_COMMUNITY,
   GET_COMMUNITIES,
-  GET_MY_COMMUNITIES
-} from "../actions/community";
+  GET_MY_COMMUNITIES,
+  GET_COMMUNITY_DATA,
+  LIST_COMMUNITY_POSTS,
+  MY_POSTS
+} from "../actions/communityAction";
 
 
 const initialState = {
   communities: [],
-  myCommunities: []
+  myCommunities: [],
+  communityData: [],
+  communityPosts: [],
+  myPosts: []
 };
 
 export default (state = initialState, action) => {
@@ -32,6 +38,26 @@ export default (state = initialState, action) => {
         return {
             ...state,
             communities: action.accessToken
+        }
+    case GET_COMMUNITY_DATA:
+        return {
+            ...state,
+            communityData: action.data
+        }
+    case LIST_COMMUNITY_POSTS:
+        return {
+            ...state,
+            communityPosts: action.data
+        }
+    case CREATE_POST:
+        return {
+            ...state,
+            //TODO
+        }
+    case MY_POSTS:
+        return {
+            ...state,
+            myPosts: action.data
         }
     case GET_COMMUNITIES:
         return {

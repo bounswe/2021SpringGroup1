@@ -13,6 +13,17 @@ export const myDate = (date,language="tr") => {
 
 }
 
+export const isEmpty = value => {
+    return (
+      value == null || // Check for null or undefined
+      value == undefined || // Check for null or undefined
+      value == 'null' || // Check for null or undefined
+      value == 'undefined' || // Check for null or undefined
+      value.length === 0 || // Check for empty String (Bonus check for empty Array)
+      (typeof value === 'object' && Object.keys(value).length === 0) // Check for empty Object or Array
+    );
+  };
+
 export const myDateWithoutHour = (date) => {
     return moment(date).format('Do MMMM YYYY')
 }

@@ -8,13 +8,18 @@ import { Card, Container, ListGroup, ListGroupItem, Row, Col, Button } from 'rea
 import Image from 'react-bootstrap/Image'
 import 'assets/css/communitiesPage.css';
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getMyCommunities } from 'store/actions/communityAction';
 
 const MyCommunitiesPage = props => {
   var xd = "Title";
   const history = useHistory();
-  const handleClick = () => {
-
-  }
+  const dispatch = useDispatch();
+  const {myCommunities} = useSelector(state => state.community)
+  console.log('myCommunities: ' , myCommunities);
+  useEffect(()=>{
+      dispatch(getMyCommunities());
+  },[])
 
   const exampleData = {
     data: [{ "id": "15", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }

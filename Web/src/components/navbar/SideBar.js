@@ -3,11 +3,14 @@ import 'react-pro-sidebar/dist/css/styles.css';
 import { FaGem, FaHeart, FaRegRegistered } from "react-icons/fa";
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
+import { logout } from 'store/actions/authAction';
+import { useDispatch } from 'react-redux';
 
 
 export const SideBar = props => {
     const [isCollabsed, setIsCollabsed] = useState(true);
     const history = useHistory();
+    const dispatch = useDispatch();
     console.log('history: ', history);
     return (
         <ProSidebar collapsed={isCollabsed} style={{ position: 'fixed' }} onMouseLeave={() => setIsCollabsed(true)} onMouseOver={() => setIsCollabsed(false)}>
@@ -17,7 +20,7 @@ export const SideBar = props => {
                 <MenuItem onClick={() => history.push('/allCommunities')} icon={<FaGem />}>Communities</MenuItem>
                 <MenuItem onClick={() => history.push('/myCommunities')} icon={<FaGem />}>My Communities</MenuItem>
                 <MenuItem onClick={() => history.push('/myPosts')} icon={<FaGem />}>My Posts</MenuItem>
-                <MenuItem onClick={() => history.push('/')} icon={<FaGem />}>Logout</MenuItem>
+                <MenuItem onClick={() => {dispatch(logout());history.push('/')}} icon={<FaGem />}>Logout</MenuItem>
             </Menu>
         </ProSidebar>
     )

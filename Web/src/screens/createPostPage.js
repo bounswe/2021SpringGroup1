@@ -6,10 +6,37 @@ import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
 import { Card, Col, Container, Dropdown, DropdownButton, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { isEmpty } from 'utils/methods';
+import { createPost } from 'store/actions/communityAction';
 
 
 function CreatePostPage(props) {
     const history = useHistory();
+ //TODO complete this.
+    const [title , setTitle] = useState('');
+    const [post_template , setPost_template] = useState('');
+    const [name , setName] = useState('');
+    const dispatch = useDispatch();
+  // const {isLoginSucceed} = useSelector(state=>state.auth)
+
+  useEffect(()=>{
+    if(false) {
+      dispatch({
+        type: '',
+      })
+      // history.push('/landingPage')
+    }
+  },[])
+
+  const createPostCall = (e) => {
+    e.preventDefault();
+    // if(isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
+    //   alert('please fill all the fields');
+    //   return;
+    // }
+    dispatch(createPost({}))
+  }
 
     const exampleData = {
         data: [{ "id": "15", "name": "name1", "dataType": "Text" }, { "id": "16", "name": "name2", "dataType": "Text" }
@@ -91,7 +118,7 @@ function CreatePostPage(props) {
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button onClick={() => history.push('/community/createPostTemplate/' + props.match.params.id)} variant="success">Create Post Template</Button>{' '}
+                            <Button onClick={() => {createPostCall(); history.push('/community/createPostTemplate/' + props.match.params.id)}} variant="success">Create Post Template</Button>{' '}
                         </ListGroupItem>
                     </ListGroup>
                 </Card>

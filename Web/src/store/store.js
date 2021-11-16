@@ -2,6 +2,7 @@
 import {createStore , combineReducers,applyMiddleware } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import authReducer from './reducers/authReducer';
+import homeReducer from './reducers/homeReducer';
 import communityReducer from './reducers/communityReducer';
 import profileReducer from './reducers/profileReducer';
 import {composeWithDevTools} from 'redux-devtools-extension';
@@ -10,6 +11,7 @@ const rootReducer = combineReducers({
   auth: authReducer,
   community: communityReducer,
   profile: profileReducer,
+  home: homeReducer,
 });
 
 
