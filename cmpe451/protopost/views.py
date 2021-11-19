@@ -12,7 +12,6 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.generics import UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
 
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
@@ -144,7 +143,7 @@ class ListCommunities(GenericAPIView):
                 communities=req.user.joined_communities.all()
                 communities=CommunitySerializer(communities,many=True)
                 return Response(communities.data)
-        return Response({"Success" : False, "Error": "Wrong request."})
+        return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class UserSubscriptionStatus(GenericAPIView):
     serializer_class=UserSerializer
@@ -159,7 +158,7 @@ class UserSubscriptionStatus(GenericAPIView):
             except:
                 return Response({"Success" : False, "Error": "Community is not found."})
             
-            if community in req.user.joined_communities:
+            if community in req.user.joined_communities.all():
                 return Response({"Success" : True, "IsJoined": True})
             else:
                 return Response({"Success" : True, "IsJoined": False})
@@ -181,14 +180,14 @@ class UserSubscriptionStatus(GenericAPIView):
             if not "action" in req.GET:
                 return Response({"Success" : False, "Error": "Action is not defined."})
             if req.GET["action"]=="join":
-                if community in req.user.joined_communities:
+                if community in req.user.joined_communities.all():
                     return Response({"Success" : False, "Error": "User is already in community."})
                 else:
                     community.joined_users.add(req.user)
                     community.save()
                     return Response({"Success" : True, "IsJoined": True})
             elif req.GET["action"]=="leave":
-                if community in req.user.joined_communities:
+                if community in req.user.joined_communities.all():
                     if community.moderator == req.user:
                         return Response({"Success" : False, "Error": "User is the moderator community."})
                     community.joined_users.remove(req.user)
@@ -227,21 +226,16 @@ class ListCommunityPosts(GenericAPIView):
 
 class GetUserHomeFeed(GenericAPIView):
     serializer_class= PostSerializer
-    def get(req):
+    def get(self,req):
         if req.user.is_authenticated:
-            communities=req.user.joined_communities.all()
-            post_set=QuerySet()
-            for community in communities:
-                post_set.union(community.posts)
-            ordered_set=post_set.order_by('created_date')
-            post_array=PostSerializer(ordered_set,many=True)
+            post_array=PostSerializer(Post.objects.all(),many=True)
             return Response(post_array.data)
         else:
             return Response({"Success":False, "Error": "No Authentication"})
 
 class GetUserCreatedPosts(GenericAPIView):
     serializer_class=PostSerializer
-    def get(req):
+    def get(self,req):
         if req.user.is_authenticated:
             post_array=PostSerializer(req.user.posts.all(),many=True)
             return Response(post_array.data)
