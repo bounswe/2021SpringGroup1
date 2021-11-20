@@ -1,3 +1,4 @@
+# I created this dockerfile based on this article https://medium.com/@minghz42/docker-setup-for-django-on-mysql-1f063c9d16a0
 FROM python:3.8.5
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /protopost-backend
