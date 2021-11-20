@@ -5,6 +5,16 @@ Web/node_modules/**
 cmpe352/__pycache__/**
 cmpe352/migrations/__pycache__/**
 
+cmpe352/__pycache__/**
+cmpe352/migrations/__pycache__/**
+
+cmpe451/cmpe451/__pycache__/**
+cmpe451/cmpe451/migrations/__pycache__/**
+
+cmpe451/protopost/__pycache__/**
+cmpe451/protopost/migrations/__pycache__/**
+cmpe451/protopost/migrations/**
+
 login/__pycache__/**
 login/migrations/__pycache__/**
 
@@ -160,3 +170,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 .DS_Store
+cmpe451/protopost/migrations/0002_auto_20211109_1329.py
+cmpe451/protopost/migrations/0002_auto_20211109_2247.py
+cmpe451/protopost/migrations/0004_auto_20211112_2006.py

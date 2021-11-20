@@ -6,9 +6,27 @@ import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
 import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { getCommunityData, listCommunityPosts } from 'store/actions/communityAction';
 
 const CommunityPage = (props) => {
   const history = useHistory();
+  let listOfPath = props?.location?.pathname?.split('/');
+  let id = listOfPath[listOfPath?.length - 1];
+  console.log('id: ' , id);
+  console.log('props: ' , props?.location?.pathname?.split('/'));
+
+  const dispatch = useDispatch();
+  const {communityData, communityPosts} = useSelector(state => state.community)
+  console.log('communityData: ' , communityData?.Community);
+  console.log('communityPosts: ' , communityPosts);
+  useEffect(()=>{
+      dispatch(getCommunityData(id));
+      dispatch(listCommunityPosts(id));
+      
+  },[])
+
+
   const exampleData = {
     data: [{
       "title": "Travel", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
@@ -38,7 +56,7 @@ const CommunityPage = (props) => {
       </div>
 
       <div>
-        {exampleData.data.map((posts) => (
+        {exampleData?.data.map((posts) => (
           <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
             <Row>
               <Col>
@@ -76,10 +94,9 @@ const CommunityPage = (props) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}>Community Name</Card.Title>
+              }}>{communityData?.Community?.name}</Card.Title>
               <Card.Text>
-                Some quick example text to build on the card title and make up the bulk of
-                the card's content.
+                {communityData?.Community?.description}
               </Card.Text>
 
 

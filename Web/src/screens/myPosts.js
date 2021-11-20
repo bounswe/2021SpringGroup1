@@ -5,9 +5,18 @@ import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
 import { Button, Card, ListGroup, ListGroupItem, Col, Row, Container, FormLabel } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMyPosts } from 'store/actions/communityAction';
 
 
 const MyPosts = (props) => {
+
+  const dispatch = useDispatch();
+  const {myPosts} = useSelector(state => state.community)
+  console.log('myPosts: ' , myPosts);
+  useEffect(()=>{
+      dispatch(getMyPosts());
+  },[])
 
     const exampleData = {
         data: [{
