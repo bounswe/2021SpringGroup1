@@ -10,37 +10,36 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.generics import ListAPIView
 from rest_framework.generics import CreateAPIView
 from rest_framework.generics import UpdateAPIView
+
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
 
-class Login(GenericAPIView):
-    serializer_class=UserSerializer
-
-    @extend_schema(
-        parameters=[
-          OpenApiParameter("username", OpenApiTypes.STR, OpenApiParameter.QUERY),
-          OpenApiParameter("password", OpenApiTypes.STR, OpenApiParameter.QUERY),
-        ],
-        request=UserSerializer,
-        responses=None,
-    )
-    def get(self,req,format=None):
-        user = authenticate(username=req.query_params["username"], password=req.query_params["password"])
-        if user:
-            login(req,user)
-            return Response({"Success":True,"Message":"Successfully logged in."})
-        else:
-            return Response({"Success":False,"Message":"No user found."})
+class Login(ObtainAuthToken):
+    def post(self,req,format=None):
+        user_serializer = self.serializer_class(data=req.data, context={'request': req})
+        if user_serializer.is_valid():
+            try:
+                token = Token.objects.get(user=user_serializer.validated_data['user'])
+            except:
+                return Response({"Success":False,"Message":"No user found."})
+            return Response({"Success":True,"Token":token.key})
+        return Response({"Success":False})
+            
 
 class Register(GenericAPIView):
     serializer_class=UserSerializer
     def post(self,req,format=None):
         user_serializer=UserSerializer(data=req.data)
         if user_serializer.is_valid():
-            user_serializer.save()
+            user=user_serializer.save()
+            Token.objects.create(user=user)
             return Response({"Success":True,"Message":"Successfully registered."})
         else:
             return Response({"Success":False,"Message":user_serializer.errors})
@@ -71,23 +70,21 @@ class CreateCommunity(GenericAPIView):
 class CreatePost(GenericAPIView):
     serializer_class=PostSerializer 
     def post(self,req,community_id,format=None):
-        if req.method=="POST":
-            if req.user.is_authenticated:
-                try:
-                    community=req.user.joined_communities.get(pk=community_id)
-                except:
-                    return Response({"Success" : False,"Error": "User is not subscribed to this community."}) 
-            else:
-                return Response({"Success" : False,"Error": "User is not logged in."}) 
-            post_serializer = PostSerializer(data=req.data)
-            if post_serializer.is_valid():
-                try:
-                    post_serializer.save(poster=req.user,community=community)
-                    return Response({"Success" : True, "Post" : post_serializer.data})
-                except:
-                    return Response({"Success" : False, "Error" : "Something went wrong, is field names unique?"})
-
-            else:
+        if req.user.is_authenticated:
+            try:
+                community=req.user.joined_communities.get(pk=community_id)
+            except:
+                return Response({"Success" : False,"Error": "User is not subscribed to this community."}) 
+        else:
+            return Response({"Success" : False,"Error": "User is not logged in."}) 
+        post_serializer = PostSerializer(data=req.data)
+        if post_serializer.is_valid():
+            try:
+                post_serializer.save(poster=req.user,community=community)
+                return Response({"Success" : True, "Post" : post_serializer.data})
+            except:
+                return Response({"Success" : False, "Error" : "Something went wrong, is field names unique?"})
+        else:
                 return Response({"Success" : False, "Error" : post_serializer.errors})
 
 class CreatePostTemplate(GenericAPIView):

@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-1&no^=bc(k)bif$ot$1zx@vf#&h(5(m(6ql9)dig11b@k^2ph*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = ['3.249.82.166','127.0.0.1','localhost']
 
 
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_spectacular',
     'coreapi',
     'drf_yasg',
@@ -68,7 +69,7 @@ MIDDLEWARE = [
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
@@ -116,7 +117,7 @@ DATABASES = {
         'NAME': env("MYSQL_DATABASE"),
         'USER': env("MYSQL_USER"),
         'PASSWORD': env("MYSQL_PASSWORD"),
-        'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
