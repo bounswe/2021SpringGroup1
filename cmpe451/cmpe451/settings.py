@@ -47,8 +47,10 @@ INSTALLED_APPS = [
     'drf_yasg',
     'corsheaders',
 ]
+
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS=True
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Protopost API',
     'DESCRIPTION': 'Your project description',
