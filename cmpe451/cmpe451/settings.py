@@ -111,9 +111,9 @@ WSGI_APPLICATION = 'cmpe451.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
+        'NAME': env("MYSQL_DATABASE"),
+        'USER': env("MYSQL_USER"),
+        'PASSWORD': env("MYSQL_PASSWORD"),
         'HOST': 'db',
         'PORT': '3306',
     }
