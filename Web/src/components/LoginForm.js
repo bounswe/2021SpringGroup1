@@ -23,6 +23,7 @@ function Form() {
       history.push('/landingPage')
     }
   },[isLoginSucceed])
+  
   const loginCall = (e) => {
     e.preventDefault();
     if(isEmpty(username) || isEmpty(password)) {

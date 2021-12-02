@@ -38,13 +38,14 @@ const LandingPage = (props) => {
             "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
         }]
     };
+    console.log('homeFeed: ' , homeFeed);
     return (
         <>
             <div>
                 <SideBar />
             </div>
             <div>
-                {exampleData.data.map((posts) => (
+                {homeFeed && homeFeed?.map((posts) => (
                     <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
                         <Row>
                             <Col>

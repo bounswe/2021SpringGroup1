@@ -34,7 +34,7 @@ export const register = (data) => {
     }
   }
 };
-
+let token = '641895a64fcaf3dad5773d36725e0a9c722adc88';
 
 export const login = (data) => {
   return async (dispatch,getState) => {
@@ -43,17 +43,21 @@ export const login = (data) => {
     const formData = FORM_DATA_TEXT(data);
     try {
       const response = await axios({
-        method: 'GET',
+        method: 'POST',
         url: ROOT_URL + '/login',//PRE_LOGIN_EMAIL_REQUEST,
         headers: API_HEADERS_UNAUTHORIZED,
-        params: data,
+        data: formData,
         withCredentials: true,
       });
       const responseData = response.data;
-      console.log('responseData: ' , responseData);
+      console.log('login: responseData: ' , );
+      if(!responseData?.Success) {
+        alert('Wrong Information. Please Try Again');
+        return;
+      }
       dispatch({
         type: LOGIN,
-        data: responseData?.Success
+        data: responseData?.Token
       });
     } catch (error) {
       // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
@@ -72,7 +76,6 @@ export const logout = () => {
         withCredentials: true,
       });
       const responseData = response.data;
-      console.log('responseData: ' , responseData);
       dispatch({
         type: LOGOUT,
       });

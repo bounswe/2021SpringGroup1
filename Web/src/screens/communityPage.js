@@ -7,7 +7,7 @@ import SideBar from 'components/navbar/SideBar';
 import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getCommunityData, listCommunityPosts } from 'store/actions/communityAction';
+import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 
 const CommunityPage = (props) => {
   const history = useHistory();
@@ -23,8 +23,14 @@ const CommunityPage = (props) => {
   useEffect(()=>{
       dispatch(getCommunityData(id));
       dispatch(listCommunityPosts(id));
-      
   },[])
+
+
+  const subscribeCall = (e, id, isJoined) => {
+    e.preventDefault();
+    // dispatch(subscribeCommunity(id));
+    dispatch(subscribeCommunity(id, isJoined));
+  } 
 
 
   const exampleData = {
@@ -49,6 +55,7 @@ const CommunityPage = (props) => {
       "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
     }]
   };
+  console.log('communityData: ' , communityData);
   return (
     <>
       <div>
@@ -56,20 +63,20 @@ const CommunityPage = (props) => {
       </div>
 
       <div>
-        {exampleData?.data.map((posts) => (
+        {communityData?.Success ? (
           <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
             <Row>
               <Col>
-                <Card.Title>{posts["title"]}</Card.Title>
+                <Card.Title>{communityData?.Community?.name}</Card.Title>
               </Col>
               <Col>
-                <Card.Title>{posts["community"]}</Card.Title>
+                <Card.Title>{communityData?.Community?.description}</Card.Title>
               </Col>
               <Col>
-                <Card.Title>Posted by @{posts["posted_by"]}</Card.Title>
+                <Card.Title>Posted by @{communityData?.Community?.moderator}</Card.Title>
               </Col>
             </Row>
-            {posts["data_fields"].map((field) => (
+            {communityData?.Community["data_fields"]?.map((field) => (
               <Container style={{ width: '45rem', margin: '30px auto', backgroundColor: "gainsboro" }}>
                 <div >
                   <Row>
@@ -84,11 +91,11 @@ const CommunityPage = (props) => {
               </Container>
             ))}
           </Card>
-        ))}
+        ) : null}
 
         <div>
           <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
-            <Card.Img variant="top" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" />
+            <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
             <Card.Body>
               <Card.Title style={{
                 display: 'flex',
@@ -107,7 +114,7 @@ const CommunityPage = (props) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <Button onClick variant="success">Subscribe</Button>{' '}
+                <Button onClick={(e)=>subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)} variant="success">Subscribe</Button>{' '}
               </ListGroupItem>
               <ListGroupItem style={{
                 display: 'flex',

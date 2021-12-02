@@ -17,7 +17,7 @@ const MyPosts = (props) => {
   useEffect(()=>{
       dispatch(getMyPosts());
   },[])
-
+  console.log('myPosts: ' , myPosts);
     const exampleData = {
         data: [{
             "title": "Travel", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
@@ -46,7 +46,7 @@ const MyPosts = (props) => {
                 <SideBar />
             </div>
             <div>
-                {exampleData.data.map((posts) => (
+                {myPosts?.map((posts) => (
                     <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
                         <Row>
                             <Col>

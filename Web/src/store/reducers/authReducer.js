@@ -11,14 +11,17 @@ const initialState = {
   isLogin: false,
   isRegistered: false,
   isLoginSucceed: false,
+  token: null,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case LOGIN:
+    localStorage.setItem('token', action.data)
       return {
         ...state,
-        isLoginSucceed: action.data //TODO check this.
+        token: action.data, //TODO check this.
+        isLoginSucceed: !!action.data
       }
     case REGISTER:
       return {
@@ -31,6 +34,7 @@ export default (state = initialState, action) => {
         isLoginSucceed: false //TODO check this.
       }
     case LOGOUT:
+      localStorage.removeItem('token')
       return {
         ...initialState,
       };

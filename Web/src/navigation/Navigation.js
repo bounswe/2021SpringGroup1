@@ -16,6 +16,9 @@ import MyCommunitiesPage from 'screens/myCommunitiesPage';
 import AllCommunitiesPage from 'screens/allCommunitiesPage';
 import CommunityPage from 'screens/communityPage';
 import createCommunity from 'screens/createCommunity';
+import { isEmpty } from 'utils/methods';
+import { useDispatch, useSelector } from 'react-redux';
+import { LOGIN } from 'store/actions/authAction';
 
 
 function withProps(Component, props) {
@@ -30,6 +33,18 @@ const styles = {
 var idd = 0;
 const Navigation = (props) => {
   {/* <Redirect to="/" /> */ }
+
+  const {token} = useSelector(state => state.auth)
+  const dispatch = useDispatch();
+  if(isEmpty(token)) {
+    let token2 = localStorage.getItem('token', token)
+    if(!isEmpty(token2)) {
+      dispatch({
+        type: LOGIN,
+        data: token2
+      });
+    }
+  }
 
   var ROUTES = <Switch>
     <Route key={idd++} exact path={urls.home} component={home} />
