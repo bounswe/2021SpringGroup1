@@ -12,10 +12,10 @@ services:
        MYSQL_ROOT_PASSWORD: ''
   backend:
     build: .
-    command: python manage.py runserver 0.0.0.0:7000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/protopost-backend
     ports:
-      - "7000:7000"
+      - "8000:8000"
     depends_on:
       - db
