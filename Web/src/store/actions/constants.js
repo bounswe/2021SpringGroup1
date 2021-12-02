@@ -1,4 +1,4 @@
-export const ROOT_URL = 'http://3.249.82.166:4999/api/v1/protopost'
+export const ROOT_URL = 'http://3.249.82.166:8000/api/v1/protopost'
 
 export const API_HEADERS_UNAUTHORIZED = {
   Accept: 'application/json',
