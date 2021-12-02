@@ -9,7 +9,8 @@ import Image from 'react-bootstrap/Image'
 import 'assets/css/communitiesPage.css';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getCommunities } from 'store/actions/communityAction';
+import { getCommunities, subscribeCommunity } from 'store/actions/communityAction';
+import { isEmpty } from 'utils/methods';
 
 const AllCommunitiesPage = props => {
   var xd = "Title";
@@ -18,21 +19,19 @@ const AllCommunitiesPage = props => {
   const {communities} = useSelector(state => state.community)
   console.log('communities: ' , communities);
   useEffect(()=>{
-      dispatch(getCommunities());
+      dispatch(getCommunities({from: 'all'}));
   },[])
 
-  const subscribeCall = (e, id) => {
+  const subscribeCall = (e, id, isJoined) => {
     e.preventDefault();
-    dispatch(getCommunities({id, id}));
-
-
+    // dispatch(subscribeCommunity(id));
+    dispatch(subscribeCommunity(id, isJoined));
   } 
 
   const exampleData = {
     data: [{ "id": "1", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }
       , { "id": "2", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }]
   };
-
 
   return (
     <>
@@ -41,7 +40,7 @@ const AllCommunitiesPage = props => {
       </div>
 
       <div>
-        {communities.map((community) => (
+        {communities?.Communities?.length > 0 && communities?.Communities?.map((community) => (
           <Container style={{ width: '55rem', margin: '0px auto', backgroundColor: "gainsboro", marginBottom: "30px" }}>
             <div >
               <Row>
@@ -59,7 +58,7 @@ const AllCommunitiesPage = props => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <Button variant="success" onClick={e=>subscribeCall(e, community?.id)}>Subscribe</Button>{' '}
+                  <Button variant={community?.isJoined ? 'danger' : 'success'} onClick={e=>subscribeCall(e, community?.id, community?.isJoined)}>{community?.isJoined ? 'Unsubscribe' : 'Subscribe'}</Button>{' '}
                 </Col>
               </Row>
             </div>
