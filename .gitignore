@@ -31,7 +31,9 @@ post2/migrations/__pycache__/**
 mainapp/__pycache__/**
 mainapp/migrations/__pycache__/**
 
-
+cmpe451/docker-compose.yml
+cmpe451/dockerfile
+cmpe451/docker/**
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

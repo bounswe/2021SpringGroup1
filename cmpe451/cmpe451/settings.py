@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-1&no^=bc(k)bif$ot$1zx@vf#&h(5(m(6ql9)dig11b@k^2ph*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = ['3.249.82.166','127.0.0.1','localhost']
 
 
 
@@ -42,13 +42,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_spectacular',
     'coreapi',
     'drf_yasg',
     'corsheaders',
 ]
+
 CORS_ALLOW_ALL_ORIGINS=True
 CORS_ALLOW_CREDENTIALS=True
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Protopost API',
     'DESCRIPTION': 'Your project description',
@@ -66,7 +69,7 @@ MIDDLEWARE = [
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
@@ -111,10 +114,10 @@ WSGI_APPLICATION = 'cmpe451.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': 'db',
+        'NAME': env("MYSQL_DATABASE"),
+        'USER': env("MYSQL_USER"),
+        'PASSWORD': env("MYSQL_PASSWORD"),
+        'HOST': env("MYSQL_HOST"),
         'PORT': '3306',
     }
 }
