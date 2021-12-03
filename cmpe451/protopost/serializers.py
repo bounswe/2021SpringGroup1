@@ -1,7 +1,9 @@
+import re
 from django.core.checks.messages import Error
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
+from .models import Community, DataField, DataFieldTemp, Post, PostTemplate
 from rest_framework import serializers, validators
 from rest_framework.validators import UniqueTogetherValidator
 
@@ -15,11 +17,22 @@ class UserSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 class CommunitySerializer(serializers.ModelSerializer):
+    isJoined=serializers.SerializerMethodField()
     class Meta:
         model = Community
-        fields = ["id","name","description","community_image_url","moderator"]
-        read_only_fields=["moderator","id"]
+        fields = ["id","name","description","community_image_url","moderator","isJoined"]
+        read_only_fields=["moderator","id","isJoined"]
     
+    def get_isJoined(self,obj):
+        try:
+            if Community.objects.get(pk=obj.id) in self.context['request'].user.joined_communities.all():
+                return True
+            else:
+                return False
+        except:
+            return False
+
+       
     def to_representation(self, instance):
         representation = {
             '@context' : "http://schema.org/",
@@ -32,16 +45,14 @@ class CommunitySerializer(serializers.ModelSerializer):
 class DataFieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataField
-        fields = ["name","type","content","post"]
-        read_only_fields=["post"]
+        fields = ["name","type","content"]
 
 
 
 class DataFieldTempSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataFieldTemp
-        fields = ["name","type","post_template"]
-        read_only_fields=["post_template"]
+        fields = ["name","type"]
     
 
 class PostTemplateSerializer(serializers.ModelSerializer):

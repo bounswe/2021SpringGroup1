@@ -1,3 +1,4 @@
+from decimal import Context
 from django.db.models import query
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -16,7 +17,6 @@ from rest_framework.authtoken.models import Token
 
 
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
@@ -66,6 +66,7 @@ class CreateCommunity(GenericAPIView):
                 return Response({"Success":True, "Community": community_serializer.data})
             else:
                 return Response({"Success":False, "Error": community_serializer.errors})
+        return Response({"Success":False, "Error": "No authentication."})
 
 class CreatePost(GenericAPIView):
     serializer_class=PostSerializer 
@@ -116,9 +117,13 @@ class GetCommunityData(GenericAPIView):
                 community = Community.objects.get(pk = community_id)
             except:
                 return Response({"Success" : False, "Error": "Community is not found."})
-            community=CommunitySerializer(community)    
-            return Response({"Success" : True, "Community": community.data})
-        return Response({"Success" : False, "Error": "Wrong request method."})
+            community=CommunitySerializer(community,context={"request":req})
+            post_data=[]
+            posts = Post.objects.filter(community_id = community_id)
+            post_data = PostSerializer(posts, many=True).data
+            return Response({"Success" : True, "Community": community.data, "Posts" : post_data})
+        return Response({"Success":False, "Error": "No Authentication"})
+        
       
 class ListCommunities(GenericAPIView):
     serializer_class=CommunitySerializer
@@ -134,11 +139,11 @@ class ListCommunities(GenericAPIView):
         if req.user.is_authenticated and "from" in req.GET:
             if req.GET["from"]=="all":
                 communities=Community.objects.all()
-                communities=CommunitySerializer(communities,many=True)
+                communities=CommunitySerializer(communities,many=True,context={"request":req})
                 return Response({"Communities" : communities.data})
             elif req.GET["from"]=="joined":
                 communities=req.user.joined_communities.all()
-                communities=CommunitySerializer(communities,many=True)
+                communities=CommunitySerializer(communities,many=True,context={"request":req})
                 return Response(communities.data)
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
