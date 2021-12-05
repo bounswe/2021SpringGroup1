@@ -4,44 +4,130 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Col, Container, Dropdown, DropdownButton, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button } from 'react-bootstrap';
+import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl, FormFile } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 import { isEmpty } from 'utils/methods';
 import { createPost } from 'store/actions/communityAction';
 
 
 function CreatePostPage(props) {
     const history = useHistory();
- //TODO complete this.
-    const [title , setTitle] = useState('');
-    const [post_template , setPost_template] = useState('');
-    const [name , setName] = useState('');
+    //TODO complete this.
+    const [title, setTitle] = useState('');
+    const [post_template, setPost_template] = useState('');
+    const [name, setName] = useState('');
     const dispatch = useDispatch();
-  // const {isLoginSucceed} = useSelector(state=>state.auth)
+    // const {isLoginSucceed} = useSelector(state=>state.auth)
 
-  useEffect(()=>{
-    if(false) {
-      dispatch({
-        type: '',
-      })
-      // history.push('/landingPage')
+    useEffect(() => {
+        if (false) {
+            dispatch({
+                type: '',
+            })
+            // history.push('/landingPage')
+        }
+    }, [])
+
+    const createPostCall = (e) => {
+        e.preventDefault();
+        // if(isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
+        //   alert('please fill all the fields');
+        //   return;
+        // }
+        dispatch(createPost({}))
     }
-  },[])
 
-  const createPostCall = (e) => {
-    e.preventDefault();
-    // if(isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
-    //   alert('please fill all the fields');
-    //   return;
-    // }
-    dispatch(createPost({}))
-  }
+    let listOfPath = props?.location?.pathname?.split('/');
+    let id = listOfPath[listOfPath?.length - 1];
+    console.log('id: ', id);
+    console.log('props: ', props?.location?.pathname?.split('/'));
+
+    const { communityData, communityPosts } = useSelector(state => state.community)
+    console.log('communityData: ', communityData?.Community);
+    // console.log('communityPosts: ', communityPosts);
+    useEffect(() => {
+        dispatch(getCommunityData(id));
+        // dispatch(listCommunityPosts(id));
+    }, [])
+
+
+    const subscribeCall = (e, id, isJoined) => {
+        e.preventDefault();
+        // dispatch(subscribeCommunity(id));
+        dispatch(subscribeCommunity(id, isJoined));
+    }
 
     const exampleData = {
-        data: [{ "id": "15", "name": "name1", "dataType": "Text" }, { "id": "16", "name": "name2", "dataType": "Text" }
-            , { "id": "17", "name": "name3", "dataType": "Image" }, { "id": "18", "name": "name4", "dataType": "Image" }]
+        data: [{
+            "id": 0,
+            "community": 0,
+            "name": "birinci",
+            "data_field_templates": [
+                {
+                    "name": "body",
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "id": 1,
+            "community": 0,
+            "name": "ikinci template",
+            "data_field_templates": [
+                {
+                    "name": "foto",
+                    "type": "image"
+                },
+                {
+                    "name": "tarih",
+                    "type": "date"
+                },
+                {
+                    "name": "yer2",
+                    "type": "location"
+                },
+                {
+                    "name": "yazı",
+                    "type": "text"
+                },
+                {
+                    "name": "yer1",
+                    "type": "location"
+                },
+
+            ]
+        },
+        {
+            "id": 2,
+            "community": 0,
+            "name": "üçüncü",
+            "data_field_templates": [
+                {
+                    "name": "yer",
+                    "type": "location"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "community": 0,
+            "name": "dördüncü",
+            "data_field_templates": [
+                {
+                    "name": "tarih",
+                    "type": "date"
+                }
+            ]
+        }]
     };
+
+
+    let index = "1";
+    const displayTemplate = (e) => {
+        index = 1;
+    }
 
     const onChangeFile = (e) => {
         let files = e.target.files;
@@ -53,72 +139,108 @@ function CreatePostPage(props) {
                 <SideBar />
             </div>
 
-            <Card style={{ width: '50rem', margin: 'auto', position: 'fluid' }}>
-                <Card.Title>
-                    Create Post
-                </Card.Title>
-
-                <Card.Body>
-                    {exampleData.data.map((field) => (
-                        <Container style={{ width: '45rem', margin: '30px auto', backgroundColor: "gainsboro" }}>
-                            <div >
-                                <Row>
-                                    <Col>
-                                        <FormLabel style={{ color: "black" }} > {field["name"]} </FormLabel>
-                                    </Col>
-                                    {field["dataType"] === "Text" && <Col xs={8}><input type="text" name="textField"></input></Col>}
-                                    {field["dataType"] === "Image" && <Col xs={8}><input type="file" name="file" accept="image/*" onChange={(e) => onChangeFile(e)}></input>
-                                    </Col>}
-                                </Row>
-                            </div>
-                        </Container>
+            <Container fluid={true} style={{ width: '55rem', margin: '0px auto', backgroundColor: "Lavender" }}>
+                <Form>
+                    <FormGroup className="mb-3">
+                        <FormLabel style={{ color: "black", fontSize: 30, font: "bold" }}>
+                            Create Post
+                        </FormLabel>
+                    </FormGroup>
+                    <FormGroup className="mb-3" controlId="templateNum">
+                        <Form.Control as="select" aria-label="Default select example" onChange={() => displayTemplate()}>
+                            <option value="init">Please Select a Template</option>
+                            {exampleData.data.map((field) => (
+                                <option value={field.id}>{field.name}</option>
+                            ))}
+                        </Form.Control>
+                    </FormGroup>
+                    <FormGroup className="mb-3">
+                        <FormLabel style={{ color: "black", fontSize: 15, font: "bold" }}>
+                            Post Title
+                        </FormLabel>
+                        <Form.Control name="postTitle" placeholder="Please Enter Post Title" onChange={(text) => setTitle(text.target.value)}>
+                        </Form.Control>
+                    </FormGroup>
+                    {index !== "init" && exampleData.data[index]["data_field_templates"].map((field) => (
+                        <FormGroup className="mb-3" controlId="fields">
+                            <Row>
+                                <Col>
+                                    <FormLabel style={{ color: "black" }} > {field["name"]} </FormLabel>
+                                </Col>
+                                <Col>
+                                    {field["type"] === "text" &&
+                                        <FormControl as="textarea" rows={2} name="textField" placeholder="Enter text" type="text">
+                                        </FormControl>
+                                    }
+                                    {field["type"] === "image" &&
+                                        <FormFile accept="image/*" name="imageFile" onChange={(e) => onChangeFile(e)}>
+                                        </FormFile>
+                                    }
+                                    {field["type"] === "location" &&
+                                        <FormControl name="locField" placeholder="Enter Location" type="text">
+                                        </FormControl>
+                                    }
+                                    {field["type"] === "date" &&
+                                        <FormControl name="dateField" placeholder="Enter Date" type="text">
+                                        </FormControl>
+                                    }
+                                </Col>
+                            </Row>
+                        </FormGroup>
                     ))}
-                </Card.Body>
-            </Card>
+
+                    <FormGroup>
+                        <Button style={{ marginBottom: "20px" }} onClick={() => { createPostCall() }} variant="success">Create Post</Button>{' '}
+                    </FormGroup>
+                </Form>
+            </Container>
+
             <div>
                 <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
-                    <Card.Img variant="top" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" />
-                    
+                    <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
                     <Card.Body>
                         <Card.Title style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                        }}>Community Name</Card.Title>
+                        }}>{communityData?.Community?.name}</Card.Title>
                         <Card.Text>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
+                            {communityData?.Community?.description}
                         </Card.Text>
-                    </Card.Body>
 
+
+                    </Card.Body>
                     <ListGroup className="list-group-flush">
                         <ListGroupItem style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button variant="success">Subscribe</Button>{' '}
+                            <Button onClick={e => subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)}
+                                variant={communityData?.Community?.isJoined ? 'danger' : 'success'}>
+                                {communityData?.Community?.isJoined ? 'Unsubscribe' : 'Subscribe'}
+                            </Button>{' '}
                         </ListGroupItem>
                         <ListGroupItem style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button onClick={() => history.push('/community/' + props.match.params.id)} variant="success">Feed Page</Button>{' '}
+                            <Button variant="success">Feed Page</Button>{' '}
                         </ListGroupItem>
                         <ListGroupItem style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button variant="success">Create Post</Button>{' '}
+                            <Button onClick={() => history.push('/community/createPostPage/' + props.match.params.id)} variant="success">Create Post</Button>{' '}
                         </ListGroupItem>
                         <ListGroupItem style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button onClick={() => {createPostCall(); history.push('/community/createPostTemplate/' + props.match.params.id)}} variant="success">Create Post Template</Button>{' '}
+                            <Button onClick={() => history.push('/community/createPostTemplate/' + props.match.params.id)} variant="success">Create Post Template</Button>{' '}
                         </ListGroupItem>
                     </ListGroup>
                 </Card>

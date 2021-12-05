@@ -13,49 +13,49 @@ const CommunityPage = (props) => {
   const history = useHistory();
   let listOfPath = props?.location?.pathname?.split('/');
   let id = listOfPath[listOfPath?.length - 1];
-  console.log('id: ' , id);
-  console.log('props: ' , props?.location?.pathname?.split('/'));
+  console.log('id: ', id);
+  console.log('props: ', props?.location?.pathname?.split('/'));
 
   const dispatch = useDispatch();
-  const {communityData, communityPosts} = useSelector(state => state.community)
-  console.log('communityData: ' , communityData?.Community);
-  console.log('communityPosts: ' , communityPosts);
-  useEffect(()=>{
-      dispatch(getCommunityData(id));
-      dispatch(listCommunityPosts(id));
-  },[])
+  const { communityData, communityPosts } = useSelector(state => state.community)
+  console.log('communityData: ', communityData?.Community);
+  console.log('communityPosts: ', communityPosts);
+  useEffect(() => {
+    dispatch(getCommunityData(id));
+    dispatch(listCommunityPosts(id));
+  }, [])
 
 
   const subscribeCall = (e, id, isJoined) => {
     e.preventDefault();
     // dispatch(subscribeCommunity(id));
     dispatch(subscribeCommunity(id, isJoined));
-  } 
+  }
 
 
-  const exampleData = {
-    data: [{
-      "title": "Travel", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-      "posted_by": "Muhammed", "post_date": "10/11/2021", "community": "Boun"
-    },
-    {
-      "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-      "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-    },
-    {
-      "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-      "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-    },
-    {
-      "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-      "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-    },
-    {
-      "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-      "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-    }]
-  };
-  console.log('communityData: ' , communityData);
+  // const exampleData = {
+  //   data: [{
+  //     "title": "Travel", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
+  //     "posted_by": "Muhammed", "post_date": "10/11/2021", "community": "Boun"
+  //   },
+  //   {
+  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
+  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
+  //   },
+  //   {
+  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
+  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
+  //   },
+  //   {
+  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
+  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
+  //   },
+  //   {
+  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
+  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
+  //   }]
+  // };
+  console.log('communityData: ', communityData);
   return (
     <>
       <div>
@@ -83,8 +83,10 @@ const CommunityPage = (props) => {
                     <Col>
                       <FormLabel style={{ color: "black" }} > {field["name"]} </FormLabel>
                     </Col>
-                    {field["dataType"] === "Text" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
-                    {field["dataType"] === "Image" && <Col xs={8}><Card.Img src={field["data"]}></Card.Img>
+                    {field["dataType"] === "text" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
+                    {field["dataType"] === "image" && <Col xs={8}><Card.Img src={field["data"]}></Card.Img>
+                    {field["dataType"] === "location" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
+                    {field["dataType"] === "date" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
                     </Col>}
                   </Row>
                 </div>
@@ -114,7 +116,10 @@ const CommunityPage = (props) => {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <Button onClick={(e)=>subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)} variant="success">Subscribe</Button>{' '}
+                <Button onClick={e => subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)}
+                  variant={communityData?.Community?.isJoined ? 'danger' : 'success'}>
+                  {communityData?.Community?.isJoined ? 'Unsubscribe' : 'Subscribe'}
+                </Button>{' '}
               </ListGroupItem>
               <ListGroupItem style={{
                 display: 'flex',
