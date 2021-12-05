@@ -4,108 +4,128 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Col, Container, Dropdown, DropdownButton, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button } from 'react-bootstrap';
+import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 
 
 function CreatePostTemplate(props) {
     const history = useHistory();
+    let listOfPath = props?.location?.pathname?.split('/');
+    let id = listOfPath[listOfPath?.length - 1];
+    // console.log('id: ', id);
+    // console.log('props: ', props?.location?.pathname?.split('/'));
 
-    const [typeState, setTypeState] = useState(1)
-    const [value, setValue] = useState([]);
-    const handleSelect = (e) => {
-        console.log(e);
-        setValue(e)
-    }
-    const handleChange = (ev) => {
-        console.log(ev);
-        // setValue(...value.push(ev))
-    }
-    let content = [];
-    for (let i = 0; i < typeState; i++) {
-        content.push(<Row>
-            <Col>
-                <DropdownButton style={{ margin: "10px" }} id="dropdown-basic-button" title="Select Field" onSelect={handleSelect}>
-                    <Dropdown.Item eventKey="Text">Text</Dropdown.Item>
-                    <Dropdown.Item eventKey="Image">Image</Dropdown.Item>
-                </DropdownButton>
-            </Col>
-            <Col style={{ margin: "15px" }}>
-                <input type="text" placeholder="Enter Field Name" name="fieldName" onChange={handleChange}>
-                </input>
-            </Col>
-        </Row>);
+    const dispatch = useDispatch();
+    const { communityData, communityPosts } = useSelector(state => state.community)
+    // console.log('communityData: ', communityData?.Community);
+    // console.log('communityPosts: ', communityPosts);
+    useEffect(() => {
+        dispatch(getCommunityData(id));
+        // dispatch(listCommunityPosts(id));
+    }, [])
+
+
+    const subscribeCall = (e, id, isJoined) => {
+        e.preventDefault();
+        // dispatch(subscribeCommunity(id));
+        dispatch(subscribeCommunity(id, isJoined));
     }
 
+    const [fields, setFields] = useState([]);
+    // handle input change
+    const handleInputChange = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...fields];
+        list[index][name] = value;
+        setFields(list);
+    };
+    // handle click event of the Remove button
+    const handleRemoveClick = (index) => {
+        const list = [...fields];
+        list.splice(index, 1);
+        setFields(list);
+    };
+
+    // handle click event of the Add button
+    const handleAddClick = () => {
+        setFields([...fields, { type: "", name: "" }]);
+    };
     return (
         <>
             <div>
                 <SideBar />
             </div>
+            <Container fluid={true} style={{ width: '55rem', margin: '0px auto', backgroundColor: "Lavender" }}>
+                <Form>
+                    <FormGroup className="mb-3">
+                        <FormLabel style={{ color: "black", fontSize: 30, font: "bold" }}>
+                            Create Post Template
+                        </FormLabel>
+                    </FormGroup>
+                    <FormGroup className="mb-3" controlId="tempTitle">
+                        <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
+                            Template Name
+                        </FormLabel>
+                        <FormControl placeholder="Enter Template Name" type="text" >
+                        </FormControl>
+                    </FormGroup>
+                    <FormGroup className="mb-3" controlId="tempDesc">
+                        <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
+                            Template Description
+                        </FormLabel>
+                        <FormControl as="textarea" rows={3} placeholder="Enter Template Description" type="text">
+                        </FormControl>
+                    </FormGroup>
 
-            <Card style={{ width: '50rem', margin: 'auto', position: 'fluid' }}>
-                <Card.Title>
-                    Create Post Template
-                </Card.Title>
-                <Card.Subtitle>
-                    You can add max 6 fields.
-                </Card.Subtitle>
-
-                <Card.Body>
-                    <Container>
-                        <Row>
-                            <Col>
-                                <FormLabel style={{ color: "black" }}>
-                                    Template Title
-                                </FormLabel>
-                            </Col>
-                            <Col>
-                                <input type="text" name='title' placeholder="Enter Template Title">
-                                </input>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <FormLabel style={{ color: "black" }}>
-                                    Template Description
-                                </FormLabel>
-                            </Col>
-                            <Col>
-                                <input type="text" name='description' placeholder="Enter Template Description">
-                                </input>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Button style={{ margin: "20px" }} variant="primary" type="submit" onClick={typeState < 6 ? () => setTypeState(typeState + 1) : undefined}>
-                                    Add
-                                </Button>
-                            </Col>
-                        </Row>
-                        {content}
-                        <Row style={{ margin: "5px" }}>
-
-                            <Button variant="primary" type="submit">
-                                Send
-                            </Button>
-                        </Row>
-
-                    </Container>
-                </Card.Body>
-            </Card>
+                    {fields.map((field, i) => {
+                        return (
+                            <div key={i}>
+                                <Row>
+                                    <Col>
+                                        <Form.Control style={{ margin: "10px" }} as="select" value={field.type} name="type" aria-label="Default select example" onChange={e => handleInputChange(e, i)}>
+                                            <option value="0">Select Field Type</option>
+                                            <option value="text">Text</option>
+                                            <option value="image">Image</option>
+                                            <option value="location">Location</option>
+                                            <option value="date">Date</option>
+                                        </Form.Control>
+                                    </Col>
+                                    <Col style={{ margin: "10px" }}>
+                                        <FormControl placeholder="Enter Field Name" value={field.name} type="text" name="name" onChange={e => handleInputChange(e, i)} >
+                                        </FormControl>
+                                    </Col>
+                                    <Col style={{ margin: "10px" }}>
+                                        {fields.length !== 1 && <Button variant="danger" onClick={() => handleRemoveClick(i)}>Remove</Button>}
+                                    </Col>
+                                </Row>
+                            </div>
+                        );
+                    })}
+                    <FormGroup>
+                        <Button style={{ margin: "20px" }} variant="warning" onClick={() => handleAddClick()}>
+                            Add
+                        </Button>
+                        <br />
+                        <Button style={{ margin: "20px" }} variant="primary" type="submit">
+                            Create Template
+                        </Button>
+                    </FormGroup>
+                </Form>
+            </Container>
+            
             <div>
                 <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
-                    <Card.Img variant="top" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" />
+                    <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
                     <Card.Body>
                         <Card.Title style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                        }}>Community Name</Card.Title>
+                        }}>{communityData?.Community?.name}</Card.Title>
                         <Card.Text>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
+                            {communityData?.Community?.description}
                         </Card.Text>
 
 
@@ -116,14 +136,17 @@ function CreatePostTemplate(props) {
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button variant="success">Subscribe</Button>{' '}
+                            <Button onClick={e => subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)}
+                                variant={communityData?.Community?.isJoined ? 'danger' : 'success'}>
+                                {communityData?.Community?.isJoined ? 'Unsubscribe' : 'Subscribe'}
+                            </Button>{' '}
                         </ListGroupItem>
                         <ListGroupItem style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button onClick={() => history.push('/community/' + props.match.params.id)} variant="success">Feed Page</Button>{' '}
+                            <Button variant="success">Feed Page</Button>{' '}
                         </ListGroupItem>
                         <ListGroupItem style={{
                             display: 'flex',
@@ -137,7 +160,7 @@ function CreatePostTemplate(props) {
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}>
-                            <Button variant="success">Create Post Template</Button>{' '}
+                            <Button onClick={() => history.push('/community/createPostTemplate/' + props.match.params.id)} variant="success">Create Post Template</Button>{' '}
                         </ListGroupItem>
                     </ListGroup>
                 </Card>

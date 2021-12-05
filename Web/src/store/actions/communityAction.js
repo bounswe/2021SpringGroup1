@@ -209,14 +209,14 @@ export const createPost = (data) => {
         const formData = FORM_DATA_TEXT(data);
         try {
         const response = await axios({
-            method: 'GET',
+            method: 'POST',
             url: ROOT_URL + '/communities/' + data.id + '/create_post',//PRE_LOGIN_EMAIL_REQUEST,
             headers: API_HEADERS_UNAUTHORIZED,
             data: formData,
             withCredentials: true,
         });
         const responseData = response.data;
-        console.log('getCommunityData: responseData: ' , responseData);
+        console.log('createPost: responseData: ' , responseData);
         dispatch({
             type: CREATE_POST,
             data: responseData

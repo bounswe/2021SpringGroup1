@@ -12,28 +12,30 @@ import { useDispatch } from 'react-redux';
 
 
 const CreateCommunity = (props) => {
-  const [community_image_url , setCommunity_image_url] = useState('');
-  const [description , setDescription] = useState('');
-  const [name , setName] = useState('');
+  const [isPrivate, setIsPrivate] = useState('');
+  const [community_image_url, setCommunity_image_url] = useState('');
+  const [description, setDescription] = useState('');
+  const [name, setName] = useState('');
   const dispatch = useDispatch();
+  console.log(isPrivate)
   // const {isLoginSucceed} = useSelector(state=>state.auth)
 
-  useEffect(()=>{
-    if(false) {
+  useEffect(() => {
+    if (false) {
       dispatch({
         type: '',
       })
       // history.push('/landingPage')
     }
-  },[])
+  }, [])
 
   const createCommunityCall = (e) => {
     e.preventDefault();
-    if(isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
-      alert('please fill all the fields');
+    if (isEmpty(isPrivate) || isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
+      alert('Please Fill All The Fields.');
       return;
     }
-    dispatch(createCommunity({name, description, community_image_url}))
+    dispatch(createCommunity({ name, description, community_image_url, isPrivate }))
   }
 
   return (
@@ -53,25 +55,32 @@ const CreateCommunity = (props) => {
             <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
               Community Name
             </FormLabel>
-            <FormControl placeholder="Enter Community Name" type="text"onChange={(text)=>setName(text.target.value)}>
+            <FormControl placeholder="Enter Community Name" type="text" onChange={(text) => setName(text.target.value)}>
             </FormControl>
           </FormGroup>
           <FormGroup className="mb-3" controlId="formDescription">
             <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
               Community Description
             </FormLabel>
-            <FormControl placeholder="Enter Community Description" type="text" onChange={(text)=>setDescription(text.target.value)}>
+            <FormControl as="textarea" rows={3} placeholder="Enter Community Description" type="text" onChange={(text) => setDescription(text.target.value)}>
             </FormControl>
           </FormGroup>
-          <FormGroup className="mb-3" controlId="formDescription">
+          <FormGroup className="mb-3" controlId="formImageFile">
             <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
-              Community Image Url
+              Community Picture
             </FormLabel>
-            <FormControl placeholder="Enter Community Description" type="text" onChange={(text)=>setCommunity_image_url(text.target.value)}>
-            </FormControl>
+            <FormFile accept="image/*" onChange={(text) => setCommunity_image_url(text.target.value)}>
+            </FormFile>
           </FormGroup>
-          <Button variant="primary" type="submit" onClick={e => createCommunityCall(e)}>
-            Create
+          <FormGroup className="mb-3" controlId="formPrivacy">
+            <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
+              Community Privacy Option
+            </FormLabel>
+            <Form.Check type="radio" label="Public" name="formHorizontalRadios" id="formHorizontalRadios1" onClick={() => setIsPrivate('public')} />
+            <Form.Check type="radio" label="Private" name="formHorizontalRadios" id="formHorizontalRadios2" onClick={() => setIsPrivate('private')} />
+          </FormGroup>
+          <Button variant="primary" type="submit" style={{ marginBottom: '10px' }} onClick={e => createCommunityCall(e)}>
+            Create Community
           </Button>
         </Form>
       </Container>
