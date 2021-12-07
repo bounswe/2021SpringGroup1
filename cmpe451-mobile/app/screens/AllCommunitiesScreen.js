@@ -21,6 +21,7 @@ function AllCommunitiesScreen({navigation}) {
             if (response.status === 200) {
                 console.log("getting all communities success!");
                 changeCommunities(response.data["Communities"]);
+                console.log(allCommunities);
             }
         })
     }
