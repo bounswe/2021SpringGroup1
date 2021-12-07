@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './app/screens/UserHome';
 import PostScreen from './app/screens/PostScreen';
 import CommunityScreen from './app/screens/CommunityScreen';
+import CreatePostTemplateScreen from './app/screens/CreatePostTemplateScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +42,10 @@ export default function App() {
           <Stack.Screen
             name="Community"
             component={CommunityScreen}
+            />
+          <Stack.Screen
+            name="CreatePostTemplate"
+            component={CreatePostTemplateScreen}
             />
       </Stack.Navigator>
     </NavigationContainer>
