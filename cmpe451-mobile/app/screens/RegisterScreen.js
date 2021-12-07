@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
+import {axiosInstance} from "../service/axios_client_service";
 
 function RegisterScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -75,7 +76,7 @@ async function makeRegistration(name, mail, pass, pass2) {
         return false;
     }
     reg = /^\w[\w.]{2,18}\w$/;
-    if (reg.test(name)) {
+    if (!reg.test(name)) {
         Alert.alert("Can not register.", "Please enter a valid username.");
         return false;
     }
@@ -105,20 +106,18 @@ async function makeRegistration(name, mail, pass, pass2) {
     return false
 }
 
-async function registerCall(name, mail, pass) {
-    const res = await fetch('http://3.249.82.166:8000/api/v1/protopost/register', {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            username: name,
-            email: mail,
-            password: pass
-        })
-    });
-    return await res.json();
+
+async function registerCall(name,mail, pass) {
+    var data = {
+        'username': name,
+        'email': mail,
+        'password': pass
+    }
+    const res = axiosInstance.post(
+        'register', data
+    );
+    console.log((await res).data);
+    return (await res).data;
 }
 
 const styles = StyleSheet.create({
