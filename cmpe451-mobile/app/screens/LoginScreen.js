@@ -49,15 +49,14 @@ async function checkCredential(username, password, navigation) {
 }
 
 async function loginCall(name, pass) {
-    var data = {
-        'username': name,
-        'password': pass
-    }
     const res = axiosInstance.post(
-        'login', data
+        'login', {'username': name, 'password': pass}
     );
-    console.log((await res).data);
-    return (await res).data;
+    const data = (await  res).data;
+    if(data["Success"]) {
+        axiosInstance.defaults.headers.common['Authorization'] = 'Token ' + data["Token"];
+    }
+    return data;
 }
 
 // const data = {foo:1, bar:2};
