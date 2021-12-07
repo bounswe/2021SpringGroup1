@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Button, FlatList, TouchableOpacity} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
-import Cookies from 'js-cookie'
 import axios from "axios";
 
 function CommunityScreen({route, navigation}) {
@@ -73,10 +72,12 @@ function CommunityScreen({route, navigation}) {
             });
         } else {
             console.log(uri);
+            console.log(1);
             //console.log(axiosInstance.defaults.baseURL);
             axiosInstance.put(uri, JSON.stringify({action: "join"}), {
-                withCredentials: true, headers: {
-                    'X-CSRFTOKEN': 'f2c2e43d816a5668da7f7c9bc54c8a7dd1f5be3f'
+                headers: {
+                    'X-CSRFTOKEN': 'vhrU9bKR9SAYLhwI6TYK77LKP7keOe2hxd8ssFcdypas3CWTQJdmi81ptIInw3Zx',
+                    accept: '*/*'
                 }
             }).then(async response => {
                 console.log(2);

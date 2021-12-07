@@ -52,7 +52,7 @@ async function loginCall(name, pass) {
     //const uri = 'http://54.217.117.68:8000/api/v1/protopost/login?password=' + pass + "&username=" + name
     //console.log(uri)
     //f2c2e43d816a5668da7f7c9bc54c8a7dd1f5be3f
-    const res = axiosInstance.get(
+    const res = axiosInstance.post(
         'login', {
             params: {
                 username: name,
