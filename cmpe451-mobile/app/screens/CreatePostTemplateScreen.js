@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View, Text, Button, FlatList, StyleSheet,
-  TextInput,
-  Keyboard,
-  ScrollView
-} from "react-native";
+import {View, Text, Button, StyleSheet,TextInput,ScrollView} from "react-native";
 import { axiosInstance } from "../service/axios_client_service";
 
 function CreatePostTemplateScreen({ route, navigation }) {
@@ -153,8 +148,7 @@ function CreatePostTemplateScreen({ route, navigation }) {
     <View style={styles.background}
     >
       <ScrollView
-        style={styles.scrollView}
-        keyboardShouldPersistTaps="handled">
+        style={styles.scrollView}>
 
         <View style={styles.templateNameContainer}
         >
@@ -163,7 +157,6 @@ function CreatePostTemplateScreen({ route, navigation }) {
             onChangeText={Name => setName(Name)}
             placeholder="Post Template Name"
             returnKeyType="done"
-            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <Button
