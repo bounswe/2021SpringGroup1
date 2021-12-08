@@ -6,6 +6,8 @@ import json
 DATA_TYPES = (
         ('text', 'Text'),
         ('image', 'Image'),
+        ('location', 'Location'),
+        ('date', 'Date')
     )
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
