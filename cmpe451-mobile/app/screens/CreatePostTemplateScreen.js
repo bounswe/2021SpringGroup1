@@ -7,10 +7,7 @@ function CreatePostTemplateScreen({ route, navigation }) {
   //console.log(community);
 
   const [name, setName] = React.useState('');
-  const [textInputs, setTextInputs] = useState([{ key: '', value: '' }]);
-  const [dateInputs, setDateInputs] = useState([{ key: '', value: '' }]);
-  const [locationInputs, setLocationInputs] = useState([{ key: '', value: '' }]);
-  const [imageInputs, setImageInputs] = useState([{ key: '', value: '' }]);
+  const [dataFields, setDataFields] = useState([]);
 
   const textFieldKey = 'text';
   const dateFieldKey = 'date';
@@ -18,124 +15,37 @@ function CreatePostTemplateScreen({ route, navigation }) {
   const imageFieldKey = 'image';
 
   const addFieldHandler = fieldType => {
-    if (fieldType === "text") {
-      const _textInputs = [...textInputs];
-      _textInputs.push({ key: '', value: '' });
-      setTextInputs(_textInputs);
-    }
-    if (fieldType === "date") {
-      const _dateInputs = [...dateInputs];
-      _dateInputs.push({ key: '', value: '' });
-      setDateInputs(_dateInputs);
-    }
-    if (fieldType === "location") {
-      const _locationInputs = [...locationInputs];
-      _locationInputs.push({ key: '', value: '' });
-      setLocationInputs(_locationInputs);
-    }
-    if (fieldType === "image") {
-      const _imageInputs = [...imageInputs];
-      _imageInputs.push({ key: '', value: '' });
-      setImageInputs(_imageInputs);
-    }
+    const _dataFields = [...dataFields];
+    _dataFields.push({ key: '', type: fieldType, name: '' });
+    setDataFields(_dataFields);
   };
 
   const deleteFieldHandler = (fieldType, key) => {
-    if (fieldType === "text") {
-      const _textInputs = textInputs.filter((input, index) => index !== key);
-      setTextInputs(_textInputs);
-    }
-    if (fieldType === "date") {
-      const _dateInputs = dateInputs.filter((input, index) => index !== key);
-      setDateInputs(_dateInputs);
-    }
-    if (fieldType === "location") {
-      const _locationInputs = locationInputs.filter((input, index) => index !== key);
-      setLocationInputs(_locationInputs);
-    }
-    if (fieldType === "image") {
-      const _imageInputs = imageInputs.filter((input, index) => index !== key);
-      setImageInputs(_imageInputs);
-    }
+    const _dataFields = dataFields.filter((input, index) => index !== key);
+    setDataFields(_dataFields);
   };
 
   const inputHandler = (fieldType, text, key) => {
-    if (fieldType === "text") {
-      const _textInputs = [...textInputs];
-      _textInputs[key].value = text;
-      _textInputs[key].key = key;
-      setTextInputs(_textInputs);
-    }
-    if (fieldType === "date") {
-      const _dateInputs = [...dateInputs];
-      _dateInputs[key].value = text;
-      _dateInputs[key].key = key;
-      setDateInputs(_dateInputs);
-    }
-    if (fieldType === "location") {
-      const _locationInputs = [...locationInputs];
-      _locationInputs[key].value = text;
-      _locationInputs[key].key = key;
-      setLocationInputs(_locationInputs);
-    }
-    if (fieldType === "image") {
-      const _imageInputs = [...imageInputs];
-      _imageInputs[key].value = text;
-      _imageInputs[key].key = key;
-      setImageInputs(_imageInputs);
-    }
+    const _dataFields = [...dataFields];
+    _dataFields[key].name = text;
+    _dataFields[key].type = fieldType;
+    _dataFields[key].key = key;
+    setDataFields(_dataFields);
   };
 
 
-  const formatData = () => {
-    const textFieldNames = textInputs
-      .filter(input => input.value)
-      .map(input => input.value);
-    const dateFieldNames = dateInputs
-      .filter(input => input.value)
-      .map(input => input.value);
-    const locationFieldNames = locationInputs
-      .filter(input => input.value)
-      .map(input => input.value);
-    const imageFieldNames = imageInputs
-      .filter(input => input.value)
-      .map(input => input.value);
-
-    return {
-      name: name,
-      textFieldNames: textFieldNames,
-      dateFieldNames: dateFieldNames,
-      locationFieldNames: locationFieldNames,
-      imageFieldNames: imageFieldNames
-    };
-  };
   // api call
   const createPostTypeHandler = async () => {
-    var data = formatData();
-    var data_fields = [];
-    var text_names = data.textFieldNames;
-    var date_names = data.dateFieldNames;
-    var location_names = data.locationFieldNames;
-    var image_names = data.imageFieldNames;
 
-    for (let i = 0; i < text_names.length; i++) {
-      let x = text_names[i];
-      data_fields.push({ "name": x, "type": "text" })
-    }
-    for (let i = 0; i < date_names.length; i++) {
-      let x = date_names[i];
-      data_fields.push({ "name": x, "type": "date" })
-    }
-    for (let i = 0; i < location_names.length; i++) {
-      let x = location_names[i];
-      data_fields.push({ "name": x, "type": "location" })
-    }
-    for (let i = 0; i < image_names.length; i++) {
-      let x = image_names[i];
-      data_fields.push({ "name": x, "type": "image" })
+    let values = [];
+    for(let i = 0; i<dataFields.length; i++){
+      let item = {name: dataFields[i].name, type: dataFields[i].type};
+      values.push(item);
     }
 
-    var sendData = { "name": data.name, "data_field_templates": data_fields };
+    console.log(values);
+
+    var sendData = { "name": name, "data_field_templates": values };
     var url = "communities/" + String(community) + "/create_post_template";
     const res = axiosInstance.post(
       url, sendData
@@ -156,7 +66,6 @@ function CreatePostTemplateScreen({ route, navigation }) {
             style={styles.templateNameInput}
             onChangeText={Name => setName(Name)}
             placeholder="Post Template Name"
-            returnKeyType="done"
           />
         </View>
         <Button
@@ -166,13 +75,13 @@ function CreatePostTemplateScreen({ route, navigation }) {
         <View style={styles.addFieldContainer}>
           <View style={styles.buttonView}>
             <Button
-              title="Text Field"
+              title="Add Text Field"
               onPress={() => addFieldHandler(textFieldKey)}
             />
           </View>
           <View style={styles.buttonView}>
             <Button
-              title="Date Field"
+              title="Add Date Field"
               onPress={() => addFieldHandler(dateFieldKey)}
             />
           </View>
@@ -180,13 +89,13 @@ function CreatePostTemplateScreen({ route, navigation }) {
         <View style={styles.addFieldContainer}>
           <View style={styles.buttonView}>
               <Button
-                title="Location Field"
+                title="Add Location Field"
                 onPress={() => addFieldHandler(locationFieldKey)}
               />
             </View>
             <View style={styles.buttonView}>
               <Button
-                title="Image Field"
+                title="Add Image Field"
                 onPress={() => addFieldHandler(imageFieldKey)}
               />
             </View>
@@ -197,81 +106,18 @@ function CreatePostTemplateScreen({ route, navigation }) {
             borderBottomWidth: 1,
           }}
         />
-        {textInputs.map((input, key) => (
+        {dataFields.map((input, key) => (
           <View style={styles.nameFieldContainer}
           >
             <TextInput
               style={styles.fieldTextInput}
-              placeholder={'Enter text field name'}
-              value={input.value}
-              onChangeText={text => inputHandler(textFieldKey, text, key)}
+              placeholder={'Enter ' + input.type + ' field name'}
+              value={input.name}
+              onChangeText={text => inputHandler(input.type, text, key)}
             />
             <Button
               title="Delete"
-              onPress={() => deleteFieldHandler(textFieldKey, key)}
-            />
-          </View>
-        ))}
-        <View
-          style={{
-            borderBottomColor: 'black',
-            borderBottomWidth: 1,
-          }}
-        />
-        {dateInputs.map((input, key) => (
-          <View style={styles.nameFieldContainer}
-          >
-            <TextInput
-              style={styles.fieldTextInput}
-              placeholder={'Enter date field name'}
-              value={input.value}
-              onChangeText={text => inputHandler(dateFieldKey, text, key)}
-            />
-            <Button
-              title="Delete"
-              onPress={() => deleteFieldHandler(dateFieldKey, key)}
-            />
-          </View>
-        ))}
-        <View
-          style={{
-            borderBottomColor: 'black',
-            borderBottomWidth: 1,
-          }}
-        />
-        {locationInputs.map((input, key) => (
-          <View style={styles.nameFieldContainer}
-          >
-            <TextInput
-              style={styles.fieldTextInput}
-              placeholder={'Enter location field name'}
-              value={input.value}
-              onChangeText={text => inputHandler(locationFieldKey, text, key)}
-            />
-            <Button
-              title="Delete"
-              onPress={() => deleteFieldHandler(locationFieldKey, key)}
-            />
-          </View>
-        ))}
-        <View
-          style={{
-            borderBottomColor: 'black',
-            borderBottomWidth: 1,
-          }}
-        />
-        {imageInputs.map((input, key) => (
-          <View style={styles.nameFieldContainer}
-          >
-            <TextInput
-              style={styles.fieldTextInput}
-              placeholder={'Enter image field name'}
-              value={input.value}
-              onChangeText={text => inputHandler(imageFieldKey, text, key)}
-            />
-            <Button
-              title="Delete"
-              onPress={() => deleteFieldHandler(imageFieldKey, key)}
+              onPress={() => deleteFieldHandler(input.type, key)}
             />
           </View>
         ))}
