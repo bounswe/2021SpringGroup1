@@ -14,18 +14,18 @@ function CreatePostTemplateScreen({ route, navigation }) {
   const locationFieldKey = 'location';
   const imageFieldKey = 'image';
 
-  const addFieldHandler = fieldType => {
+  const addField = fieldType => {
     const _dataFields = [...dataFields];
     _dataFields.push({ key: '', type: fieldType, name: '' });
     setDataFields(_dataFields);
   };
 
-  const deleteFieldHandler = (fieldType, key) => {
+  const deleteField = (key) => {
     const _dataFields = dataFields.filter((input, index) => index !== key);
     setDataFields(_dataFields);
   };
 
-  const inputHandler = (fieldType, text, key) => {
+  const updateField = (fieldType, text, key) => {
     const _dataFields = [...dataFields];
     _dataFields[key].name = text;
     _dataFields[key].type = fieldType;
@@ -33,9 +33,8 @@ function CreatePostTemplateScreen({ route, navigation }) {
     setDataFields(_dataFields);
   };
 
-
   // api call
-  const createPostTypeHandler = async () => {
+  const createPostTemplate = async () => {
 
     let values = [];
     for(let i = 0; i<dataFields.length; i++){
@@ -70,19 +69,19 @@ function CreatePostTemplateScreen({ route, navigation }) {
         </View>
         <Button
           title="Create Post Template"
-          onPress={createPostTypeHandler} />
+          onPress={createPostTemplate} />
 
         <View style={styles.addFieldContainer}>
           <View style={styles.buttonView}>
             <Button
               title="Add Text Field"
-              onPress={() => addFieldHandler(textFieldKey)}
+              onPress={() => addField(textFieldKey)}
             />
           </View>
           <View style={styles.buttonView}>
             <Button
               title="Add Date Field"
-              onPress={() => addFieldHandler(dateFieldKey)}
+              onPress={() => addField(dateFieldKey)}
             />
           </View>
         </View>
@@ -90,13 +89,13 @@ function CreatePostTemplateScreen({ route, navigation }) {
           <View style={styles.buttonView}>
               <Button
                 title="Add Location Field"
-                onPress={() => addFieldHandler(locationFieldKey)}
+                onPress={() => addField(locationFieldKey)}
               />
             </View>
             <View style={styles.buttonView}>
               <Button
                 title="Add Image Field"
-                onPress={() => addFieldHandler(imageFieldKey)}
+                onPress={() => addField(imageFieldKey)}
               />
             </View>
         </View>
@@ -113,11 +112,11 @@ function CreatePostTemplateScreen({ route, navigation }) {
               style={styles.fieldTextInput}
               placeholder={'Enter ' + input.type + ' field name'}
               value={input.name}
-              onChangeText={text => inputHandler(input.type, text, key)}
+              onChangeText={text => updateField(input.type, text, key)}
             />
             <Button
               title="Delete"
-              onPress={() => deleteFieldHandler(input.type, key)}
+              onPress={() => deleteField(key)}
             />
           </View>
         ))}
@@ -145,7 +144,7 @@ const styles = StyleSheet.create({
     borderColor: "gray"
   },
   scrollView: {
-    width: "90%",
+    width: "95%",
     alignSelf: "center"
   },
   addFieldContainer: {
@@ -168,7 +167,5 @@ const styles = StyleSheet.create({
     borderWidth: 1
   }
 })
-
-
 
 export default CreatePostTemplateScreen;
