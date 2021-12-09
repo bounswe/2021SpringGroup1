@@ -263,8 +263,7 @@ class SearchCommunities(GenericAPIView):
         if req.user.is_authenticated and "text" in req.GET:
             communities = Community.objects.filter(name__icontains = req.GET["text"])
             communities = CommunitySerializer(communities, many=True)
-            community_names = [community["name"] for community in communities.data]
-            return Response(community_names)    
+            return Response(communities.data)    
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class GetUserCreatedPosts(GenericAPIView):
