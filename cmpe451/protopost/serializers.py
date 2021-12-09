@@ -85,7 +85,7 @@ class PostSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = {
-            "poster_name": instance.poster.name
+            "poster_name": instance.poster.username
         }
         representation.update(super().to_representation(instance))
         return representation
