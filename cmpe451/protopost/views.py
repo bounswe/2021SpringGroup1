@@ -230,10 +230,41 @@ class GetUserHomeFeed(GenericAPIView):
     serializer_class= PostSerializer
     def get(self,req):
         if req.user.is_authenticated:
-            post_array=PostSerializer(Post.objects.all(),many=True)
-            return Response(post_array.data)
+            communities = req.user.joined_communities.all()
+            communities=CommunitySerializer(communities,many=True,context={"request":req})
+            
+            result_posts,created_dates, post_counter, sorted_posts = [], {}, 0, []
+            for community in communities.data:
+                posts = Post.objects.filter(community_id = community["id"])
+                posts = PostSerializer(posts, many=True).data
+                for post in posts:
+                    result_posts.append(post)
+                    created_dates[post_counter] = post["created_date"]
+                    post_counter += 1
+            
+            created_dates = sorted(created_dates.items(), key=lambda x: x[1], reverse=True)  
+            sorted_posts = [result_posts[i[0]] for i in created_dates]
+
+            return Response(sorted_posts)
         else:
             return Response({"Success":False, "Error": "No Authentication"})
+
+class SearchCommunities(GenericAPIView):
+    serializer_class=CommunitySerializer
+    queryset=Community.objects.all()
+    @extend_schema(
+        parameters=[
+          OpenApiParameter("text", OpenApiTypes.STR, OpenApiParameter.QUERY),
+        ],
+        request=None,
+    )
+
+    def get(self,req):
+        if req.user.is_authenticated and "text" in req.GET:
+            communities = Community.objects.filter(name__icontains = req.GET["text"])
+            communities = CommunitySerializer(communities, many=True)
+            return Response(communities.data)    
+        return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class GetUserCreatedPosts(GenericAPIView):
     serializer_class=PostSerializer
