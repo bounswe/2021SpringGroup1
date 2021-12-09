@@ -311,6 +311,7 @@ class GetUserHomeFeed(TestCase):
 
         actual_result = [
                             {
+                                "poster_name" : "John",
                                 "id": 2,
                                 "poster": 1,
                                 "community": 1,
@@ -328,6 +329,7 @@ class GetUserHomeFeed(TestCase):
                                 ]
                             },
                             {
+                                "poster_name" : "John",
                                 "id": 1,
                                 "poster": 1,
                                 "community": 1,

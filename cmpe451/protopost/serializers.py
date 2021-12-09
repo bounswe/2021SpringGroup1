@@ -83,6 +83,12 @@ class PostSerializer(serializers.ModelSerializer):
         fields = ['id','poster','community',"title","post_template","data_fields",'created_date']
         read_only_fields=['id','poster','community','created_date']
     
+    def to_representation(self, instance):
+        representation = {
+            "poster_name": instance.poster.name
+        }
+        representation.update(super().to_representation(instance))
+        return representation
     def create(self, validated_data):
         data_fields=validated_data.pop('data_fields')
         post=Post.objects.create(**validated_data)
