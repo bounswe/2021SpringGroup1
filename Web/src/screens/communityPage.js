@@ -8,6 +8,8 @@ import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel 
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
+import PostCard from 'components/card/MaterialUICard';
+import SideCard from 'components/card/SideCard';
 
 const CommunityPage = (props) => {
   const history = useHistory();
@@ -25,37 +27,13 @@ const CommunityPage = (props) => {
     dispatch(listCommunityPosts(id));
   }, [])
 
-
   const subscribeCall = (e, id, isJoined) => {
     e.preventDefault();
     // dispatch(subscribeCommunity(id));
     dispatch(subscribeCommunity(id, isJoined));
   }
-
-
-  // const exampleData = {
-  //   data: [{
-  //     "title": "Travel", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-  //     "posted_by": "Muhammed", "post_date": "10/11/2021", "community": "Boun"
-  //   },
-  //   {
-  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-  //   },
-  //   {
-  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-  //   },
-  //   {
-  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-  //   },
-  //   {
-  //     "title": "Tournement", "description": "name1", "data_fields": [{ "id": "17", "name": "name3", "dataType": "Image", "data": "https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" }, { "id": "16", "name": "name2", "dataType": "Text", "data": "Deneme test" }],
-  //     "posted_by": "Emir", "post_date": "11/11/2021", "community": "Cmpe"
-  //   }]
-  // };
   console.log('communityData: ', communityData);
+
   return (
     <>
       <div>
@@ -63,39 +41,49 @@ const CommunityPage = (props) => {
       </div>
 
       <div>
-        {communityData?.Success ? (
+        {/* {communityData?.Success && communityData["Posts"].map((posts) => (
           <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
             <Row>
               <Col>
-                <Card.Title>{communityData?.Community?.name}</Card.Title>
+                <Card.Title>{posts["title"]}</Card.Title>
               </Col>
               <Col>
-                <Card.Title>{communityData?.Community?.description}</Card.Title>
+                <Card.Title>{posts["community"]}</Card.Title>
               </Col>
               <Col>
-                <Card.Title>Posted by @{communityData?.Community?.moderator}</Card.Title>
+                <Card.Title>Posted by @{posts["poster"]}</Card.Title>
               </Col>
             </Row>
-            {communityData?.Community["data_fields"]?.map((field) => (
+            {posts["data_fields"].map((field) => (
               <Container style={{ width: '45rem', margin: '30px auto', backgroundColor: "gainsboro" }}>
                 <div >
                   <Row>
                     <Col>
                       <FormLabel style={{ color: "black" }} > {field["name"]} </FormLabel>
                     </Col>
-                    {field["dataType"] === "text" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
-                    {field["dataType"] === "image" && <Col xs={8}><Card.Img src={field["data"]}></Card.Img>
-                    {field["dataType"] === "location" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
-                    {field["dataType"] === "date" && <Col xs={8}><Card.Text type="text" name="textField">{field["data"]}</Card.Text></Col>}
-                    </Col>}
+                    <Col>
+                      {field["type"] === "text" && <Card.Text type="text" name="textField">{field["content"][Object.keys(field["content"])[0]]}</Card.Text>}
+                      {field["type"] === "image" && <Card.Img src={field["content"][Object.keys(field["content"])[0]]}></Card.Img>}
+                      {field["type"] === "location" && <Card.Text type="text" name="locField">{field["content"][Object.keys(field["content"])[0]]}</Card.Text>}
+                      {field["type"] === "date" && <Card.Text type="text" name="dateField">{field["content"][Object.keys(field["content"])[0]]}</Card.Text>}
+                    </Col>
                   </Row>
                 </div>
               </Container>
             ))}
           </Card>
-        ) : null}
+        ))} */}
 
         <div>
+          {communityData?.Success && communityData["Posts"].map((posts) => (
+            <PostCard posts={posts} />
+          ))}
+        </div>
+
+
+        <SideCard props={props} communityData={communityData}/>
+
+        {/* <div>
           <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
             <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
             <Card.Body>
@@ -144,7 +132,7 @@ const CommunityPage = (props) => {
               </ListGroupItem>
             </ListGroup>
           </Card>
-        </div>
+        </div> */}
       </div>
     </>
   );

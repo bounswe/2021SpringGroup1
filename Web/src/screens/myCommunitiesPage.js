@@ -12,20 +12,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getMyCommunities } from 'store/actions/communityAction';
 
 const MyCommunitiesPage = props => {
-  var xd = "Title";
   const history = useHistory();
   const dispatch = useDispatch();
   const {myCommunities} = useSelector(state => state.community)
   console.log('myCommunities: ' , myCommunities);
   useEffect(()=>{
-      dispatch(getMyCommunities({from: 'joined'}));
+      dispatch(getMyCommunities({from: 'isJoined'}));
   },[])
-
-  const exampleData = {
-    data: [{ "id": "15", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }
-      , { "id": "15", "description": "abasdfsafdafafda safdaf adsfdsaf da fsda fdsaf dsas fdsafsdfds.", "name": "Community name1", "community_image_url": "https://github.com/gautam-in/shopping-cart-assignment/blob/master/static/images/logo.png?raw=true" }]
-  };
-
 
   return (
 

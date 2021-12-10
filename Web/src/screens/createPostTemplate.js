@@ -7,7 +7,8 @@ import SideBar from 'components/navbar/SideBar';
 import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
+import { createTemplate, getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
+import SideCard from 'components/card/SideCard';
 
 
 function CreatePostTemplate(props) {
@@ -26,6 +27,11 @@ function CreatePostTemplate(props) {
         // dispatch(listCommunityPosts(id));
     }, [])
 
+    const createPostTemplateCall = (e) => {
+        e.preventDefault();
+        // dispatch(subscribeCommunity(id));
+        dispatch(createTemplate());
+    }
 
     const subscribeCall = (e, id, isJoined) => {
         e.preventDefault();
@@ -105,17 +111,19 @@ function CreatePostTemplate(props) {
                     })}
                     <FormGroup>
                         <Button style={{ margin: "20px" }} variant="warning" onClick={() => handleAddClick()}>
-                            Add
+                            Add Field
                         </Button>
                         <br />
-                        <Button style={{ margin: "20px" }} variant="primary" type="submit">
+                        <Button style={{ margin: "20px" }} variant="primary" type="submit" onClick={e => createPostTemplateCall(e)}>
                             Create Template
                         </Button>
                     </FormGroup>
                 </Form>
             </Container>
-            
-            <div>
+
+            <SideCard props={props} communityData={communityData}/>
+
+            {/* <div>
                 <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
                     <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
                     <Card.Body>
@@ -164,7 +172,7 @@ function CreatePostTemplate(props) {
                         </ListGroupItem>
                     </ListGroup>
                 </Card>
-            </div>
+            </div> */}
         </>
     );
 }
