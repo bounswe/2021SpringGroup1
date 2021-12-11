@@ -16,6 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
+    def to_representation(self, instance):
+        representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "Person"
+        }
+        representation.update(super().to_representation(instance))
+        return representation
+
 class CommunitySerializer(serializers.ModelSerializer):
     isJoined=serializers.SerializerMethodField()
     class Meta:
@@ -76,6 +84,14 @@ class PostTemplateSerializer(serializers.ModelSerializer):
                 raise Error
         return post_template
 
+    def to_representation(self, instance):
+        representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "Post_Template",
+        }
+        representation.update(super().to_representation(instance))
+        return representation
+
 class PostSerializer(serializers.ModelSerializer):
     data_fields=DataFieldSerializer(many=True)
     class Meta:
@@ -85,6 +101,8 @@ class PostSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "SocialMediaPosting",
             "poster_name": instance.poster.username
         }
         representation.update(super().to_representation(instance))
