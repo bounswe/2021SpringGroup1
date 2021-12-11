@@ -7,13 +7,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap';
 
 function App() {
-  
+
   return (
-    <>
-      <Provider store={store}>
-        <Navigation />
-      </Provider>
-    </>
+    <div style={{backgroundColor:"Cornsilk", "min-height" :'100vh'}}>
+      <>
+        <Provider store={store}>
+          <Navigation />
+        </Provider>
+      </>
+    </div>
+
   );
 }
 

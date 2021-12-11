@@ -15,6 +15,7 @@ const AllCommunitiesPage = props => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { communities } = useSelector(state => state.community)
+  const [subButton, setSubButton] = useState(false);
   console.log('communities: ', communities);
   useEffect(() => {
     dispatch(getCommunities({ from: 'all' }));

@@ -4,7 +4,7 @@ import en from 'moment/locale/en-gb'
 
 // import {AsyncStorage} from 'react-native';
 
-export const myDate = (date,language="tr") => {
+export default function myDate (date,language="tr")  {
     if(language == "en"){
         return moment(date).locale('en',en).format('MMMM Do YYYY, HH:mm');
     } else {

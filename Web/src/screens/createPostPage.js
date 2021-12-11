@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 import { isEmpty } from 'utils/methods';
 import { createPost } from 'store/actions/communityAction';
+import SideCard from 'components/card/SideCard';
 
 
 function CreatePostPage(props) {
@@ -18,6 +19,7 @@ function CreatePostPage(props) {
     const [title, setTitle] = useState('');
     const [post_template, setPost_template] = useState('');
     const [name, setName] = useState('');
+    const [date, setDate] = useState(new Date());
     const dispatch = useDispatch();
     // const {isLoginSucceed} = useSelector(state=>state.auth)
 
@@ -164,7 +166,7 @@ function CreatePostPage(props) {
                     {index !== "init" && exampleData.data[index]["data_field_templates"].map((field) => (
                         <FormGroup className="mb-3" controlId="fields">
                             <Row>
-                                <Col>
+                                <Col sm={2}>
                                     <FormLabel style={{ color: "black" }} > {field["name"]} </FormLabel>
                                 </Col>
                                 <Col>
@@ -173,15 +175,17 @@ function CreatePostPage(props) {
                                         </FormControl>
                                     }
                                     {field["type"] === "image" &&
-                                        <FormFile accept="image/*" name="imageFile" onChange={(e) => onChangeFile(e)}>
-                                        </FormFile>
+                                        // <FormFile accept="image/*" name="imageFile" onChange={(e) => onChangeFile(e)}>
+                                        // </FormFile>
+                                        <FormControl placeholder="Enter Picture URL" type="text" onChange={(e) => onChangeFile(e)}>
+                                        </FormControl>
                                     }
                                     {field["type"] === "location" &&
                                         <FormControl name="locField" placeholder="Enter Location" type="text">
                                         </FormControl>
                                     }
                                     {field["type"] === "date" &&
-                                        <FormControl name="dateField" placeholder="Enter Date" type="text">
+                                        <FormControl name="dateField" placeholder="Enter Date" type="date" value={date} onChange={(e) => setDate(e.target.value)}>
                                         </FormControl>
                                     }
                                 </Col>
@@ -195,7 +199,9 @@ function CreatePostPage(props) {
                 </Form>
             </Container>
 
-            <div>
+            <SideCard props={props} communityData={communityData}/>
+
+            {/* <div>
                 <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
                     <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
                     <Card.Body>
@@ -244,7 +250,7 @@ function CreatePostPage(props) {
                         </ListGroupItem>
                     </ListGroup>
                 </Card>
-            </div>
+            </div> */}
         </>
     );
 }

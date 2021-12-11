@@ -44,7 +44,7 @@ const CreateCommunity = (props) => {
         <SideBar />
       </div>
 
-      <Container fluid={true} style={{ width: '55rem', margin: '0px auto', backgroundColor: "lightblue" }}>
+      <Container fluid={true} style={{ width: '55rem', margin: '0px auto', backgroundColor: "Lavender" }}>
         <Form>
           <FormGroup className="mb-3">
             <FormLabel style={{ color: "black", fontSize: 30, font: "bold" }}>
@@ -69,8 +69,10 @@ const CreateCommunity = (props) => {
             <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
               Community Picture
             </FormLabel>
-            <FormFile accept="image/*" onChange={(text) => setCommunity_image_url(text.target.value)}>
-            </FormFile>
+            <FormControl placeholder="Enter Community Picture URL" type="text" onChange={(text) => setCommunity_image_url(text.target.value)}>
+            </FormControl>
+            {/* <FormFile accept="image/*" onChange={(text) => setCommunity_image_url(text.target.value)}>
+            </FormFile> */}
           </FormGroup>
           <FormGroup className="mb-3" controlId="formPrivacy">
             <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
@@ -82,6 +84,9 @@ const CreateCommunity = (props) => {
           <Button variant="primary" type="submit" style={{ marginBottom: '10px' }} onClick={e => createCommunityCall(e)}>
             Create Community
           </Button>
+          {/* {isRegistered && <Alert variant="success">
+        <Alert.Heading>{'Başarıyla Kayıt Oldunuz.'}</Alert.Heading>
+      </Alert> } */}
         </Form>
       </Container>
     </>
