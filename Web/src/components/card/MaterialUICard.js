@@ -15,7 +15,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import myDate from 'utils/methods'
-import { ImageList, ImageListItem } from '@mui/material';
+import { Carousel, Image } from 'react-bootstrap';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -28,13 +28,18 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
+
 export default function PostCard({ posts }) {
     const [expanded, setExpanded] = React.useState(false);
-    const [isAnyImage, setIsAnyImage] = React.useState(false);
+    const [isAnyImage, setIsAnyImage] = React.useState(false)
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-
+    {
+        posts["data_fields"].map((field) => (field["type"] === "image" && !isAnyImage &&
+            setIsAnyImage(true)
+        ))
+    }
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
             <CardHeader
@@ -57,72 +62,37 @@ export default function PostCard({ posts }) {
                     {posts["title"]}
                 </Typography>
             </CardContent>
-            {/* {(() => {
-                for (let i = 0; i < posts["data_fields"].length; i++) {
-                    if (posts["data_fields"][i]["type"] === "image") {
-                        setIsAnyImage(true);
-                    }
+
+            {isAnyImage &&
+                <CardMedia>
+                    <Carousel prevLabel="" nextLabel="" slide={false} interval={5000000}>
+                        {
+                            posts["data_fields"].map((field) => (field["type"] === "image" &&
+                                <Carousel.Item >
+                                    <Image style={{ height: "480px" }}
+                                        className="d-block w-100"
+                                        src={field["content"][Object.keys(field["content"])[0]]}
+                                    />
+                                </Carousel.Item>
+                            ))
+                        }
+                    </Carousel>
+                </CardMedia>
+            }
+
+            <CardContent>
+                {
+                    posts["data_fields"].map((field) => (
+                        <div>
+                            {field["type"] !== "image" &&
+                                <Typography paragraph>
+                                    {field["content"][Object.keys(field["content"])[0]]}
+                                </Typography>
+                            }
+                        </div>
+                    ))
                 }
-            })()} */}
-            {/*
-            {posts["data_fields"].map((field) => (
-                <div>
-                    {field["type"] === "text" &&
-                        <Typography paragraph>
-                            {field["content"][Object.keys(field["content"])[0]]}
-                        </Typography>}
-                    {field["type"] === "image" &&
-                        <CardMedia>
-
-                        </CardMedia>}
-                </div>
-
-            ))} */}
-            {/* <CardMedia >
-                <ImageList
-                    sx={{ width: 800, height: 150 }}
-                    variant="quilted"
-                    cols={3}
-                    rowHeight={150}
-                >
-                    {posts["data_fields"].map((field) => (field["type"] === "image" &&
-                        <ImageListItem cols={field.cols || 1} rows={field.rows || 1}>
-                            <img
-                                src={field["content"][Object.keys(field["content"])[0]]}
-                            />
-                        </ImageListItem>
-                    ))}
-                </ImageList>
-            </CardMedia> */}
-            <div class="latest-photos">
-                <div class="row"><div class="col-md-4">
-                    <figure> <img class="img-fluid" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" alt="" />
-                        {/* </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" alt="" />
-                        </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://i4.hurimg.com/i/hurriyet/75/1110x740/5b8e6d967152d827603dd434.jpg" alt="" />
-                        </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar4.png" alt="" />
-                        </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar5.png" alt="" />
-                        </figure></div><div class="col-md-4"> <figure> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" />
-                        </figure></div><div class="col-md-4"> <figure class="mb-0"> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="" />
-                        </figure></div><div class="col-md-4"> <figure class="mb-0"> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="" />
-                        </figure></div><div class="col-md-4"> <figure class="mb-0"> <img class="img-fluid" src="https://bootdey.com/img/Content/avatar/avatar9.png" alt="" /> */}
-                    </figure></div></div></div>
-
-
-            {posts["data_fields"].map((field) => (
-                <div>
-                    {field["type"] === "text" &&
-                        <Typography paragraph>
-                            {field["content"][Object.keys(field["content"])[0]]}
-                        </Typography>}
-
-                </div>
-
-            ))}
-
-            {/* {(() => {
-                setIsAnyImage(false);
-            })()} */}
-
+            </CardContent>
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />
@@ -139,7 +109,7 @@ export default function PostCard({ posts }) {
                     <ExpandMoreIcon />
                 </ExpandMore> */}
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            {/* <Collapse in={expanded} timeout="auto" unmountOnExit>
                 <CardContent>
                     <Typography paragraph>Method:</Typography>
                     <Typography paragraph>
@@ -167,7 +137,7 @@ export default function PostCard({ posts }) {
                         Set aside off of the heat to let rest for 10 minutes, and then serve.
                     </Typography>
                 </CardContent>
-            </Collapse>
+            </Collapse> */}
         </MaterialCard>
     );
 }
