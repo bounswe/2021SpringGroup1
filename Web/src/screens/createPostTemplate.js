@@ -17,7 +17,8 @@ function CreatePostTemplate(props) {
     let id = listOfPath[listOfPath?.length - 1];
     // console.log('id: ', id);
     // console.log('props: ', props?.location?.pathname?.split('/'));
-
+    const [templateName, setTemplateName] = useState("");
+    const [fields, setFields] = useState([]);
     const dispatch = useDispatch();
     const { communityData, communityPosts } = useSelector(state => state.community)
     // console.log('communityData: ', communityData?.Community);
@@ -27,10 +28,68 @@ function CreatePostTemplate(props) {
         // dispatch(listCommunityPosts(id));
     }, [])
 
+    function transformInToFormObject(data) {
+        let formData = new FormData();
+        console.log(fields);
+        for (let key in data) {
+          if (Array.isArray(data[key])) {
+            data[key].forEach((obj, index) => {
+              let keyList = Object.keys(obj);
+              keyList.forEach((keyItem) => {
+                if(keyItem==0) {
+                console.log(keyItem);
+                let keyName = [key, "[", index, "]", ".", "type"].join("");
+                console.log(keyName);
+                console.log(obj[keyItem]);
+                formData.append(keyName, String(obj[keyItem]));
+                } else {
+                    console.log(keyItem);
+                let keyName = [key, "[", index, "]", ".", "name"].join("");
+                console.log(keyName);
+                console.log(obj[keyItem]);
+                formData.append(keyName, String(obj[keyItem]));
+
+                }
+              });
+            });
+          } else if (typeof data[key] === "object") { 
+            for (let innerKey in data[key]) {
+              formData.append(`${key}.${innerKey}`, data[key][innerKey]);
+            }
+          } else {
+            formData.append(key, data[key]);
+          }
+        }
+        return formData;
+      }
     const createPostTemplateCall = (e) => {
-        e.preventDefault();
+        // let formData = new FormData();
+        // formData.append("name",templateName);
+        // fields.forEach((item,index) => {formData.append('data_field_templates['+ index +'].type', item.type);
+        // formData.append('data_field_templates[' +index+'].name', item.name)});
+        // fields.forEach((item,index) =>
+        // formData.append("data_field_templates", {
+        //    "name": String(item.name),
+        //    "type": String(item.type)
+        // }));
+        // console.log(formData.getAll('data_field_templates'))
+        // fields.forEach(item => {
+        //     formData.append(`data_field_templates`,item);
+        //   });
+        // for(let i = 0; i < fields.length; i += 1) {
+        //     Object.keys(fields[i]).forEach((key) => {
+        //         if(key === 'image') {
+        //             formData.append(key, JSON.stringify(fields[i][key]))
+        //          } else {
+        //              formData.append(key, fields[i][key])
+        //          }
+        //     })
+        // }
+        // formData.append("name",templateName);
+         e.preventDefault();
         // dispatch(subscribeCommunity(id));
-        dispatch(createTemplate());
+        
+        // 
     }
 
     const subscribeCall = (e, id, isJoined) => {
@@ -39,7 +98,6 @@ function CreatePostTemplate(props) {
         dispatch(subscribeCommunity(id, isJoined));
     }
 
-    const [fields, setFields] = useState([]);
     // handle input change
     const handleInputChange = (e, index) => {
         const { name, value } = e.target;
@@ -71,10 +129,10 @@ function CreatePostTemplate(props) {
                         </FormLabel>
                     </FormGroup>
                     <FormGroup className="mb-3" controlId="tempTitle">
-                        <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }}>
+                        <FormLabel style={{ color: "black", fontSize: 20, font: "bold" }} >
                             Template Name
                         </FormLabel>
-                        <FormControl placeholder="Enter Template Name" type="text" >
+                        <FormControl onChange={(text) => setTemplateName(text.target.value)} placeholder="Enter Template Name" type="text" >
                         </FormControl>
                     </FormGroup>
                     <FormGroup className="mb-3" controlId="tempDesc">

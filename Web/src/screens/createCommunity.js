@@ -4,18 +4,23 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Container, ListGroup, ListGroupItem, Button, Form, FormLabel, FormGroup, FormControl, FormFile } from 'react-bootstrap';
+import { Card, Container, ListGroup, ListGroupItem, Button, Form, FormLabel, FormGroup, FormControl, FormFile,Alert } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { createCommunity } from 'store/actions/communityAction';
 import { isEmpty } from 'utils/methods';
 import { useDispatch } from 'react-redux';
-
+import SearchField from 'react-search-field';
 
 const CreateCommunity = (props) => {
   const [isPrivate, setIsPrivate] = useState('');
   const [community_image_url, setCommunity_image_url] = useState('');
   const [description, setDescription] = useState('');
   const [name, setName] = useState('');
+  const [isCreated,setIsCreated]= useState(false);
+  const [isSuccessful,setIsSuccessful]= useState(false);
+  const [alertMessage,setAlertMessage]= useState('');
+
+
   const dispatch = useDispatch();
   console.log(isPrivate)
   // const {isLoginSucceed} = useSelector(state=>state.auth)
@@ -28,14 +33,29 @@ const CreateCommunity = (props) => {
       // history.push('/landingPage')
     }
   }, [])
+  const returnAlert = (variant,message) => {
+    if (isCreated) {
+    return(
+      <Alert variant={variant}>
+        <Alert.Heading>{isSuccessful? "Success!":"Error!"}</Alert.Heading>
+        <p>{message}</p>
+      </Alert>
 
-  const createCommunityCall = (e) => {
+    );
+    }
+  }
+
+  const createCommunityCall = async (e) => {
     e.preventDefault();
     if (isEmpty(isPrivate) || isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
       alert('Please Fill All The Fields.');
       return;
     }
-    dispatch(createCommunity({ name, description, community_image_url, isPrivate }))
+    const response = await dispatch(createCommunity({ name, description, community_image_url, isPrivate }));
+    setIsSuccessful(response.Success);
+    setAlertMessage(response.Success? "Community created successfully.":response.Error.name);
+    setIsCreated(true); 
+    console.log(response);
   }
 
   return (
@@ -84,9 +104,7 @@ const CreateCommunity = (props) => {
           <Button variant="primary" type="submit" style={{ marginBottom: '10px' }} onClick={e => createCommunityCall(e)}>
             Create Community
           </Button>
-          {/* {isRegistered && <Alert variant="success">
-        <Alert.Heading>{'Başarıyla Kayıt Oldunuz.'}</Alert.Heading>
-      </Alert> } */}
+          {isCreated && returnAlert(isSuccessful? "success":"danger",alertMessage)} 
         </Form>
       </Container>
     </>
