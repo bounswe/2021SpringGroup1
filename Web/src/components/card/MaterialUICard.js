@@ -53,7 +53,7 @@ export default function PostCard({ posts }) {
                         <MoreVertIcon />
                     </IconButton>
                 }
-                title={posts["community"]}
+                title={posts["community_name"]}
                 // title={myDate(posts["created_date"])}
                 subheader={posts["poster_name"]}
             />
