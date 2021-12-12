@@ -263,7 +263,6 @@ class SearchCommunities(GenericAPIView):
     def get(self,req):
         if req.user.is_authenticated and "text" in req.GET:
             communities = Community.objects.filter(name__icontains = req.GET["text"])
-            communities = CommunitySerializer(communities, many=True)
             communities=CommunitySerializer(communities,many=True,context={"request":req})
             return Response(communities.data)    
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
