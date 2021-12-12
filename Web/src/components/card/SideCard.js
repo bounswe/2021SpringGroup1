@@ -11,17 +11,16 @@ import { subscribeCommunity } from 'store/actions/communityAction';
 export default function SideCard({ props, communityData }) {
     const history = useHistory();
     const dispatch = useDispatch();
-
-    const subscribeCall = (e, id, isJoined) => {
+    const subscribeCall = async (e, id, isJoined) => {
         e.preventDefault();
         // dispatch(subscribeCommunity(id));
-        dispatch(subscribeCommunity(id, isJoined));
+        const result= await dispatch(subscribeCommunity(id, isJoined));
     }
     return (
         <div>
-            <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
+            <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px",backgroundColor:"cornsilk" }}>
                 <Card.Img variant="top" src={communityData?.Community?.community_image_url} />
-                <Card.Body>
+                <Card.Body style={{backgroundColor:"cornsilk"}}>
                     <Card.Title style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -32,12 +31,13 @@ export default function SideCard({ props, communityData }) {
                     </Card.Text>
 
 
-                </Card.Body>
+                </Card.Body >
                 <ListGroup className="list-group-flush">
                     <ListGroupItem style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        backgroundColor:"cornsilk"
                     }}>
                         <Button onClick={e => subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)}
                             variant={communityData?.Community?.isJoined ? 'danger' : 'success'}>
@@ -48,23 +48,28 @@ export default function SideCard({ props, communityData }) {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        backgroundColor:"cornsilk"
                     }}>
                         <Button onClick={() => history.push('/community/' + props.match.params.id)} variant="success">Feed Page</Button>{' '}
                     </ListGroupItem>
+                    {communityData?.Community?.isJoined &&
                     <ListGroupItem style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        backgroundColor:"cornsilk"
                     }}>
                         <Button onClick={() => history.push('/community/createPostPage/' + props.match.params.id)} variant="success">Create Post</Button>{' '}
-                    </ListGroupItem>
+                    </ListGroupItem>}
+                    {communityData?.Community?.isJoined &&
                     <ListGroupItem style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        backgroundColor:"cornsilk"
                     }}>
                         <Button onClick={() => history.push('/community/createPostTemplate/' + props.match.params.id)} variant="success">Create Post Template</Button>{' '}
-                    </ListGroupItem>
+                    </ListGroupItem>}
                 </ListGroup>
             </Card>
         </div>

@@ -1,11 +1,11 @@
 #linkid {
-    color: #000000;
-    text-decoration: none;
-  }
-  
-  #linkid:hover {
-    color: #6996FF;
+  color: #FFFFFF;
+  text-decoration: none;
+}
 
-    cursor: pointer;
-    text-decoration: underline
-  }
+#linkid:hover {
+  color: #fffacd;
+
+  cursor: pointer;
+  text-decoration: underline
+}

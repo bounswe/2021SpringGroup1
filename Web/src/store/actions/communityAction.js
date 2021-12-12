@@ -33,6 +33,7 @@ export const createCommunity = data => {
         });
         const responseData = response.data;
         console.log('responseData: ' , responseData);
+        return(responseData);
         dispatch({
           type: CREATE_COMMUNITY,
           data: responseData
@@ -69,15 +70,15 @@ export const joinCommunity = data => {
     }
 };
 
-export const createTemplate = data => {
+export const createTemplate = (formData,id) => {
     return async (dispatch,getState) => {
         let {token} = getState().auth;
         if(isEmpty(token)) return;
-        const formData = FORM_DATA_TEXT(data);
+//        const formData = FORM_DATA_TEXT(data);
         try {
         const response = await axios({
             method: 'POST',
-            url: '',//PRE_LOGIN_EMAIL_REQUEST,
+            url: ROOT_URL+ '/communities/'+ id+'/create_post_template',//PRE_LOGIN_EMAIL_REQUEST,
             headers: API_HEADERS_BEARER_TOKEN(token),
             data: formData,
         //   withCredentials: true,
@@ -85,7 +86,7 @@ export const createTemplate = data => {
         const responseData = response.data;
         dispatch({
             type: CREATE_TEMPLATE,
-            data: responseData
+            data: formData
         });
         } catch (error) {
         // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
@@ -306,6 +307,32 @@ export const subscribeCommunity = (id, isJoined) => {
         dispatch({
             type: MY_POSTS,
             data: responseData
+        });
+        } catch (error) {
+        // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+        // throw error.response.data;
+        }
+    }
+};
+
+export const searchCommunities = (data) => {
+    return async (dispatch,getState) => {
+        let {token} = getState().auth;
+        if(isEmpty(token)) return;
+        console.log('data: token, ' , data, token);
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+        const response = await axios({
+            method: 'GET',
+            url: ROOT_URL + '/search_communities',//PRE_LOGIN_EMAIL_REQUEST,
+            headers: API_HEADERS_BEARER_TOKEN(token),
+            params: data,
+            withCredentials: true,
+        });
+        const responseData = response.data;
+        dispatch({
+            type: GET_COMMUNITIES,
+            data: {Communities: responseData}
         });
         } catch (error) {
         // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
