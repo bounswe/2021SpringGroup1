@@ -63,6 +63,7 @@ class CreateCommunity(GenericAPIView):
             if community_serializer.is_valid():
                 community=community_serializer.save(moderator=req.user)
                 req.user.joined_communities.add(community)
+                community_serializer=CommunitySerializer(community,context={"request":req})
                 return Response({"Success":True, "Community": community_serializer.data})
             else:
                 return Response({"Success":False, "Error": community_serializer.errors})
@@ -263,6 +264,7 @@ class SearchCommunities(GenericAPIView):
         if req.user.is_authenticated and "text" in req.GET:
             communities = Community.objects.filter(name__icontains = req.GET["text"])
             communities = CommunitySerializer(communities, many=True)
+            communities=CommunitySerializer(communities,many=True,context={"request":req})
             return Response(communities.data)    
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
