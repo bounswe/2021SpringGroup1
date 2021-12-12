@@ -72,7 +72,7 @@ function UserPostsScreen({navigation}) {
     return (
         <View style={styles.background}>
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>Users Posts</Text>
+                <Text style={styles.title}>Your Posts</Text>
             </View>
             <View style={styles.listContainer}>
                 <FlatList

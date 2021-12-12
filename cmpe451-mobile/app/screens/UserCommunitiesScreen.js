@@ -57,7 +57,7 @@ function UserCommunitiesScreen({navigation}) {
     return (
         <View style={styles.background}>
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>Users Communities</Text>
+                <Text style={styles.title}>Your Communities</Text>
             </View>
             <View style={styles.listContainer}>
                 <FlatList

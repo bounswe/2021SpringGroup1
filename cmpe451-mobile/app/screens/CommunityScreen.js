@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, StyleSheet, Button, FlatList, TouchableOpacity} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import axios from "axios";
+import CreatePostTemplateScreen from './CreatePostTemplateScreen';
 
 function CommunityScreen({route, navigation}) {
     const {communData} = route.params;
@@ -102,6 +103,8 @@ function CommunityScreen({route, navigation}) {
                 <Button style={styles.button} title={subscriptionStatus ? "Leave" : "Subscribe"}
                         onPress={() => communitySubscribe()}/>
                 <Text style={styles.commDescription}> {commData["description"]}</Text>
+                <Button style={styles.button} title={"Create Post Template"}
+                        onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}/>
             </View>
             <View style={styles.body}>
                 <FlatList
