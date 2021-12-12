@@ -7,7 +7,7 @@ export const API_HEADERS_UNAUTHORIZED = {
 
 export const API_HEADERS_BEARER_TOKEN = authToken => {
   return {
-    'Content-Type': 'multipart/form-data',
+    'Content-Type': 'application/json',
     Accept: 'application/json',
     Authorization: `token ${authToken}`,
   };

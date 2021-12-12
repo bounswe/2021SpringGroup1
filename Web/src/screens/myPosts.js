@@ -15,7 +15,7 @@ import myDate from 'utils/methods'
 const MyPosts = (props) => {
 
     const dispatch = useDispatch();
-    const { myPosts } = useSelector(state => state.posts)
+    const { myPosts } = useSelector(state => state.community)
     console.log('myPosts: ', myPosts);
     useEffect(() => {
         dispatch(getMyPosts());
