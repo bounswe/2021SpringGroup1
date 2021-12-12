@@ -14,6 +14,8 @@ export const GET_MY_COMMUNITIES = "GET_MY_COMMUNITIES";
 export const GET_COMMUNITY_DATA = "GET_COMMUNITY_DATA";
 export const LIST_COMMUNITY_POSTS = "LIST_COMMUNITY_POSTS";
 export const MY_POSTS = "MY_POSTS";
+export const LIST_POST_TEMPLATES = "LIST_POST_TEMPLATES";
+
 
 let token = '641895a64fcaf3dad5773d36725e0a9c722adc88';
 
@@ -69,18 +71,18 @@ export const joinCommunity = data => {
     }
 };
 
-export const createTemplate = data => {
+export const createTemplate = (data, id) => {
     return async (dispatch,getState) => {
         let {token} = getState().auth;
         if(isEmpty(token)) return;
-        const formData = FORM_DATA_TEXT(data);
+        //const formData = FORM_DATA_TEXT(data);
         try {
         const response = await axios({
             method: 'POST',
-            url: '',//PRE_LOGIN_EMAIL_REQUEST,
+            url: ROOT_URL + '/communities/' + id + '/create_post_template' ,//PRE_LOGIN_EMAIL_REQUEST,
             headers: API_HEADERS_BEARER_TOKEN(token),
-            data: formData,
-        //   withCredentials: true,
+            data: data,
+           withCredentials: true,
         });
         const responseData = response.data;
         dispatch({
@@ -305,6 +307,33 @@ export const subscribeCommunity = (id, isJoined) => {
         console.log('getCommunityData: responseData: ' , responseData);
         dispatch({
             type: MY_POSTS,
+            data: responseData
+        });
+        } catch (error) {
+        // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+        // throw error.response.data;
+        }
+    }
+};
+
+//TODO getCommunityData
+export const listPostTemplates = (id) => {
+    return async (dispatch,getState) => {
+        let {token} = getState().auth;
+        if(isEmpty(token)) return;
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+        const response = await axios({
+            method: 'GET',
+            url: ROOT_URL + '/communities/' + id + '/list_post_templates',//PRE_LOGIN_EMAIL_REQUEST,
+            headers: API_HEADERS_BEARER_TOKEN(token),
+            params: {community_id: id},
+        //   withCredentials: true,
+        });
+        const responseData = response.data;
+        console.log('getPostTemplates: responseData: ' , responseData);
+        dispatch({
+            type: LIST_POST_TEMPLATES,
             data: responseData
         });
         } catch (error) {

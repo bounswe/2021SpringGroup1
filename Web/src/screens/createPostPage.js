@@ -7,7 +7,7 @@ import SideBar from 'components/navbar/SideBar';
 import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl, FormFile } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
+import { getCommunityData, listCommunityPosts, listPostTemplates, subscribeCommunity } from 'store/actions/communityAction';
 import { isEmpty } from 'utils/methods';
 import { createPost } from 'store/actions/communityAction';
 import SideCard from 'components/card/SideCard';
@@ -46,12 +46,12 @@ function CreatePostPage(props) {
     console.log('id: ', id);
     console.log('props: ', props?.location?.pathname?.split('/'));
 
-    const { communityData, communityPosts } = useSelector(state => state.community)
+    const { communityData, postTemplates } = useSelector(state => state.community)
     console.log('communityData: ', communityData?.Community);
-    // console.log('communityPosts: ', communityPosts);
+    console.log('postTemplates: ', postTemplates);
     useEffect(() => {
         dispatch(getCommunityData(id));
-        // dispatch(listCommunityPosts(id));
+        dispatch(listPostTemplates(id));
     }, [])
 
 
@@ -125,10 +125,9 @@ function CreatePostPage(props) {
         }]
     };
 
-
-    let index = "1";
+    const [index, setindex] = useState("init");
     const displayTemplate = (e) => {
-        index = 1;
+
     }
 
     const onChangeFile = (e) => {
@@ -149,9 +148,9 @@ function CreatePostPage(props) {
                         </FormLabel>
                     </FormGroup>
                     <FormGroup className="mb-3" controlId="templateNum">
-                        <Form.Control as="select" aria-label="Default select example" onChange={() => displayTemplate()}>
+                        <Form.Control as="select" aria-label="Default select example" onChange={(e) => setindex(e.target.value)}>
                             <option value="init">Please Select a Template</option>
-                            {exampleData.data.map((field) => (
+                            {postTemplates["Post_templates"]?.map((field) => (
                                 <option value={field.id}>{field.name}</option>
                             ))}
                         </Form.Control>
@@ -163,7 +162,8 @@ function CreatePostPage(props) {
                         <Form.Control name="postTitle" placeholder="Please Enter Post Title" onChange={(text) => setTitle(text.target.value)}>
                         </Form.Control>
                     </FormGroup>
-                    {index !== "init" && exampleData.data[index]["data_field_templates"].map((field) => (
+                    {index !== "init" && postTemplates["Post_templates"]?.map((field) => (
+                        field["id"] === index &&
                         <FormGroup className="mb-3" controlId="fields">
                             <Row>
                                 <Col sm={2}>
@@ -199,7 +199,7 @@ function CreatePostPage(props) {
                 </Form>
             </Container>
 
-            <SideCard props={props} communityData={communityData}/>
+            <SideCard props={props} communityData={communityData} />
 
             {/* <div>
                 <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>
