@@ -12,7 +12,6 @@ import PostCard from 'components/card/MaterialUICard';
 import SideCard from 'components/card/SideCard';
 
 const CommunityPage = (props) => {
-  const history = useHistory();
   let listOfPath = props?.location?.pathname?.split('/');
   let id = listOfPath[listOfPath?.length - 1];
   console.log('id: ', id);
@@ -32,6 +31,10 @@ const CommunityPage = (props) => {
     // dispatch(subscribeCommunity(id));
     dispatch(subscribeCommunity(id, isJoined));
   }
+
+  const handleCommunityData = () => {
+    dispatch(getCommunityData(id));
+}
   console.log('communityData: ', communityData);
 
   return (
@@ -81,7 +84,7 @@ const CommunityPage = (props) => {
         </div>
 
 
-        <SideCard props={props} communityData={communityData}/>
+        <SideCard props={props} communityData={communityData} handleCommunityData={handleCommunityData}/>
 
         {/* <div>
           <Card style={{ width: '15rem', margin: 'auto', position: "absolute", right: "5px", top: "5px" }}>

@@ -4,7 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl } from 'react-bootstrap';
+import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl,Alert } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { createTemplate, getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
@@ -24,11 +24,21 @@ function CreatePostTemplate(props) {
     const { communityData } = useSelector(state => state.community)
     // console.log('communityData: ', communityData?.Community);
 
+    const [isCreated,setIsCreated]= useState(false);
+    const [isSuccessful,setIsSuccessful]= useState(false);
+    const [alertMessage,setAlertMessage]= useState('');
+
+
+    const handleCommunityData = () => {
+        dispatch(getCommunityData(id));
+    }
+
+
     useEffect(() => {
         dispatch(getCommunityData(id));
     }, [])
 
-    const createPostTemplateCall = (e) => {
+    const createPostTemplateCall = async (e) => {
         e.preventDefault();
         let values = [];
         for (let i = 0; i < dataFields.length; i++) {
@@ -38,7 +48,11 @@ function CreatePostTemplate(props) {
         console.log("values:", values);
         var sendData = { "name": templateName, "data_field_templates": values };
         console.log("sendData:", sendData);
-        dispatch(createTemplate(sendData,id));
+        const response = await dispatch(createTemplate(sendData,id));
+        setIsSuccessful(response.Success);
+        setAlertMessage(response.Success? "Post template created successfully.":response.Error.name);
+        setIsCreated(true); 
+        console.log(response);
     }
 
     // handle input change
@@ -59,6 +73,18 @@ function CreatePostTemplate(props) {
     const handleAddClick = () => {
         setDataFields([...dataFields, { type: "", name: "" }]);
     };
+
+    const returnAlert = (variant,message) => {
+        if (isCreated) {
+        return(
+          <Alert variant={variant}>
+            <Alert.Heading>{isSuccessful? "Success!":"Error!"}</Alert.Heading>
+            <p>{message}</p>
+          </Alert>
+    
+        );
+        }
+      }
     return (
         <>
             <div>
@@ -119,10 +145,13 @@ function CreatePostTemplate(props) {
                             Create Template
                         </Button>
                     </FormGroup>
+
+                    {isCreated && returnAlert(isSuccessful? "success":"danger",alertMessage)} 
+
                 </Form>
             </Container>
 
-            <SideCard props={props} communityData={communityData} />
+            <SideCard props={props} communityData={communityData} handleCommunityData={handleCommunityData}/>
 
         </>
     );

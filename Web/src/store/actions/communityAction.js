@@ -61,6 +61,7 @@ export const joinCommunity = data => {
                 //   withCredentials: true,
             });
             const responseData = response.data;
+            
             dispatch({
                 type: JOIN_COMMUNITY,
                 data: responseData
@@ -87,6 +88,8 @@ export const createTemplate = (formData, id) => {
             });
             const responseData = response.data;
             console.log("createTEmplateResponseData:", responseData);
+            return (responseData);
+
             dispatch({
                 type: CREATE_TEMPLATE,
                 data: formData
@@ -125,23 +128,24 @@ export const getCommunities = (data) => {
     }
 };
 
-export const getMyCommunities = () => {
+export const getMyCommunities = (data) => {
     return async (dispatch, getState) => {
         let { token } = getState().auth;
         if (isEmpty(token)) return;
+        console.log('data: token, ', data, token);
         // const formData = FORM_DATA_TEXT(data);
         try {
             const response = await axios({
-                method: 'POST',
-                url: '',//PRE_LOGIN_EMAIL_REQUEST,
-                headers: API_HEADERS_UNAUTHORIZED,
-                // data: formData,
-                //   withCredentials: true,
+                method: 'GET',
+                url: ROOT_URL + '/list_communities',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: data,
+                withCredentials: true,
             });
             const responseData = response.data;
             dispatch({
                 type: GET_MY_COMMUNITIES,
-                data: responseData
+                data: {"Communities":responseData}
             });
         } catch (error) {
             // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
@@ -221,6 +225,7 @@ export const createPost = (data, id) => {
             });
             const responseData = response.data;
             console.log('createPost: responseData: ', responseData);
+            return (responseData);
             dispatch({
                 type: CREATE_POST,
                 data: responseData
