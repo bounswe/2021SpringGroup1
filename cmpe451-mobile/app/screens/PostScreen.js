@@ -4,7 +4,7 @@ import {View, Text, StyleSheet,ScrollView, Image} from 'react-native';
 
 function PostScreen({route, navigation}) {
     const {postData} = route.params;
-
+    console.log("asdasdasdasdas");
     console.log(postData);
     return (
         <ScrollView style={styles.background}>
@@ -12,14 +12,14 @@ function PostScreen({route, navigation}) {
             {postData["data_fields"].filter(item=>item.type==="text").map((input) => (
                 <View style={styles.contentContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Text style={styles.contentText}>{input.content.additionalProp1}</Text>
+                    <Text style={styles.contentText}>{input.content.prop1}</Text>
                 </View>
             ))}
 
             {postData["data_fields"].filter(item=>item.type==="image").map((input) => (
                 <View style={styles.contentContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Image style={styles.stretch} source={{uri:input.content.additionalProp1}}/>
+                    <Image style={styles.stretch} source={{uri:input.content.prop1}}/>
                 </View>
             ))}
 
