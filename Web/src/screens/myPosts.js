@@ -27,42 +27,11 @@ const MyPosts = (props) => {
                 <SideBar />
             </div>
             <div>
-                {/* {myPosts?.map((posts) => (
-                    <Card style={{ width: '50rem', margin: 'auto', marginBottom: "30px" }}>
-                        <Row>
-                            <Col>
-                                <Card.Title>{posts["title"]}</Card.Title>
-                            </Col>
-                            <Col>
-                                <Card.Title>{posts["community"]}</Card.Title>
-                            </Col>
-                            <Col>
-                                <Card.Title>{myDate(posts["created_date"])}</Card.Title>
-                            </Col>
-                        </Row>
-                        {posts["data_fields"].map((field) => (
-                            <Container style={{ width: '45rem', margin: '5px auto', backgroundColor: "gainsboro" }}>
-                                <div >
-                                    <Row>
-                                        <Col>
-                                            <FormLabel style={{ color: "black" }} > {field["name"]} </FormLabel>
-                                        </Col>
-                                        {field["type"] === "text" && <Col xs={8}><Card.Text type="text" name="textField">{field["content"][Object.keys(field["content"])[0]]}</Card.Text></Col>}
-                                        {field["type"] === "image" && <Col xs={8}><Card.Img src={field["content"][Object.keys(field["content"])[0]]}></Card.Img>
-                                        </Col>}
-                                    </Row>
-                                </div>
-                            </Container>
-                        ))}
-                    </Card>
-                ))} */}
-
                 <div>
-                    {myPosts && myPosts?.map((posts) => (
+                    {myPosts?.length > 0 && myPosts?.map((posts) => (
                         <PostCard posts={posts} />
                     ))}
                 </div>
-
             </div>
         </>
     );
