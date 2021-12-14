@@ -15,7 +15,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import myDate from 'utils/methods'
-import { Carousel, Image } from 'react-bootstrap';
+import { Carousel, Image, Row, Col } from 'react-bootstrap';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -58,9 +58,19 @@ export default function PostCard({ posts }) {
                 subheader={posts["poster_name"]}
             />
             <CardContent>
-                <Typography variant="body2" color="text.first">
-                    {posts["title"]}
-                </Typography>
+                <Row>
+                    <Col sm={2}>
+                        <Typography variant="body2" color="text.first">
+                            Post Title:
+                        </Typography>
+                    </Col>
+                    <Col>
+                        <Typography variant="body2" color="text.first">
+                            {posts["title"]}
+                        </Typography>
+                    </Col>
+                </Row>
+
             </CardContent>
 
             {isAnyImage &&
@@ -85,9 +95,16 @@ export default function PostCard({ posts }) {
                     posts["data_fields"].map((field) => (
                         <div>
                             {field["type"] !== "image" &&
-                                <Typography paragraph>
-                                    {field["content"][Object.keys(field["content"])[0]]}
-                                </Typography>
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <Col>
+                                        <Typography paragraph>
+                                            {field["content"][Object.keys(field["content"])[0]]}
+                                        </Typography>
+                                    </Col>
+                                </Row>
                             }
                         </div>
                     ))

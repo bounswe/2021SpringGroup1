@@ -9,10 +9,10 @@ import './SignUpLogin.css'
 
 
 function Form() {
-  const [username , setUsername] = useState('bilal5');
-  const [email , setEmail] = useState('bilal@gmail.com');
-  const [password , setPassword] = useState('bilal');
-  const [passwordConfirm , setPasswordConfirm] = useState('bilal');
+  const [username , setUsername] = useState('');
+  const [email , setEmail] = useState('');
+  const [password , setPassword] = useState('');
+  const [passwordConfirm , setPasswordConfirm] = useState('');
   const {isRegistered} = useSelector(state=>state.auth)
   console.log('isRegistered: ' , isRegistered);
   const dispatch = useDispatch();
