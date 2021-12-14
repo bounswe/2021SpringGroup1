@@ -250,6 +250,24 @@ class GetUserHomeFeed(GenericAPIView):
         else:
             return Response({"Success":False, "Error": "No Authentication"})
 
+class SearchPostsInCommunity(GenericAPIView):
+    serializer_class=PostSerializer
+    queryset=Post.objects.all()
+    @extend_schema(
+        parameters=[
+          OpenApiParameter("text", OpenApiTypes.STR, OpenApiParameter.QUERY),
+        ],
+        request=None,
+    )
+
+    def get(self,req,community_id):
+        if req.user.is_authenticated and "text" in req.GET:
+            current_community=Community.objects.get(pk=community_id)
+            posts = current_community.posts.filter(title__icontains = req.GET["text"])
+            posts=Post(posts,many=True,context={"request":req})
+            return Response(posts.data)    
+        return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
+
 class SearchCommunities(GenericAPIView):
     serializer_class=CommunitySerializer
     queryset=Community.objects.all()
