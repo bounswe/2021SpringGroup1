@@ -16,14 +16,14 @@ function WelcomeScreen({ navigation }) {
             <View style={styles.loginButton}>
                 <Button
                     title="Log in"
-                    color="white"
+                    color="dodgerblue"
                     onPress={() => navigation.navigate('Login')}
                 />
             </View>
             <View style={styles.registerButton}>
                 <Button
                     title="Register"
-                    color="white"
+                    color="darkblue"
                     onPress={() => navigation.navigate('Register')}
                 />
             </View>

@@ -29,7 +29,7 @@ function CreateCommunityScreen(props) {
             <View style={{paddingBottom: 20}}/>
             <View style={styles.buttonView}>
                 <Button title="Create Community"
-                        color="white"
+                        color="dodgerblue"
                         onPress={() => createComm(name, description, url)}/>
             </View>
             <View style={{paddingBottom: 200}}/>

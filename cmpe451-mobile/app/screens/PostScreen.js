@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         width: "100%"
     },
     detailList: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         alignItems: 'center',
         padding: 10
     },

@@ -39,7 +39,7 @@ function RegisterScreen({navigation}) {
             <View style={styles.buttonView}>
                 <Button
                     title="Register"
-                    color="white"
+                    color="darkblue"
                     onPress={() => makeRegistration(name, mail, pass, pass2)}
                 />
             </View>

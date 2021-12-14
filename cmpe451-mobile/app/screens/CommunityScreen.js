@@ -104,6 +104,8 @@ function CommunityScreen({route, navigation}) {
                 <Text style={styles.commDescription}> {commData["description"]}</Text>
                 <Button style={styles.button} title={"Create Post Template"}
                         onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}/>
+                <Button style={styles.button} title={"Create Post"}
+                        onPress={() => navigation.navigate("CreatePost", {community: commData["id"]})}/>
             </View>
             <View style={styles.body}>
                 <FlatList
@@ -143,12 +145,12 @@ const styles = StyleSheet.create({
     banner: {
         backgroundColor: "lightblue",
         width: "100%",
-        height: "30%"
+        height: "40%"
     },
     body: {
         backgroundColor: "dodgerblue",
         width: "100%",
-        height: "80%",
+        height: "60%",
         alignItems: "center"
     },
     commTitle: {
@@ -161,7 +163,7 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     flatList: {
-        width: "100%"
+        width: "90%"
     },
     postContainer: {
         margin: 10,

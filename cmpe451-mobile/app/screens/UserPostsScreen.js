@@ -6,50 +6,69 @@ import {axiosInstance} from "../service/axios_client_service";
 function UserPostsScreen({navigation}) {
     //const items = getUserPosts();
 
-    const userPosts = [
-        {
-            "id": 10,
-            "poster": "elxif",
-            "community": "chess lovers",
-            "title": "how can i improve myself?",
-            "post_template": 0,
-            "description": "I'm a beginner and I want to get better at chess. What would you suggest?",
-            "data_fields": [
-                {
-                    "name": "string",
-                    "type": "text",
-                    "content": {
-                        "additionalProp1": "string",
-                        "additionalProp2": "string",
-                        "additionalProp3": "string"
-                    },
-                    "post": 0
-                }
-            ],
-            "created_date": "today"
-        },
-        {
-            "id": 11,
-            "poster": "elxif",
-            "community": "chess lovers",
-            "title": "Check out this EPIC game.",
-            "description": "Check this out. Wow.\n https://www.chessgames.com/perl/chessgame?gid=1011478",
-            "post_template": 0,
-            "data_fields": [
-                {
-                    "name": "string",
-                    "type": "text",
-                    "content": {
-                        "additionalProp1": "string",
-                        "additionalProp2": "string",
-                        "additionalProp3": "string"
-                    },
-                    "post": 0
-                }
-            ],
-            "created_date": "2 days ago"
-        }
-    ];
+    const [userPosts, setUserPosts] = useState([]);
+
+    useEffect(() => {
+            getUserPosts();
+        },[]
+    );
+
+    const getUserPosts = () => {
+        axiosInstance.get('get_user_created_posts'
+        ).then(async response => {
+            if (response.status === 200) {
+                console.log("getting user posts success!");
+                setUserPosts(response.data);
+            }
+            else{
+                console.log("error on getUserFeed")
+            }
+        })
+    }
+    // const userPosts = [
+    //     {
+    //         "id": 10,
+    //         "poster": "elxif",
+    //         "community": "chess lovers",
+    //         "title": "how can i improve myself?",
+    //         "post_template": 0,
+    //         "description": "I'm a beginner and I want to get better at chess. What would you suggest?",
+    //         "data_fields": [
+    //             {
+    //                 "name": "string",
+    //                 "type": "text",
+    //                 "content": {
+    //                     "additionalProp1": "string",
+    //                     "additionalProp2": "string",
+    //                     "additionalProp3": "string"
+    //                 },
+    //                 "post": 0
+    //             }
+    //         ],
+    //         "created_date": "today"
+    //     },
+    //     {
+    //         "id": 11,
+    //         "poster": "elxif",
+    //         "community": "chess lovers",
+    //         "title": "Check out this EPIC game.",
+    //         "description": "Check this out. Wow.\n https://www.chessgames.com/perl/chessgame?gid=1011478",
+    //         "post_template": 0,
+    //         "data_fields": [
+    //             {
+    //                 "name": "string",
+    //                 "type": "text",
+    //                 "content": {
+    //                     "additionalProp1": "string",
+    //                     "additionalProp2": "string",
+    //                     "additionalProp3": "string"
+    //                 },
+    //                 "post": 0
+    //             }
+    //         ],
+    //         "created_date": "2 days ago"
+    //     }
+    // ];
     /*
         const [userPosts, changePosts] = useState([]);
 
