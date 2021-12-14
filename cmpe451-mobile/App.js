@@ -10,6 +10,7 @@ import Home from './app/screens/UserHome';
 import PostScreen from './app/screens/PostScreen';
 import CommunityScreen from './app/screens/CommunityScreen';
 import CreatePostTemplateScreen from './app/screens/CreatePostTemplateScreen';
+import CreatePostScreen from './app/screens/CreatePostScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,10 @@ export default function App() {
           <Stack.Screen
             name="CreatePostTemplate"
             component={CreatePostTemplateScreen}
+            />
+          <Stack.Screen
+            name="CreatePost"
+            component={CreatePostScreen}
             />
       </Stack.Navigator>
     </NavigationContainer>

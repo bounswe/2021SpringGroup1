@@ -59,14 +59,16 @@ function CommunityScreen({route, navigation}) {
     //gives an error with code 403. could not get it to work.
     //presumably, to get it to work we need to pass a header called 'X-CSRFTOKEN'
     async function communitySubscribe() {
-        let uri = 'communities/' + commData["id"] + '/user_subscription';
+        let uri = 'communities/' + commData["id"] + '/user_subscription?action=leave';
         if (subscriptionStatus) {
-            axiosInstance.put(uri, {action: "leave"}, {withCredentials: true}).then(async response => {
+            axiosInstance.put(uri, {withCredentials: true}).then(async response => {
+                console.log(response.data);
+                console.log()
                 if (response.status === 200) {
                     if (response.data["Success"]) {
                         if (!response.data["IsJoined"]) {
                             console.log("successfully left community");
-                            subscriptionStatus = false;
+                            changeSubscriptionStatus(false);
                         }
                     }
                 }
@@ -74,19 +76,16 @@ function CommunityScreen({route, navigation}) {
         } else {
             console.log(uri);
             console.log(1);
+            let uri2 = 'communities/' + commData["id"] + '/user_subscription?action=join';
             //console.log(axiosInstance.defaults.baseURL);
-            axiosInstance.put(uri, JSON.stringify({action: "join"}), {
-                headers: {
-                    'X-CSRFTOKEN': 'vhrU9bKR9SAYLhwI6TYK77LKP7keOe2hxd8ssFcdypas3CWTQJdmi81ptIInw3Zx',
-                    accept: '*/*'
-                }
-            }).then(async response => {
+            axiosInstance.put(uri2).then(async response => {
                 console.log(2);
+                console.log(response.data);
                 if (response.status === 200) {
                     if (response.data["Success"]) {
                         if (response.data["IsJoined"]) {
                             console.log("successfully joined community");
-                            subscriptionStatus = true;
+                            changeSubscriptionStatus(true);
                         }
                     }
                 }
@@ -105,6 +104,8 @@ function CommunityScreen({route, navigation}) {
                 <Text style={styles.commDescription}> {commData["description"]}</Text>
                 <Button style={styles.button} title={"Create Post Template"}
                         onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}/>
+                <Button style={styles.button} title={"Create Post"}
+                        onPress={() => navigation.navigate("CreatePost", {community: commData["id"]})}/>
             </View>
             <View style={styles.body}>
                 <FlatList
@@ -144,12 +145,12 @@ const styles = StyleSheet.create({
     banner: {
         backgroundColor: "lightblue",
         width: "100%",
-        height: "30%"
+        height: "40%"
     },
     body: {
         backgroundColor: "dodgerblue",
         width: "100%",
-        height: "80%",
+        height: "60%",
         alignItems: "center"
     },
     commTitle: {
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     flatList: {
-        width: "100%"
+        width: "90%"
     },
     postContainer: {
         margin: 10,

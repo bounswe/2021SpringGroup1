@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, Button, StyleSheet,TextInput,ScrollView} from "react-native";
+import {View, Text, Button, StyleSheet,TextInput,ScrollView, Alert} from "react-native";
 import { axiosInstance } from "../service/axios_client_service";
 
 function CreatePostTemplateScreen({ route, navigation }) {
@@ -49,6 +49,16 @@ function CreatePostTemplateScreen({ route, navigation }) {
     const res = axiosInstance.post(
       url, sendData
     );
+    console.log("aaaaa");
+    // success
+    if((await res).data.Success){
+      Alert.alert("Sucess","Template created sucessfully.");
+    }
+    else{
+      console.log(res);
+      Alert.alert("Failure",res.Error.name);
+
+    }
     console.log((await res).data);
     return (await res).data;
   };

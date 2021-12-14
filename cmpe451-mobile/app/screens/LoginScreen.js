@@ -24,7 +24,7 @@ function LoginScreen({navigation}) {
             <View style={{paddingBottom: 20}}/>
             <View style={styles.buttonView}>
                 <Button title="Log in"
-                        color="white"
+                        color="dodgerblue"
                         onPress={() => checkCredential(name, pass, navigation)}/>
             </View>
             <View style={{paddingBottom: 200}}/>
