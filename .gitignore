@@ -1,7 +1,7 @@
 .vs
 .vscode
 help.txt
-
+Web/node_modules/**
 cmpe352/__pycache__/**
 cmpe352/migrations/__pycache__/**
 
