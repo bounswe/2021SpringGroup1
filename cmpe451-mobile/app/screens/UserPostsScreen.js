@@ -25,88 +25,28 @@ function UserPostsScreen({navigation}) {
             }
         })
     }
-    // const userPosts = [
-    //     {
-    //         "id": 10,
-    //         "poster": "elxif",
-    //         "community": "chess lovers",
-    //         "title": "how can i improve myself?",
-    //         "post_template": 0,
-    //         "description": "I'm a beginner and I want to get better at chess. What would you suggest?",
-    //         "data_fields": [
-    //             {
-    //                 "name": "string",
-    //                 "type": "text",
-    //                 "content": {
-    //                     "additionalProp1": "string",
-    //                     "additionalProp2": "string",
-    //                     "additionalProp3": "string"
-    //                 },
-    //                 "post": 0
-    //             }
-    //         ],
-    //         "created_date": "today"
-    //     },
-    //     {
-    //         "id": 11,
-    //         "poster": "elxif",
-    //         "community": "chess lovers",
-    //         "title": "Check out this EPIC game.",
-    //         "description": "Check this out. Wow.\n https://www.chessgames.com/perl/chessgame?gid=1011478",
-    //         "post_template": 0,
-    //         "data_fields": [
-    //             {
-    //                 "name": "string",
-    //                 "type": "text",
-    //                 "content": {
-    //                     "additionalProp1": "string",
-    //                     "additionalProp2": "string",
-    //                     "additionalProp3": "string"
-    //                 },
-    //                 "post": 0
-    //             }
-    //         ],
-    //         "created_date": "2 days ago"
-    //     }
-    // ];
-    /*
-        const [userPosts, changePosts] = useState([]);
-
-        useEffect(() => {
-                getUserPosts();
-            }, []
-        );
-
-        const getUserPosts = () => {
-            axiosInstance.get('get_user_created_posts'
-            ).then(async response => {
-                if (response.status === 200) {
-                    console.log("getting user posts success!");
-                    changePosts(response.data);
-                }
-            })
-        }
-
-    */
     return (
         <View style={styles.background}>
-            <View style={styles.titleContainer}>
+            {/* <View style={styles.titleContainer}>
                 <Text style={styles.title}>Your Posts</Text>
-            </View>
+            </View> */}
             <View style={styles.listContainer}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     style={styles.flatList}
                     data={userPosts}
+                    ListEmptyComponent={
+                    <View style={styles.emptyContainer}>
+                        <Text style={styles.emptyText}>Looks like you didn't post anything yet.</Text>
+                    </View>}
                     renderItem={({item}) => (
                         <TouchableOpacity style={styles.postContainer}
-                                          onPress={() => navigation.navigate("Post", {postData: item})}>
-                            <Text style={styles.postTitle}>{item["title"]}</Text>
-                            <View style={styles.detailList}>
-                                <Text style={styles.postTitle}>{item["poster"]}</Text>
-                                <View style={{padding: 60}}/>
-                                <Text style={styles.postTitle}>{item["created_date"]}</Text>
-                            </View>
+                            onPress={() => navigation.navigate("Post",{postData: item})}>
+                            <Text style={styles.postTitle}>Post Title: {item.title}</Text>
+                            <Text style={styles.postComm}>Community: {item.community_name}</Text>
+
+                            <Text style={styles.postInfo}>Posted by: {item.poster_name}</Text>
+                            <Text style={styles.postInfo}>{isoDateConvert(item.created_date)}</Text>
                         </TouchableOpacity>
                     )}
                 />
@@ -116,58 +56,67 @@ function UserPostsScreen({navigation}) {
 }
 
 
-// // this should be an api call that returns a json like this.
-// function getUserPosts(){
-//     return [{title: "title1", description: "desc1", data_fields:[]},
-//     {title: "title2", description: "desc2", data_fields:[]},
-//     {title: "title3", description: "desc3", data_fields:[]},
-//     {title: "title4", description: "desc4", data_fields:[]},
-//     {title: "title5", description: "desc5", data_fields:[]},
-//     {title: "title6", description: "desc6", data_fields:[]},
-//     ];
-// }   
+function isoDateConvert(input){
+    const time = new Date(input);
 
+    return time.toDateString();
+}
 const styles = StyleSheet.create({
-    background: {
-        backgroundColor: "dodgerblue",
+    background:{
+        backgroundColor: "white",
         flex: 1,
         alignItems: "center"
     },
     titleContainer: {
-        top: 40
+        paddingBottom:10
     },
     title: {
-        fontSize: 20,
-        color: "white"
+        fontSize: 30,
+        color: "black"
     },
     listContainer: {
-        top: 50,
         alignItems: "center",
-        backgroundColor: "white",
-        width: "80%",
-        height: "80%"
-
+        backgroundColor: "rgb(39, 84, 125)",
+        width: "90%",
+        flex:1
     },
     postContainer: {
-        margin: 5,
+        margin:5,
+        padding: 5,
         backgroundColor: "lightblue",
         alignItems: "center",
-        height: 75
+        alignSelf: "center",
+        flex:1,
+        width: "75%"
+    },
+    postComm:{
+        fontSize:15
     },
     postTitle: {
-        fontSize: 20
+        fontSize:25,
+        paddingBottom:10
+    },
+    postInfo: {
+        fontSize:15
     },
     postDescription: {
-        fontSize: 15
-    },
-    postDetail: {
-        fontSize: 10
+        fontSize:15,
+        textAlign: "center"
     },
     flatList: {
         width: "100%"
     },
-    detailList: {
-        flexDirection: 'row',
+    emptyContainer:{
+        alignItems: "center",
+        justifyContent: "center",
+        width:"100%",
+        height: "100%",
+    },
+    emptyText:{
+        fontSize:20,
+        color: "white",
+        paddingTop: 30,
+        paddingHorizontal: 50
     }
 })
 

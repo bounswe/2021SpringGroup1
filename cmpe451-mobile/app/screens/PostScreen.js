@@ -10,28 +10,33 @@ function PostScreen({route, navigation}) {
         <ScrollView style={styles.background}>
             <Text style={styles.postTitle}>{postData["title"]}</Text>
             {postData["data_fields"].filter(item=>item.type==="text").map((input) => (
-                <View style={styles.contentContainer}>
+                <View style={styles.textContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
                     <Text style={styles.contentText}>{input.content.prop1}</Text>
                 </View>
             ))}
 
             {postData["data_fields"].filter(item=>item.type==="image").map((input) => (
-                <View style={styles.contentContainer}>
+                <View style={styles.imageContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Image style={styles.stretch} source={{uri:input.content.prop1}}/>
+                    <Image style={styles.contentImage} source={{uri:input.content.prop1}}/>
                 </View>
             ))}
 
             <View style={styles.detailList}>
                 <Text style={styles.postDetail}>posted by: {postData["poster_name"]}</Text>
                 <View style={{paddingLeft: 10, padding: 10}}/>
-                <Text style={styles.postDetail}>{postData["created_date"].substring(0,10)} | {postData["created_date"].substring(11,19) }</Text>
+                <Text style={styles.postDetail}>{isoDateConvert(postData["created_date"])} | {postData["created_date"].substring(11,16) }</Text>
             </View>
             <Text style={styles.postDescription}>{postData["description"]}</Text>
 
         </ScrollView>
     );
+}
+
+function isoDateConvert(input){
+    const time = new Date(input);
+    return time.toDateString();
 }
 
 const styles = StyleSheet.create({
@@ -60,18 +65,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10
     },
-    contentContainer: {
+    textContainer: {
+        alignItems: "center",
+        paddingHorizontal: 50,
+        paddingVertical: 10
+    },
+    imageContainer: {
         alignItems: "center",
         padding: 3
     },
     contentTitle:{
-        fontSize: 30
+        fontSize: 30,
+        paddingVertical:5
     },
     contentText: {
         fontSize:20,
         padding:2
     },
-    stretch: {
+    contentImage: {
         width: 300,
         height: 200,
         resizeMode: 'stretch',

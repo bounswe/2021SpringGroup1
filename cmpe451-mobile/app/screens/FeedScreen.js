@@ -20,6 +20,7 @@ function FeedScreen({navigation}) {
             if (response.status === 200) {
                 console.log("getting user feed success!");
                 changeFeed(response.data);
+                console.log(response.data);
             }
             else{
                 console.log("error on getUserFeed")
@@ -30,18 +31,25 @@ function FeedScreen({navigation}) {
     
     return (
         <View style={styles.background}>
-            <View style={styles.titleContainer}>
+            {/* <View style={styles.titleContainer}>
                 <Text style={styles.title}>Your Feed</Text>
-            </View>
+            </View> */}
             <View style={styles.listContainer}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     style={styles.flatList}
                     data={userFeed}
+                    ListEmptyComponent={<View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>Looks like your feed is empty. Subscribe to a community to see their posts here.</Text>
+                </View>}
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.postContainer}
                             onPress={() => navigation.navigate("Post",{postData: item})}>
-                            <Text style={styles.postTitle}>{item.title}</Text>
+                            <Text style={styles.postTitle}>Post Title: {item.title}</Text>
+                            <Text style={styles.postComm}>Community: {item.community_name}</Text>
+
+                            <Text style={styles.postInfo}>Posted by: {item.poster_name}</Text>
+                            <Text style={styles.postInfo}>{isoDateConvert(item.created_date)}</Text>
                         </TouchableOpacity>
                     )}
                 />
@@ -49,55 +57,66 @@ function FeedScreen({navigation}) {
         </View>
     );
 }
-
-
-// // this should be an api call that returns a json like this.
-// function getUserFeed(){
-//     return [{title: "title1", description: "This is a description for this post", data_fields:[]},
-//     {title: "title2", description: "desc2", data_fields:[]},
-//     {title: "title3", description: "desc3", data_fields:[]},
-//     {title: "title4", description: "desc4", data_fields:[]},
-//     {title: "title5", description: "desc5", data_fields:[]},
-//     {title: "title6", description: "desc6", data_fields:[]},
-//     ];
-// }   
   
+function isoDateConvert(input){
+    const time = new Date(input);
+
+    return time.toDateString();
+}
 const styles = StyleSheet.create({
     background:{
-        backgroundColor: "dodgerblue",
+        backgroundColor: "white",
         flex: 1,
         alignItems: "center"
     },
     titleContainer: {
-        top: 40
+        paddingBottom:10
     },
     title: {
-        fontSize: 20,
-        color: "white"
+        fontSize: 30,
+        color: "black"
     },
     listContainer: {
-        top: 50,
         alignItems: "center",
-        backgroundColor: "white",
+        backgroundColor: "rgb(39, 84, 125)",
         width: "90%",
-        height: "80%"
-    
+        flex:1
     },
     postContainer: {
         margin:5,
+        padding: 5,
         backgroundColor: "lightblue",
         alignItems: "center",
-        height: 75
+        alignSelf: "center",
+        flex:1,
+
+        width: "75%"
+    },
+    postComm:{
+        fontSize:15
     },
     postTitle: {
-        fontSize:20
+        fontSize:25,
+        paddingBottom:10
     },
-    postDescription: {
-        fontSize:15,
-        textAlign: "center"
+    postInfo: {
+        fontSize:15
     },
     flatList: {
         width: "100%"
+    },
+    emptyContainer:{
+        alignItems: "center",
+        justifyContent: "center",
+        width:"100%",
+        height: "100%",
+    },
+    emptyText:{
+        fontSize:20,
+        color: "white",
+        textAlign: "center",
+        paddingTop: 30,
+        paddingHorizontal: 50
     }
 })
 

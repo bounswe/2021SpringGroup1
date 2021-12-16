@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Button, Image} from 'react-native';
+import {View, Text, StyleSheet, FlatList, Button, Image, TouchableOpacity} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
 
 
@@ -23,94 +23,101 @@ function UserCommunitiesScreen({navigation}) {
             }
         })
     }
-    /*
-    const techno = {
-        "community": 3,
-        "name": "Event",
-        "description": "A techno event taking place at a specific time and place.",
-        "data_field_templates": [
-            {
-                "name": "Organizer",
-                "type": "text",
-                "post_template": 1
-            },
-            {
-                "name": "Date",
-                "type": "text",
-                "post_template": 1
-            },
-            {
-                "name": "Venue",
-                "type": "text",
-                "post_template": 1
-            },
-            {
-                "name": "Poster",
-                "type": "image",
-                "post_template": 1
-            },
-        ]
-    };
-    */
-
 
     return (
         <View style={styles.background}>
-            <View style={styles.titleContainer}>
                 <Text style={styles.title}>Your Communities</Text>
-            </View>
             <View style={styles.listContainer}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     data={userCommunities}
+                    style={styles.flatList}
+                    ListEmptyComponent={<View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>Looks like you didn't subscribe to any community yet.</Text>
+                </View>}
                     renderItem={({item}) => (
-                        <View style={styles.comms}>
-                            <Image source={{uri: item["community_image_url"]}} style={styles.tinyLogo}/>
-                            <Button title={item["name"]}
-                                    style={styles.item}
-                                    onPress={() => navigation.navigate("Community", {communData: item})}/>
+                        <View style={styles.itemContainer}>
+                                <TouchableOpacity
+                                    style={styles.itemButton}
+                                    onPress={() => navigation.navigate("Community", {communData: item})}>
+                                    <View style={styles.imageContainer}>
+                                        <Image source={{uri: item["community_image_url"]}} style={styles.itemImage}/>
+                                    </View>
+                                    <View style={styles.textContainer}>
+                                        <Text style={styles.itemText}>{item["name"]}</Text>
+                                    </View>
+                                </TouchableOpacity>
                         </View>
                     )}
                 />
             </View>
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: "dodgerblue",
+        backgroundColor: "white",
         flex: 1,
         alignItems: "center"
     },
-    titleContainer: {
-        top: 40
-    },
     title: {
-        fontSize: 20,
-        color: "white"
+        fontSize: 30,
+        color: "black",
+        padding:20
     },
     listContainer: {
-        top: 50,
-        alignItems: "center",
-        backgroundColor: "white",
-        width: "80%",
-        height: "80%"
+        alignContent: "center",
+        backgroundColor: "rgb(39, 84, 125)",
+        flex: 1,
+        width:"90%"
+    },
+    itemText: {
+        fontSize:25,
+        color: "white",
+    },
+    itemImage: {
+        width:"100%",
+        height:"100%"
+    },
+    itemButton: {
+        width: "100%",
+        flexDirection: "row"
+    },
 
+    itemContainer: {
+        alignSelf: "center",
+        alignItems:"center",
+        padding: 5,
+        margin: 10,
+        flex:1,
+        width: "90%",
     },
-    item: {
-        fontSize: 20,
-        padding: 5
+    flatList: {
+        width: "100%",    
     },
-    tinyLogo: {
-        width: 35,
-        height: 35,
+    imageContainer: {
+        flex:3,
+        paddingRight:5
     },
-    comms: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 5
+    textContainer: {
+        flex:7,
+        alignItems: "flex-start",
+        paddingLeft: 5
     },
+    emptyContainer:{
+        alignItems: "center",
+        justifyContent: "center",
+        width:"100%",
+        height: "100%",
+    },
+    emptyText:{
+        fontSize:20,
+        color: "white",
+        paddingTop: 30,
+        paddingHorizontal: 50
+    }
 })
 
 export default UserCommunitiesScreen;
