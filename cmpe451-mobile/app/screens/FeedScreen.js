@@ -1,11 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import { View , Text, StyleSheet, FlatList, Button } from 'react-native';
+import {RefreshControl, View , Text, StyleSheet, FlatList, Button } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {axiosInstance} from "../service/axios_client_service";
 
 
 function FeedScreen({navigation}) {
     //const items = getUserFeed();
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      getUserFeed();
+      setTimeout(() => { setRefreshing(false) }, 2000);
+    }, []);
+
     
     const [userFeed, changeFeed] = useState([]);
 
@@ -42,6 +51,12 @@ function FeedScreen({navigation}) {
                     ListEmptyComponent={<View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Looks like your feed is empty. Subscribe to a community to see their posts here.</Text>
                 </View>}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.postContainer}
                             onPress={() => navigation.navigate("Post",{postData: item})}>

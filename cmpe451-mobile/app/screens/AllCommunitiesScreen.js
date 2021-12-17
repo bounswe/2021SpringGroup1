@@ -1,8 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList, StyleSheet, Button, Image, TextInput, TouchableOpacity} from 'react-native';
+import {Text, View, FlatList, StyleSheet, Button, Image, TextInput, TouchableOpacity,RefreshControl} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
 
 function AllCommunitiesScreen({navigation}) {
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      getUserCommunities();
+      setTimeout(() => { setRefreshing(false) }, 2000);
+    }, []);
+
+
 
     console.log("c");
     const [allCommunities, changeCommunities] = useState([]);
@@ -42,6 +52,12 @@ function AllCommunitiesScreen({navigation}) {
                     //keyExtractor={(item) => item.id}
                     data={allCommunities}
                     style={styles.flatList}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
                     renderItem={({item}) => (
                         <View style={styles.itemContainer}>
                             <TouchableOpacity

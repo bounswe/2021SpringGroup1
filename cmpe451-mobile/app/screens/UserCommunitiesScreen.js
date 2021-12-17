@@ -1,9 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, FlatList, Button, Image, TouchableOpacity} from 'react-native';
+import {RefreshControl,View, Text, StyleSheet, FlatList, Button, Image, TouchableOpacity} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
 
 
 function UserCommunitiesScreen({navigation}) {
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      getUserCommunities();
+      setTimeout(() => { setRefreshing(false) }, 2000);
+    }, []);
+
+
     const [userCommunities, changeCommunities] = useState([]);
 
     useEffect(() => {
@@ -32,6 +41,12 @@ function UserCommunitiesScreen({navigation}) {
                     //keyExtractor={(item) => item.id}
                     data={userCommunities}
                     style={styles.flatList}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
                     ListEmptyComponent={<View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Looks like you didn't subscribe to any community yet.</Text>
                 </View>}

@@ -46,6 +46,7 @@ async function createComm(name, description, url) {
     console.log(response);
     if (response["Success"]) {
         Alert.alert("Success", "Community Creation Successful!");
+        return true
 
     } else {
         const result = response["Error"];
@@ -56,11 +57,10 @@ async function createComm(name, description, url) {
         }
         if(result.hasOwnProperty("description")){
             errormessage = errormessage + "Community description: " + result["description"];
-
         }
         Alert.alert("Failure", errormessage);
+        return false
     }
-    return true
 }
 
 async function commCall(name, description, url) {

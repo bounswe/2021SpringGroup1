@@ -1,10 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Button, FlatList, TouchableOpacity, ImageBackground, Image} from "react-native";
+import {RefreshControl, View, Text, StyleSheet, Button, FlatList, TouchableOpacity, ImageBackground, Image} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import axios from "axios";
 import CreatePostTemplateScreen from './CreatePostTemplateScreen';
 
 function CommunityScreen({route, navigation}) {
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      getCommunityPosts();
+      setTimeout(() => { setRefreshing(false) }, 2000);
+    }, []);
+
+
     const {communData} = route.params;
     const [posts, changePosts] = useState([]);
     const [commData, changeCommData] = useState(communData);
@@ -57,42 +66,6 @@ function CommunityScreen({route, navigation}) {
         })
     }
 
-    const renderPostButtons = () =>{
-        if(subscriptionStatus){
-            return(
-                    <View style={styles.commButtons}>
-                        <TouchableOpacity
-                            onPress={() => communitySubscribe()}
-                            style={styles.button}>
-                            <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}
-                            style={styles.button}
-                            disabled={subscriptionStatus ? false : true}
-                            >
-                            <Text 
-                            >Create Post Template</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("CreatePost", {community: commData["id"]})}
-                            style={styles.button}
-                            disabled={subscriptionStatus ? false : true}>
-                            <Text>Create Post</Text>
-                        </TouchableOpacity>
-                    </View>    
-            );
-        }
-        else{
-            <View style={styles.commButtons}>
-            <TouchableOpacity
-                onPress={() => communitySubscribe()}
-                style={styles.button}>
-                <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
-            </TouchableOpacity>
-            </View>
-        }
-    }
     //gives an error with code 403. could not get it to work.
     //presumably, to get it to work we need to pass a header called 'X-CSRFTOKEN'
     async function communitySubscribe() {
@@ -191,12 +164,16 @@ function CommunityScreen({route, navigation}) {
                     ListEmptyComponent={<View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Looks like this community doesn't have any post.</Text>
                     </View>}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
                     renderItem={({item}) => (
                         <TouchableOpacity style={styles.postContainer}
                                           onPress={() => navigation.navigate("Post", {postData: item})}>
                             <Text style={styles.postTitle}>Post Title: {item.title}</Text>
-                            <Text style={styles.postComm}>Community: {item.community_name}</Text>
-
                             <Text style={styles.postInfo}>Posted by: {item.poster_name}</Text>
                             <Text style={styles.postInfo}>{isoDateConvert(item.created_date)}</Text>
                         </TouchableOpacity>
