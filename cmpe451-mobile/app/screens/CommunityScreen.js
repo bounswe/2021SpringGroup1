@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {RefreshControl, View, Text, StyleSheet, Button, FlatList, TouchableOpacity, ImageBackground, Image} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
-import axios from "axios";
 import CreatePostTemplateScreen from './CreatePostTemplateScreen';
 
 function CommunityScreen({route, navigation}) {
@@ -118,43 +117,47 @@ function CommunityScreen({route, navigation}) {
                 <View style={styles.infoContainer}>
                     <Text style={styles.commTitle}>{commData["name"]}</Text>
                     <Text style={styles.commDescription}> {commData["description"]}</Text>
-                    <View>
-
-                        <View>{subscriptionStatus ? ( 
-                            <View style={styles.commButtons}>
-                            <TouchableOpacity
-                                onPress={() => communitySubscribe()}
-                                style={styles.button}>
-                                <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}
-                                style={styles.button}
-                                disabled={subscriptionStatus ? false : true}
-                                >
-                                <Text 
-                                >Create Post Template</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => navigation.navigate("CreatePost", {community: commData["id"]})}
-                                style={styles.button}
-                                disabled={subscriptionStatus ? false : true}>
-                                <Text>Create Post</Text>
-                            </TouchableOpacity>
-                        </View>    
-
-                        ) 
-                        :                         
-                        <TouchableOpacity
-                            onPress={() => communitySubscribe()}
-                            style={styles.button}>
-                            <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
-                        </TouchableOpacity>
-                        }
-                        </View>
-
-                    </View>    
+                     
                 </View>
+            </View>
+            <View style={styles.settings}>
+            <View>
+
+                <View>{subscriptionStatus ? ( 
+                    <View style={styles.commButtons}>
+                    <TouchableOpacity
+                        onPress={() => communitySubscribe()}
+                        style={styles.button}>
+                        <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}
+                        style={styles.button}
+                        disabled={subscriptionStatus ? false : true}
+                        >
+                        <Text 
+                        >Create Post Template</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("CreatePost", {community: commData["id"]})}
+                        style={styles.button}
+                        disabled={subscriptionStatus ? false : true}>
+                        <Text>Create Post</Text>
+                    </TouchableOpacity>
+                </View>    
+
+                ) 
+                :                         
+                <TouchableOpacity
+                    onPress={() => communitySubscribe()}
+                    style={styles.button}>
+                    <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
+                </TouchableOpacity>
+                }
+                </View>
+
+                </View>   
+
             </View>
             <View style={styles.listContainer}>
                 <FlatList
@@ -189,6 +192,9 @@ function isoDateConvert(input){
     return time.toDateString();
 }
 const styles = StyleSheet.create({
+    settings: {
+        flex: 1
+    },
     background: {
         backgroundColor: "white",
         flex: 1,
@@ -196,7 +202,7 @@ const styles = StyleSheet.create({
     },
     banner: {
         backgroundColor: "white",
-        flex:2,
+        flex:3,
         flexDirection: "row",
         width: "90%",
         flexWrap: "wrap-reverse",
@@ -238,7 +244,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "rgb(39, 84, 125)",
         width: "90%",
-        flex:8,
+        flex:6,
     },
     postContainer: {
         margin:5,
