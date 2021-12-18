@@ -22,6 +22,9 @@ from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_seriali
 from drf_spectacular.types import OpenApiTypes
 
 class Login(ObtainAuthToken):
+    @extend_schema(description= "The user logs in. As a response, the Success field and token are returned.",
+        tags=["User"]
+    )
     def post(self,req,format=None):
         user_serializer = self.serializer_class(data=req.data, context={'request': req})
         if user_serializer.is_valid():
@@ -35,6 +38,10 @@ class Login(ObtainAuthToken):
 
 class Register(GenericAPIView):
     serializer_class=UserSerializer
+    @extend_schema(description= "The user registers to use the system.",
+     responses=None,
+     tags=["User"],
+    )
     def post(self,req,format=None):
         user_serializer=UserSerializer(data=req.data)
         if user_serializer.is_valid():
@@ -49,6 +56,8 @@ class Logout(GenericAPIView):
     @extend_schema(
         request=None,
         responses=None,
+        description="DEPRECATED: The user logs out.",
+        tags=["User"]
     )
     def post(self,req,format=None):
         logout(req)
@@ -57,6 +66,8 @@ class Logout(GenericAPIView):
 
 class CreateCommunity(GenericAPIView):
     serializer_class=CommunitySerializer
+    @extend_schema(description="The user creates the community. The information of the community created as a response is returned.",
+    tags=["Community"])
     def post(self,req):
         if req.user.is_authenticated:
             community_serializer=CommunitySerializer(data=req.data)
@@ -159,6 +170,8 @@ class ListCommunities(GenericAPIView):
           OpenApiParameter("from", OpenApiTypes.STR, OpenApiParameter.QUERY),
         ],
         request=None,
+        description= "Lists communities. Takes 1 parameters. <br>from == 'all' returns all communities in the system. <br>from == 'joined' returns all communities of which the logged in user is a member.",
+        tags=["Community"]
     )
 
     def get(self,req):
@@ -183,7 +196,7 @@ class UserSubscriptionStatus(GenericAPIView):
             
             },
         description="Method for retrieving subscription status of a given user.",
-        tags=["Get/Set Community Subscription"],
+        tags=["User"],
     )
     def get(self,req,community_id):
         if req.user.is_authenticated:
@@ -209,7 +222,7 @@ class UserSubscriptionStatus(GenericAPIView):
             "Error": inline_serializer("UserSubscriptionError2",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
             
             },
-        tags=["Get/Set Community Subscription"],
+        tags=["User"],
     )
     def put(self,req,community_id):
         if req.user.is_authenticated:
@@ -271,7 +284,7 @@ class ListCommunityPosts(GenericAPIView):
             "Error": inline_serializer("ListCommunityPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
             
             },
-        tags=["Community"],
+        tags=["Posts"],
     )
     def get(self, req,community_id):
         if req.user.is_authenticated:
@@ -286,6 +299,8 @@ class ListCommunityPosts(GenericAPIView):
 
 class GetUserHomeFeed(GenericAPIView):
     serializer_class= PostSerializer
+    @extend_schema(description= "Returns posts in groups that the logged in user is a member of, in order from newest to oldest.",
+    tags=["User"])
     def get(self,req):
         if req.user.is_authenticated:
             communities = req.user.joined_communities.all()
@@ -339,7 +354,9 @@ class SearchCommunities(GenericAPIView):
         parameters=[
           OpenApiParameter("text", OpenApiTypes.STR, OpenApiParameter.QUERY),
         ],
+        description= "Lists all Communities that contain the given parameter in their name.",
         request=None,
+        tags=["Community"]
     )
 
     def get(self,req):
@@ -351,6 +368,7 @@ class SearchCommunities(GenericAPIView):
 
 class GetUserCreatedPosts(GenericAPIView):
     serializer_class=PostSerializer
+    @extend_schema(description= "Returns all posts created by the user.",tags=["User"])
     def get(self,req):
         if req.user.is_authenticated:
             post_array=PostSerializer(req.user.posts.all(),many=True)
