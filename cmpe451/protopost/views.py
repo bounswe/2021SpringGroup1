@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import response
 
-from .home import *
 from .register import *
 from .serializers import *
 from rest_framework.generics import GenericAPIView
@@ -22,6 +21,7 @@ from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_seriali
 from drf_spectacular.types import OpenApiTypes
 
 class Login(ObtainAuthToken):
+    @extend_schema(description= "The user logs in. As a response, the Success field and token are returned.")
     def post(self,req,format=None):
         user_serializer = self.serializer_class(data=req.data, context={'request': req})
         if user_serializer.is_valid():
@@ -35,6 +35,8 @@ class Login(ObtainAuthToken):
 
 class Register(GenericAPIView):
     serializer_class=UserSerializer
+    @extend_schema(description= "The user registers to use the system.")
+
     def post(self,req,format=None):
         user_serializer=UserSerializer(data=req.data)
         if user_serializer.is_valid():
@@ -49,6 +51,7 @@ class Logout(GenericAPIView):
     @extend_schema(
         request=None,
         responses=None,
+        description="The user logs out."
     )
     def post(self,req,format=None):
         logout(req)
@@ -57,6 +60,8 @@ class Logout(GenericAPIView):
 
 class CreateCommunity(GenericAPIView):
     serializer_class=CommunitySerializer
+    @extend_schema(description="The user creates the community. The information of the community created as a response is returned.")
+    
     def post(self,req):
         if req.user.is_authenticated:
             community_serializer=CommunitySerializer(data=req.data)
@@ -130,10 +135,9 @@ class ListCommunities(GenericAPIView):
     serializer_class=CommunitySerializer
     queryset=Community.objects.all()
     @extend_schema(
-        parameters=[
-          OpenApiParameter("from", OpenApiTypes.STR, OpenApiParameter.QUERY),
-        ],
+        parameters=[OpenApiParameter("from", OpenApiTypes.STR, OpenApiParameter.QUERY)],
         request=None,
+        description= "Lists communities. Takes 1 parameters. <br>from == 'all' returns all communities in the system. <br>from == 'joined' returns all communities of which the logged in user is a member."
     )
 
     def get(self,req):
@@ -229,6 +233,8 @@ class ListCommunityPosts(GenericAPIView):
 
 class GetUserHomeFeed(GenericAPIView):
     serializer_class= PostSerializer
+    @extend_schema(description= "Returns posts in groups that the logged in user is a member of, in order from newest to oldest.")
+
     def get(self,req):
         if req.user.is_authenticated:
             communities = req.user.joined_communities.all()
@@ -272,9 +278,8 @@ class SearchCommunities(GenericAPIView):
     serializer_class=CommunitySerializer
     queryset=Community.objects.all()
     @extend_schema(
-        parameters=[
-          OpenApiParameter("text", OpenApiTypes.STR, OpenApiParameter.QUERY),
-        ],
+        parameters=[OpenApiParameter("text", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+        description= "Lists all Communities that contain the given parameter in their name.",
         request=None,
     )
 
@@ -287,6 +292,7 @@ class SearchCommunities(GenericAPIView):
 
 class GetUserCreatedPosts(GenericAPIView):
     serializer_class=PostSerializer
+    @extend_schema(description= "Returns all posts created by the user.")
     def get(self,req):
         if req.user.is_authenticated:
             post_array=PostSerializer(req.user.posts.all(),many=True)
