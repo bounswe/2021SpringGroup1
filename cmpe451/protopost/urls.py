@@ -18,6 +18,7 @@ urlpatterns = [
 	path("create_community",views.CreateCommunity.as_view(),name="create_community"),
 	path("list_communities",views.ListCommunities.as_view(),name="list_communities"),
 	path("search_communities",views.SearchCommunities.as_view(),name="search_communities"),
+	path("communities/<int:community_id>/search_posts_in_community",views.SearchPostsInCommunitya.as_view(),name="search_posts_in_community"),
 	path("communities/<int:community_id>/create_post",views.CreatePost.as_view(),name="create_post"),
 	path("communities/<int:community_id>/create_post_template",views.CreatePostTemplate.as_view(),name="create_post_template"),
 	path("communities/<int:community_id>/get_community_data",views.GetCommunityData.as_view(),name="get_community_data"),
