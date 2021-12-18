@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework import response
 
-from .home import *
 from .register import *
 from .serializers import *
 from rest_framework.generics import GenericAPIView
@@ -166,9 +165,7 @@ class ListCommunities(GenericAPIView):
     serializer_class=CommunitySerializer
     queryset=Community.objects.all()
     @extend_schema(
-        parameters=[
-          OpenApiParameter("from", OpenApiTypes.STR, OpenApiParameter.QUERY),
-        ],
+        parameters=[OpenApiParameter("from", OpenApiTypes.STR, OpenApiParameter.QUERY)],
         request=None,
         description= "Lists communities. Takes 1 parameters. <br>from == 'all' returns all communities in the system. <br>from == 'joined' returns all communities of which the logged in user is a member.",
         tags=["Community"]
