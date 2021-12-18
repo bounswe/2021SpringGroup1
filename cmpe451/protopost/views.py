@@ -70,7 +70,16 @@ class CreateCommunity(GenericAPIView):
         return Response({"Success":False, "Error": "No authentication."})
 
 class CreatePost(GenericAPIView):
-    serializer_class=PostSerializer 
+    serializer_class=PostSerializer
+    @extend_schema(
+        description="Method for creating Post objects. Requires authentication. DataField objects must match the data fields of the Post Template object specified.",
+        responses={
+            "Success": inline_serializer("CreatePostSuccess",{"Success" : serializers.BooleanField(initial=True), "Post": PostSerializer()}),
+            "Error": inline_serializer("CreatePostError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Posts"],
+    )
     def post(self,req,community_id,format=None):
         if req.user.is_authenticated:
             try:
@@ -91,6 +100,15 @@ class CreatePost(GenericAPIView):
 
 class CreatePostTemplate(GenericAPIView):
     serializer_class=PostTemplateSerializer
+    @extend_schema(
+        description="Method for creating Post Template objects. Requires authentication and the user requesting must be moderator of the community. Current accepted data types are 'text, image, date, location'.",
+        responses={
+            "Success": inline_serializer("CreatePostTemplateSuccess",{"Success" : serializers.BooleanField(initial=True), "PostTemplate": PostTemplateSerializer()}),
+            "Error": inline_serializer("CreatePostTemplateError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Posts"],
+    )
     def post(self,req,community_id):
         if req.user.is_authenticated:
             try:
@@ -111,6 +129,13 @@ class GetCommunityData(GenericAPIView):
     serializer_class=CommunitySerializer
     @extend_schema(
         request=None,
+        description="Method for retrieving a community's data and its posts. Requires authentication.",
+        responses={
+            "Success": inline_serializer("GetCommunityDataSuccess",{"Success" : serializers.BooleanField(initial=True), "Community": CommunitySerializer(),"Posts":PostSerializer(many=True)}),
+            "Error": inline_serializer("GetCommunityDataError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Community"],
     )
     def get(self,req,community_id):
         if req.user.is_authenticated:
@@ -152,7 +177,13 @@ class UserSubscriptionStatus(GenericAPIView):
     serializer_class=UserSerializer
     @extend_schema(
         request=None,
-        responses=None,
+        responses={
+            "Success": inline_serializer("UserSubscriptionSuccess1",{"Success" : serializers.BooleanField(initial=True), "IsJoined": serializers.BooleanField()}),
+            "Error": inline_serializer("UserSubscriptionError1",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        description="Method for retrieving subscription status of a given user.",
+        tags=["Get/Set Community Subscription"],
     )
     def get(self,req,community_id):
         if req.user.is_authenticated:
@@ -169,10 +200,16 @@ class UserSubscriptionStatus(GenericAPIView):
         return Response({"Success":False, "Error": "User is not authenticated"})
     @extend_schema(
         parameters=[
-          OpenApiParameter("action", OpenApiTypes.STR, OpenApiParameter.QUERY),
+          OpenApiParameter("action", OpenApiTypes.STR, OpenApiParameter.QUERY, description='Defines action, either "join" or "leave".',required=True),
         ],
+        description="Method for setting subscription status of a given user.",
         request=None,
-        responses=None,
+        responses={
+            "Success": inline_serializer("UserSubscriptionSuccess2",{"Success" : serializers.BooleanField(initial=True), "IsJoined": serializers.BooleanField()}),
+            "Error": inline_serializer("UserSubscriptionError2",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Get/Set Community Subscription"],
     )
     def put(self,req,community_id):
         if req.user.is_authenticated:
@@ -204,6 +241,16 @@ class UserSubscriptionStatus(GenericAPIView):
 
 class ListPostTemplates(GenericAPIView):
     serializer_class= PostTemplateSerializer
+    @extend_schema(
+        request=None,
+        description="Method for retrieving PostTemplate objects in a given community. Requires authentication.",
+        responses={
+            "Success": inline_serializer("ListTemplateSuccess",{"Success" : serializers.BooleanField(initial=True), "Post_templates": PostTemplateSerializer(many=True)}),
+            "Error": inline_serializer("ListTemplateError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Posts"],
+    )
     def get(self,req, community_id):
         if req.user.is_authenticated:
             try:
@@ -216,6 +263,16 @@ class ListPostTemplates(GenericAPIView):
 
 class ListCommunityPosts(GenericAPIView):
     serializer_class= PostSerializer
+    @extend_schema(
+        request=None,
+        description="Method for retrieving posts in a given community. Requires authentication.",
+        responses={
+            "Success": inline_serializer("ListCommunityPostsSuccess",{"Success" : serializers.BooleanField(initial=True), "Post_templates": PostTemplateSerializer(many=True)}),
+            "Error": inline_serializer("ListCommunityPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Community"],
+    )
     def get(self, req,community_id):
         if req.user.is_authenticated:
             try:
@@ -258,13 +315,20 @@ class SearchPostsInCommunity(GenericAPIView):
           OpenApiParameter("text", OpenApiTypes.STR, OpenApiParameter.QUERY),
         ],
         request=None,
+        description="Method that returns posts that contain the given string in their title. Requires authentication.",
+        responses={
+            "Success": PostSerializer(many=True),
+            "Error": inline_serializer("SearchPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
+            
+            },
+        tags=["Posts"],
     )
 
     def get(self,req,community_id):
         if req.user.is_authenticated and "text" in req.GET:
             current_community=Community.objects.get(pk=community_id)
             posts = current_community.posts.filter(title__icontains = req.GET["text"])
-            posts=Post(posts,many=True,context={"request":req})
+            posts=PostSerializer(posts,many=True,context={"request":req})
             return Response(posts.data)    
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
