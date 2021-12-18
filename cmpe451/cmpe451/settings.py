@@ -56,6 +56,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Protopost API',
     'DESCRIPTION': 'Your project description',
     'VERSION': '1.0.0',
+    'SCHEMA_PATH_PREFIX' : '/api/v[0-9]/protopost',
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

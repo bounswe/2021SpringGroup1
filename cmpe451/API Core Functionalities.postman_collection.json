@@ -1,0 +1,410 @@
+{
+	"info": {
+		"_postman_id": "9fb6d55c-53ab-47b8-ae01-c7c4e95cbbeb",
+		"name": "API Core Functionalities",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Community",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Token b032ed6625f1653aba82a7c393a0cd4b9fce7885",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Muhammed's Community\",\r\n  \"description\": \"Some description\",\r\n  \"community_image_url\": \"https://cdn.motor1.com/images/mgl/VA0z9/s3/tesla-roadster.jpg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.249.82.166:8000/api/v1/protopost/create_post_template",
+					"protocol": "http",
+					"host": [
+						"3",
+						"249",
+						"82",
+						"166"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"protopost",
+						"create_post_template"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Community",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Muhammed's Community\",\r\n  \"description\": \"Some description\",\r\n  \"community_image_url\": \"https://cdn.motor1.com/images/mgl/VA0z9/s3/tesla-roadster.jpg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://3.249.82.166:8000/api/v1/protopost/create_post_template",
+							"protocol": "http",
+							"host": [
+								"3",
+								"249",
+								"82",
+								"166"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"protopost",
+								"create_post_template"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 18 Dec 2021 16:01:11 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.8.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Origin"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "272"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Success\": true,\n    \"Community\": {\n        \"@context\": \"http://schema.org/\",\n        \"@type\": \"Organization\",\n        \"id\": 11,\n        \"name\": \"Muhammed's Community\",\n        \"description\": \"Some description\",\n        \"community_image_url\": \"https://cdn.motor1.com/images/mgl/VA0z9/s3/tesla-roadster.jpg\",\n        \"moderator\": 1,\n        \"isJoined\": true\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Post Template",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Token b032ed6625f1653aba82a7c393a0cd4b9fce7885",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Muhammed's Template\",\r\n  \"data_field_templates\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\"\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\"\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\"\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\"\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.249.82.166:8000/api/v1/protopost/communities/11/create_post_template",
+					"protocol": "http",
+					"host": [
+						"3",
+						"249",
+						"82",
+						"166"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"protopost",
+						"communities",
+						"11",
+						"create_post_template"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Post Template",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Muhammed's Template\",\r\n  \"data_field_templates\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\"\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\"\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\"\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\"\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://3.249.82.166:8000/api/v1/protopost/communities/11/create_post_template",
+							"protocol": "http",
+							"host": [
+								"3",
+								"249",
+								"82",
+								"166"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"protopost",
+								"communities",
+								"11",
+								"create_post_template"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 18 Dec 2021 16:07:51 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.8.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Origin"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "264"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Success\": true,\n    \"PostTemplate\": {\n        \"id\": 10,\n        \"community\": 11,\n        \"name\": \"Muhammed's Template\",\n        \"data_field_templates\": [\n            {\n                \"name\": \"Text Field\",\n                \"type\": \"text\"\n            },\n            {\n                \"name\": \"Image Field\",\n                \"type\": \"image\"\n            },\n            {\n                \"name\": \"Date Field\",\n                \"type\": \"date\"\n            },\n            {\n                \"name\": \"Location Field\",\n                \"type\": \"location\"\n            }\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Post",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "Token b032ed6625f1653aba82a7c393a0cd4b9fce7885",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"title\": \"Muhammed's Post\",\r\n  \"post_template\": 10,\r\n  \"data_fields\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\",\r\n      \"content\": {}\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://3.249.82.166:8000/api/v1/protopost/communities/11/create_post",
+					"protocol": "http",
+					"host": [
+						"3",
+						"249",
+						"82",
+						"166"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"protopost",
+						"communities",
+						"11",
+						"create_post"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Post",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Muhammed's Post\",\r\n  \"post_template\": 10,\r\n  \"data_fields\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\",\r\n      \"content\": {}\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://3.249.82.166:8000/api/v1/protopost/communities/11/create_post",
+							"protocol": "http",
+							"host": [
+								"3",
+								"249",
+								"82",
+								"166"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"protopost",
+								"communities",
+								"11",
+								"create_post"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 18 Dec 2021 16:11:12 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.8.5"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Origin"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Content-Length",
+							"value": "440"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"Success\": true,\n    \"Post\": {\n        \"poster_name\": \"gktpmuhammed\",\n        \"community_name\": \"Muhammed's Community\",\n        \"id\": 14,\n        \"poster\": 1,\n        \"community\": 11,\n        \"title\": \"Muhammed's Post\",\n        \"post_template\": 10,\n        \"data_fields\": [\n            {\n                \"name\": \"Text Field\",\n                \"type\": \"text\",\n                \"content\": {}\n            },\n            {\n                \"name\": \"Image Field\",\n                \"type\": \"image\",\n                \"content\": {}\n            },\n            {\n                \"name\": \"Date Field\",\n                \"type\": \"date\",\n                \"content\": {}\n            },\n            {\n                \"name\": \"Location Field\",\n                \"type\": \"location\",\n                \"content\": {}\n            }\n        ],\n        \"created_date\": \"2021-12-18T16:11:12.489175Z\"\n    }\n}"
+				}
+			]
+		}
+	]
+}
