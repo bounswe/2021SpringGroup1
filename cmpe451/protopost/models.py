@@ -7,7 +7,8 @@ DATA_TYPES = (
         ('text', 'Text'),
         ('image', 'Image'),
         ('location', 'Location'),
-        ('date', 'Date')
+        ('date', 'Date'),
+        ('number','Number')
     )
 class Community(models.Model):
     id = models.AutoField(primary_key=True)

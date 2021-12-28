@@ -373,5 +373,96 @@ class GetUserCreatedPosts(GenericAPIView):
         else:
             return Response({"Success":False, "Error": "No Authentication"})
 
+class QueryFunctions:
+    def is_near_location(content,val):
+        arr=val.split(',')
+        coord2=arr[0:2]
+        coord1=[content["lat"],content["lng"]]
+        dist=float(arr[2])
+        xdist=float(coord1[0])-float(coord2[0])
+        ydist=float(coord1[1])-float(coord2[1])
+        return ((xdist*xdist+ydist*ydist)<(dist*dist))
+
+    location_queries={
+        "near": lambda content,val:QueryFunctions.is_near_location(content,val)
+    }
+    date_queries={}
+    number_queries={
+        "gt": lambda content,val:int(content["value"])>int(val),
+        "eq": lambda content,val:int(content["value"])==int(val),
+        "lt": lambda content,val:int(content["value"])<int(val)
+        }
+    queries={"location":location_queries,"date":date_queries,"number":number_queries}
+
+class FilterPosts(GenericAPIView):
+    serializer_class=PostSerializer
+    queryset=Post.objects.all()
+    @extend_schema(
+        parameters=[OpenApiParameter(
+            name='queries',
+            type={'type': 'object'},
+            location=OpenApiParameter.QUERY,
+            required=False,
+            default={"post_template_id":0,"<field_name>_<query_name>":"value"},
+            style='form',
+            explode=True,
+        )],
+        description=\
+            "Endpoint for filtering post objects based on custom queries on their data fields.<br>\
+            <ul>\
+                <li>It takes GET parameters of form ```?<field_name>_<query_name>=<query_value>``` eg. ```?location_near=40,50,10 ```</li>\
+                <li>It also needs parameter ```?post_template_id=<id>```</li>\
+            </ul>\
+            Current supported queries are:\
+            <ul>\
+                <li>Location\
+                    <ul>\
+                        <li>```<name>_near=<lat>,<lng>,<radius>``` → Returns true for fields that are at most ```<radius>``` far from ```<lat>,<lng>```.</li>\
+                    </ul>\
+                </li>\
+                <li>Number\
+                    <ul>\
+                        <li>```<name>_gt=<int_value>``` → Returns true for fields greater than ```<int_value>```.</li>\
+                        <li>```<name>_eq=<int_value>``` → Returns true for fields equal to ```<int_value>```.</li>\
+                        <li>```<name>_lt=<int_value>``` → Returns true for fields less than ```<int_value>```.</li>\
+                    <ul>\
+                </li>\
+            </ul>",
+        tags=["Posts"]
+    )
+    def get(self,req,community_id):
+        if req.user.is_authenticated:
+            current_community=Community.objects.get(pk=community_id)
+            relevant_posts = current_community.posts.filter(post_template=req.GET["post_template_id"])
+            relevant_posts=PostSerializer(relevant_posts,many=True).data
+            get_params=req.GET.keys()
+            queries_requested={}
+            for get_param in get_params:
+                if get_param=="post_template_id":
+                    continue
+                obj=re.match(r'(.*)\_(.+)$',get_param)
+                if obj:
+                    field=obj.group(1)
+                    query_type=obj.group(2)
+                    query_value=req.GET[get_param]
+                    queries_requested.setdefault(field,[]).append((query_type,query_value))
+           #Field name -> Field+name 
+            posts_to_return=[]
+            for post in relevant_posts:
+                query_failed=False
+                for data_field in post["data_fields"]:
+                    for query_type,query_value in queries_requested.get(data_field["reference_name"],[]):
+                        query_func= QueryFunctions.queries[data_field["type"]][query_type]
+                        if not query_func(data_field["content"],query_value):
+                            query_failed=True
+                            break
+                    if query_failed:
+                        break
+                if query_failed:
+                    continue
+                posts_to_return.append(post)
+            
+            return Response(posts_to_return)
+
 
 
