@@ -205,8 +205,7 @@ const styles = StyleSheet.create({
         flex:3,
         flexDirection: "row",
         width: "90%",
-        flexWrap: "wrap-reverse",
-        paddingTop: 10
+        paddingTop: 10,
     },
     image: {
         flex:1,
@@ -231,12 +230,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     commTitle: {
-        fontSize: 30,
+        fontSize: 25,
         padding: 10,
         textAlign: "center"
     },
     commDescription: {
-        fontSize: 20,
+        fontSize: 15,
         textAlign: "center",
         paddingBottom: 20
     },
