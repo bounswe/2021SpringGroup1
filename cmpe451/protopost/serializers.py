@@ -1,4 +1,5 @@
 import re
+import urllib.parse
 from django.core.checks.messages import Error
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -43,16 +44,31 @@ class CommunitySerializer(serializers.ModelSerializer):
     
 
 class DataFieldSerializer(serializers.ModelSerializer):
+    reference_name=serializers.SerializerMethodField()
     class Meta:
         model = DataField
-        fields = ["name","type","content"]
+        fields = ["name","type","content","reference_name"]
+        read_only_fields=["reference_name"]
+    def get_reference_name(self,obj):
+        try:
+            return urllib.parse.quote(obj.name)
+        except:
+            return ""
 
 
 
 class DataFieldTempSerializer(serializers.ModelSerializer):
+    reference_name=serializers.SerializerMethodField()
     class Meta:
         model = DataFieldTemp
-        fields = ["name","type"]
+        fields = ["name","type","reference_name"]
+        read_only_fields=["reference_name"]
+    
+    def get_reference_name(self,obj):
+        try:
+            return urllib.parse.quote(obj.name)
+        except:
+            return ""
     
 
 class PostTemplateSerializer(serializers.ModelSerializer):
