@@ -465,4 +465,27 @@ class FilterPosts(GenericAPIView):
             return Response(posts_to_return)
 
 
+class GetUserProfile(GenericAPIView):
+	serializer_class=[UserSerializer,CommunitySerializer]
+	@extend_schema(description= "Returns the user information with his/her joined communities and posts.",
+	tags=["User"])
+	def get(self,req,user_id):
+		try:
+			Requested_User = User.objects.get(pk = user_id)
+		except:
+			return Response({"Success":False, "Error": "No such a User"})
+
+		user_seriliazed_data = UserSerializer(Requested_User).data
+		del user_seriliazed_data["password"]
+
+		communities=Requested_User.joined_communities.all()
+		communities=CommunitySerializer(communities,many=True,context={"request":req})
+		user_seriliazed_data["joined_communities"] = communities.data
+
+		posts=PostSerializer(Requested_User.posts.all(),many=True)
+		user_seriliazed_data["user_posts"] = posts.data
+
+		return Response({"User": user_seriliazed_data})
+
+		#return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
