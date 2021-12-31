@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
         borderColor: "gray",
     },
     settings: {
-        flex: 1
+        flex: 2
     },
     background: {
         backgroundColor: "white",
