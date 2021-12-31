@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {RefreshControl, View, Text, StyleSheet, Button, FlatList, TouchableOpacity, ImageBackground, Image} from "react-native";
+import {TextInput, RefreshControl, View, Text, StyleSheet, Button, FlatList, TouchableOpacity, ImageBackground, Image} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import CreatePostTemplateScreen from './CreatePostTemplateScreen';
 
 function CommunityScreen({route, navigation}) {
     const [refreshing, setRefreshing] = React.useState(false);
-
+    let bannerStatus = false;
     const onRefresh = React.useCallback(() => {
       setRefreshing(true);
       getCommunityPosts();
@@ -65,6 +65,7 @@ function CommunityScreen({route, navigation}) {
         })
     }
 
+    
     //gives an error with code 403. could not get it to work.
     //presumably, to get it to work we need to pass a header called 'X-CSRFTOKEN'
     async function communitySubscribe() {
@@ -103,61 +104,62 @@ function CommunityScreen({route, navigation}) {
         }
     }
 
+
+
     return (
 
         <View style={styles.background}>
             <View style={styles.banner}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={{uri: communData["community_image_url"]}}
-                        style= {styles.image}
-                    />
+                        source={{ uri: communData["community_image_url"] }}
+                        style={styles.image} />
                 </View>
 
                 <View style={styles.infoContainer}>
                     <Text style={styles.commTitle}>{commData["name"]}</Text>
                     <Text style={styles.commDescription}> {commData["description"]}</Text>
-                     
+
                 </View>
             </View>
             <View style={styles.settings}>
-            <View>
+                <View>
+                    <View>{subscriptionStatus ? (
+                        <View style={styles.commButtons}>
+                            <TouchableOpacity
+                                onPress={() => communitySubscribe()}
+                                style={styles.button}>
+                                <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("CreatePostTemplate", { community: commData["id"] })}
+                                style={styles.button}
+                                disabled={subscriptionStatus ? false : true}
+                            >
+                                <Text>Create Post Template</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate("CreatePost", { community: commData["id"] })}
+                                style={styles.button}
+                                disabled={subscriptionStatus ? false : true}>
+                                <Text>Create Post</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                        :
+                        <TouchableOpacity
+                            onPress={() => communitySubscribe()}
+                            style={styles.button}>
+                            <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
+                        </TouchableOpacity>}
+                    </View>
 
-                <View>{subscriptionStatus ? ( 
-                    <View style={styles.commButtons}>
-                    <TouchableOpacity
-                        onPress={() => communitySubscribe()}
-                        style={styles.button}>
-                        <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate("CreatePostTemplate", {community: commData["id"]})}
-                        style={styles.button}
-                        disabled={subscriptionStatus ? false : true}
-                        >
-                        <Text 
-                        >Create Post Template</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate("CreatePost", {community: commData["id"]})}
-                        style={styles.button}
-                        disabled={subscriptionStatus ? false : true}>
-                        <Text>Create Post</Text>
-                    </TouchableOpacity>
-                </View>    
-
-                ) 
-                :                         
-                <TouchableOpacity
-                    onPress={() => communitySubscribe()}
-                    style={styles.button}>
-                    <Text>{subscriptionStatus ? "Leave" : "Subscribe"}</Text>
-                </TouchableOpacity>
-                }
                 </View>
-
-                </View>   
-
+                <View style={styles.searchContainer}>
+                        <TextInput style={styles.textInput}
+                        placeholder="Search Posts in Community by Title"
+                        onChangeText={keyword=>filterPosts(keyword,changePosts, commData["id"])}></TextInput>
+                </View>
             </View>
             <View style={styles.listContainer}>
                 <FlatList
@@ -186,12 +188,43 @@ function CommunityScreen({route, navigation}) {
         </View>
     );
 }
+async function filterPosts(word, changePosts, communId) {
+    let uri = 'communities/' + communId + '/search_posts_in_community?text=' + word;
+    console.log(communId);
+    console.log(word);
+    const res = axiosInstance.get(
+        uri
+    ).then(async response => {
+        if (response.status === 200) {
+            console.log("filtering posts success!");
+            changePosts(response.data);
+        }
+    })
+    return
+}
+
 function isoDateConvert(input){
     const time = new Date(input);
 
     return time.toDateString();
 }
 const styles = StyleSheet.create({
+    searchContainer:{
+        flexDirection: "row",
+        width:"90%",
+        alignItems:"center"
+    },
+
+    textInput: {
+        width:"100%",
+        fontSize: 20,
+        borderWidth: 0.7,
+        padding: 10,
+        marginBottom: 10,
+        marginTop: 10,
+        backgroundColor: "white",
+        borderColor: "gray",
+    },
     settings: {
         flex: 1
     },

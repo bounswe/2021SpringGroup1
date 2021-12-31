@@ -217,10 +217,9 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   buttonView: {
-    backgroundColor: "rgb(77, 160, 240)",
+    backgroundColor: "lightblue",
     padding: 5,
     margin: 5,
-    borderWidth: 1,
     alignItems: "center"
   },
   createButton: {

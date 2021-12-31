@@ -5,7 +5,6 @@ import {axiosInstance} from "../service/axios_client_service";
 
 
 function FeedScreen({navigation}) {
-    //const items = getUserFeed();
 
     const [refreshing, setRefreshing] = React.useState(false);
 
@@ -29,7 +28,6 @@ function FeedScreen({navigation}) {
             if (response.status === 200) {
                 console.log("getting user feed success!");
                 changeFeed(response.data);
-                console.log(response.data);
             }
             else{
                 console.log("error on getUserFeed")
@@ -41,8 +39,13 @@ function FeedScreen({navigation}) {
     return (
         <View style={styles.background}>
             {/* <View style={styles.titleContainer}>
-                <Text style={styles.title}>Your Feed</Text>
-            </View> */}
+                <Text style={styles.title}>Feed</Text>
+                <View style={styles.searchContainer}>
+                        <TextInput style={styles.textInput}
+                        placeholder="Search Posts with Title"
+                        onChangeText={keyword => filterPosts(keyword,changeFeed)}></TextInput>
+                </View>
+            </View>  */}
             <View style={styles.listContainer}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
@@ -73,6 +76,26 @@ function FeedScreen({navigation}) {
     );
 }
   
+// async function filterPosts(word, changeFeed) {
+//     console.log("aaaaaaaaaaaaaaaaaaaa");
+//     console.log(word);
+//     console.log("bbbbbbbbbbbbbbbbbbb");
+//     const res = axiosInstance.get(
+//         'search_posts_in_community', {
+//             params:{
+//                 text: word
+//             }
+//         }
+//     ).then(async response => {
+//         if (response.status === 200) {
+//             console.log("filtering communities success!");
+//             console.log(response.data);
+//             changeCommunities(response.data);
+//         }
+//     })
+//     return
+// }
+
 function isoDateConvert(input){
     const time = new Date(input);
 
@@ -90,6 +113,21 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 30,
         color: "black"
+    },
+    searchContainer:{
+        flexDirection: "row",
+        width:"100%",
+        alignItems:"center"
+    },
+    textInput: {
+        width:"100%",
+        fontSize: 20,
+        borderWidth: 0.7,
+        padding: 10,
+        marginBottom: 10,
+        marginTop: 10,
+        backgroundColor: "white",
+        borderColor: "gray",
     },
     listContainer: {
         alignItems: "center",
