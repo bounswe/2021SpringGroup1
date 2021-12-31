@@ -489,3 +489,19 @@ class GetUserProfile(GenericAPIView):
 
 		#return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
+class DeletePost(GenericAPIView):
+	@extend_schema(
+		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+		request=None, tags=["Posts"],
+		description="If the user is the owner of the post or the moderator of the community, he/she deletes the post with the given post_id",
+	)
+
+	def post(self, req):
+		if req.user.is_authenticated or "post_id" not in req.GET:
+			post = Post.objects.get(pk=req.GET["post_id"])
+			if req.user.id == post.poster_id or req.user.id == post.community.moderator_id:
+				post.delete()	
+				return Response({"Success" : True})
+			return Response({"Success" : False, "Error": "No Authentication to delete this post"})
+
+		return Response({"Success" : False, "Error" : "No Authentication or missing data"})
