@@ -30,6 +30,8 @@ post2/migrations/__pycache__/**
 mainapp/__pycache__/**
 mainapp/migrations/__pycache__/**
 
+# api keys
+.env  
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

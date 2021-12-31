@@ -18,7 +18,7 @@ const center = {
 
 function MapGoogle(props) {
     const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: "AIzaSyBZng78Z9fLu_MEVS2ckEU5PBOK7HYcJcs",
+        googleMapsApiKey: process.env.REACT_APP_GOOGLE_API_KEY,
         libraries,
     });
     const [markers, setMarkers] = React.useState([{
@@ -39,7 +39,7 @@ function MapGoogle(props) {
             },
         ]);
         console.log(markers);
-        const KEY = "AIzaSyBZng78Z9fLu_MEVS2ckEU5PBOK7HYcJcs";
+        const KEY = process.env.REACT_APP_GOOGLE_API_KEY;
         let url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${markers[0]["lat"]},${markers[0]["lng"]}&key=${KEY}`;
         fetch(url)
             .then(response => response.json())
