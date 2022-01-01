@@ -377,7 +377,7 @@ class QueryFunctions:
     def is_near_location(content,val):
         arr=val.split(',')
         coord2=arr[0:2]
-        coord1=[content["lat"],content["lng"]]
+        coord1=[content["marker"]["lat"],content["marker"]["lng"]]
         dist=float(arr[2])
         xdist=float(coord1[0])-float(coord2[0])
         ydist=float(coord1[1])-float(coord2[1])
@@ -440,7 +440,7 @@ class FilterPosts(GenericAPIView):
             for get_param in get_params:
                 if get_param=="post_template_id":
                     continue
-                obj=re.match(r'(.*)\_(.+)$',get_param)
+                obj=re.match(r'(.*)\_(.+)$',get_param,re.DOTALL)
                 if obj:
                     field=obj.group(1)
                     query_type=obj.group(2)
@@ -449,16 +449,19 @@ class FilterPosts(GenericAPIView):
            #Field name -> Field+name 
             posts_to_return=[]
             for post in relevant_posts:
-                query_failed=False
-                for data_field in post["data_fields"]:
-                    for query_type,query_value in queries_requested.get(data_field["reference_name"],[]):
-                        query_func= QueryFunctions.queries[data_field["type"]][query_type]
-                        if not query_func(data_field["content"],query_value):
-                            query_failed=True
+                try:
+                    query_failed=False
+                    for data_field in post["data_fields"]:
+                        for query_type,query_value in queries_requested.get(data_field["name"],[]):
+                            query_func= QueryFunctions.queries[data_field["type"]][query_type]
+                            if not query_func(data_field["content"],query_value):
+                                query_failed=True
+                                break
+                        if query_failed:
                             break
                     if query_failed:
-                        break
-                if query_failed:
+                        continue
+                except:
                     continue
                 posts_to_return.append(post)
             
@@ -505,3 +508,23 @@ class DeletePost(GenericAPIView):
 			return Response({"Success" : False, "Error": "No Authentication to delete this post"})
 
 		return Response({"Success" : False, "Error" : "No Authentication or missing data"})
+
+class UpdatePost(GenericAPIView):
+    serializer_class=PostSerializer
+    @extend_schema(
+		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+		tags=["Posts"],
+		description="If the user is the owner of the post or the moderator of the community, he/she deletes the post with the given post_id",
+	)
+    def post(self,req):
+        if req.user.is_authenticated and "post_id" in req.GET:
+            try:
+                post = Post.objects.get(pk=req.GET["post_id"])
+            except:
+                return Response({"Success" : False})
+            post_serial=PostSerializer(post,data=req.data,context={"request":req},partial=True)
+            if post_serial.is_valid():
+                post_serial.save()
+                return Response(post_serial.data)
+            else:
+                return Response({"Success" : False,"Error":post_serial.errors})
