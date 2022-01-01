@@ -144,7 +144,7 @@ export default function PostCard({ posts }) {
                                                                     <Modal.Title>Location</Modal.Title>
                                                                 </Modal.Header>
                                                                 <Modal.Body>
-                                                                    <LoadScript googleMapsApiKey="AIzaSyBZng78Z9fLu_MEVS2ckEU5PBOK7HYcJcs">
+                                                                    <LoadScript googleMapsApiKey="AIzaSyA-6FuNEHHEB49Rz6NL4std-cGkzKgnau8">
                                                                         <GoogleMap
                                                                             id="map"
                                                                             mapContainerStyle={{ height: "400px" }}
