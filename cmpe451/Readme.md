@@ -2,41 +2,42 @@
 
 <details>
 <summary><strong> Json-LD Vocab </strong></summary>
-```
-{
-  "@context": {
-    "@vocab": "http://schema.org/",
-    "user_name": "name",
-    "email": "email",
-    "name": "name",
-    "description": "description",
-    "community_image_url":"image",
-    "moderator" : {
-    	"@id": "http://schema.org/Person",
-        "@type": "@id",
-        "id": "identifier"
-    },
-    "Isjoined": {
-    	"@id": "http://schema.org/memberOf",
-        "@type": "@id",
-        "id": "identifier"
-    },
-    "poster" : "author",
-    "community" : "identifier",
-    "title" : "headline",
-    "post_template": "identifier",
-    "created_date" : "dateCreated",
-    "data_field_templates" : {
-    	"@id": "http://schema.org/CreativeWork",
-        "@type": "@id",
-        "name" : "name",
-        "type" : "DataType",
-        "additional_content": "accessibilityFeature",
-        "reference_name": "alternateName"
+
+  ```
+  {
+    "@context": {
+      "@vocab": "http://schema.org/",
+      "user_name": "name",
+      "email": "email",
+      "name": "name",
+      "description": "description",
+      "community_image_url":"image",
+      "moderator" : {
+        "@id": "http://schema.org/Person",
+          "@type": "@id",
+          "id": "identifier"
+      },
+      "Isjoined": {
+        "@id": "http://schema.org/memberOf",
+          "@type": "@id",
+          "id": "identifier"
+      },
+      "poster" : "author",
+      "community" : "identifier",
+      "title" : "headline",
+      "post_template": "identifier",
+      "created_date" : "dateCreated",
+      "data_field_templates" : {
+        "@id": "http://schema.org/CreativeWork",
+          "@type": "@id",
+          "name" : "name",
+          "type" : "DataType",
+          "additional_content": "accessibilityFeature",
+          "reference_name": "alternateName"
+      }
     }
   }
-}
-```
+  ```
 </details>
 
 
@@ -83,7 +84,7 @@
 }
 ```
 
-* DELETE POST <br>
+* Delete Post <br>
 ```
 {
   "@context": "https://www.w3.org/ns/activitystreams",
@@ -101,7 +102,7 @@
 }
 ```
 
-* Create COMMUNITY <br>
+* Create Community <br>
 ```
 {
     "@context": "https://www.w3.org/ns/activitystreams",
