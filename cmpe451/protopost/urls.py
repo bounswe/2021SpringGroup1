@@ -11,14 +11,17 @@ urlpatterns = [
 	path("register", views.Register.as_view(), name= "register"),
 	path("logout", views.Logout.as_view(), name= "logout"),
 	
-	
+	path("get_user_profile/<int:user_id>", views.GetUserProfile.as_view(), name= "user_profile"),
 	path("get_user_home_feed",views.GetUserHomeFeed.as_view(),name="get_user_home_feed"),
 	path("get_user_created_posts",views.GetUserCreatedPosts.as_view(),name="get_user_created_posts"),
 	
 	path("create_community",views.CreateCommunity.as_view(),name="create_community"),
 	path("list_communities",views.ListCommunities.as_view(),name="list_communities"),
 	path("search_communities",views.SearchCommunities.as_view(),name="search_communities"),
+	path("communities/<int:community_id>/search_posts_in_community",views.SearchPostsInCommunity.as_view(),name="search_posts_in_community"),
+	path("communities/<int:community_id>/filter_posts",views.FilterPosts.as_view(),name="filter_posts"),
 	path("communities/<int:community_id>/create_post",views.CreatePost.as_view(),name="create_post"),
+	path("communities/delete_post",views.DeletePost.as_view(),name="delete_post"),
 	path("communities/<int:community_id>/create_post_template",views.CreatePostTemplate.as_view(),name="create_post_template"),
 	path("communities/<int:community_id>/get_community_data",views.GetCommunityData.as_view(),name="get_community_data"),
 	
