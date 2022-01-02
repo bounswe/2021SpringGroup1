@@ -12,7 +12,7 @@ import { isEmpty } from 'utils/methods';
 import { createPost } from 'store/actions/communityAction';
 import SideCard from 'components/card/SideCard';
 import MapGoogle from 'components/googleMaps';
-
+import { FormControlLabel, Checkbox } from '@mui/material';
 
 function CreatePostPage(props) {
     const history = useHistory();
@@ -39,7 +39,15 @@ function CreatePostPage(props) {
     }
 
     const handleInputChange = (e, index) => {
-        dataFields[index][e.target.name] = e.target.value;
+        // console.log(e.target.checked);
+
+        if (e.target.type == "checkbox") {
+            dataFields[index]["content"][e.target.name] = e.target.checked;
+        }
+        else {
+            dataFields[index][e.target.name] = e.target.value;
+
+        }
         console.log("dataFields:", dataFields);
     };
 
@@ -70,10 +78,10 @@ function CreatePostPage(props) {
                 item = { name: dataFields[i].name, type: dataFields[i].type, content: { marker: location, adrs: address } };
             }
             else if (dataFields[i].type == "number") {
-                item = { name: dataFields[i].name, type: dataFields[i].type, content: { prop1: parseInt(dataFields[i].content) } };
+                item = { name: dataFields[i].name, type: dataFields[i].type, content: { value: parseInt(dataFields[i].content) } };
             }
             else {
-                item = { name: dataFields[i].name, type: dataFields[i].type, content: { prop1: dataFields[i].content } };
+                item = { name: dataFields[i].name, type: dataFields[i].type, content: { value: dataFields[i].content } };
             }
 
             values.push(item);
@@ -122,11 +130,26 @@ function CreatePostPage(props) {
         }
     ];
 
-    // const [selectionFields, setSelectionFields] = useState([]);
-
-    // const handleAddClick = () => {
-    //     setSelectionFields([...selectionFields, { type: "", name: "" }]);
-    // };
+    const deneme2 = [
+        {
+            "name": "Name",
+            "type": "text",
+            "options": []
+        },
+        {
+            "name": "Age",
+            "type": "number",
+            "options": []
+        },
+        {
+            "name": "Gender",
+            "type": "selection",
+            "options": [
+                "Male",
+                "Female"
+            ]
+        }
+    ];
 
     return (
         <>
@@ -161,8 +184,11 @@ function CreatePostPage(props) {
                         template["id"] == index
                         &&
                         template["data_field_templates"].map((field, idx) => (
-                            // deneme.map((field, idx) => (
-                            dataFields.push({ name: field["name"], type: field["type"], content: "" })
+                        //deneme2.map((field, idx) => (
+                            <>
+                                {field["type"] === "selection" ? dataFields.push({ name: field["name"], type: field["type"], content: {} })
+                                    : dataFields.push({ name: field["name"], type: field["type"], content: "" })}
+                            </>
                             &&
                             <FormGroup className="mb-3" controlId="fields">
                                 <Row>
@@ -191,29 +217,26 @@ function CreatePostPage(props) {
                                             <FormControl name="content" placeholder="Enter a value" type="text" onChange={e => handleInputChange(e, idx)}>
                                             </FormControl>
                                         }
-                                        {/* {field["type"] === "selection" &&
-                                            <Button variant="warning" onClick={() => handleAddClick()}>
-                                                Add Selection Option
-                                            </Button>
+                                        {field["type"] === "selection"
                                             &&
-                                            selectionFields.length > 0
-                                            &&
-                                        {
-                                            selectionFields.map((field, i) => {
-                                                return (
-                                                    <div key={i}>
-                                                        <Row>
-                                                            <Col sm={4}>
-                                                                <FormControl name="content" placeholder="Enter text" type="text" onChange={e => handleInputChange(e, idx)}>
-                                                                </FormControl>
-                                                            </Col>
-                                                        </Row>
-                                                    </div>
-                                                );
-                                            })
+                                            <FormGroup>
+                                                {field["options"].map((opt, i) => (
+                                                    <>
+                                                    {dataFields[idx]["content"][opt] = false}
+                                                    <FormControlLabel
+                                                        control={
+                                                            <Checkbox
+                                                                onChange={e => handleInputChange(e, idx)}
+                                                                name={opt}
+                                                            />
+                                                        }
+                                                        label={opt}
+                                                    />
+                                                    </>
+                                                    
+                                                ))}
+                                            </FormGroup>
                                         }
-
-                                        } */}
                                         {field["type"] === "video" &&
                                             <FormControl name="content" placeholder="Enter Video URL" type="text" onChange={e => handleInputChange(e, idx)}>
                                             </FormControl>
@@ -223,7 +246,6 @@ function CreatePostPage(props) {
                             </FormGroup>
                         ))
                     ))}
-
                     <FormGroup>
                         <Button style={{ marginBottom: "20px" }} onClick={(e) => { createPostCall(e) }} variant="success">Create Post</Button>{' '}
                     </FormGroup>

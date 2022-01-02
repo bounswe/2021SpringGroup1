@@ -42,7 +42,14 @@ function CreatePostTemplate(props) {
         e.preventDefault();
         let values = [];
         for (let i = 0; i < dataFields.length; i++) {
-            let item = { name: dataFields[i].name, type: dataFields[i].type };
+            let item = {};
+            let opts = [];
+            if (dataFields[i].type == "selection") {
+                var trimmed = dataFields[i].options.replace(/\s+/g, '');
+                opts = trimmed.split(",");
+                console.log(opts)
+            }
+            item = { name: dataFields[i].name, type: dataFields[i].type, options: opts };
             values.push(item);
         }
         console.log("values:", values);
@@ -72,7 +79,7 @@ function CreatePostTemplate(props) {
 
     // handle click event of the Add button
     const handleAddClick = () => {
-        setDataFields([...dataFields, { type: "", name: "" }]);
+        setDataFields([...dataFields, { type: "", name: "", options: "" }]);
     };
 
     const returnAlert = (variant, message) => {
@@ -118,7 +125,7 @@ function CreatePostTemplate(props) {
                         return (
                             <div key={i}>
                                 <Row>
-                                    <Col>
+                                    <Col sm={3}>
                                         <Form.Control style={{ margin: "10px" }} as="select" value={field.type} name="type" aria-label="Default select example" onChange={e => handleInputChange(e, i)}>
                                             <option value="0">Select Field Type</option>
                                             <option value="text">Text</option>
@@ -126,14 +133,21 @@ function CreatePostTemplate(props) {
                                             <option value="location">Location</option>
                                             <option value="date">Date</option>
                                             <option value="number">Number</option>
-                                            {/* <option value="selection">Selection</option> */}
+                                            <option value="selection">Selection</option>
                                             <option value="video">Video</option>
                                         </Form.Control>
                                     </Col>
-                                    <Col style={{ margin: "10px" }}>
+                                    <Col sm={3} style={{ margin: "10px" }}>
                                         <FormControl placeholder="Enter Field Name" value={field.name} type="text" name="name" onChange={e => handleInputChange(e, i)} >
                                         </FormControl>
                                     </Col>
+                                    {field.type == "selection"
+                                        &&
+                                        <Col sm={6} style={{ margin: "10px" }}>
+                                            <FormControl placeholder="Please enter the options separated by commas." value={field.options} type="text" name="options" onChange={e => handleInputChange(e, i)} >
+                                            </FormControl>
+                                        </Col>
+                                    }
                                     <Col style={{ margin: "10px" }}>
                                         {dataFields.length !== 1 && <Button variant="danger" onClick={() => handleRemoveClick(i)}>Remove</Button>}
                                     </Col>

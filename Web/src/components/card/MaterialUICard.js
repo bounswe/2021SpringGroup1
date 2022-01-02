@@ -21,6 +21,7 @@ import { Grid, Paper } from "@material-ui/core";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import Modal from 'react-bootstrap/Modal'
 import ReactPlayer from 'react-player'
+import { FormControlLabel, Checkbox } from '@mui/material';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -33,32 +34,32 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-// const deneme = [
-//     {
-//         "name": "yenivideo",
-//         "type": "text",
-//         "content": {
-//             "prop1": "deneme Video"
-//         },
-//         "reference_name": "Text%20Field"
-//     },
-//     {
-//         "name": "urlvideo",
-//         "type": "video",
-//         "content": {
-//             "prop1": "https://www.youtube.com/watch?v=ysz5S6PUM-U"
-//         },
-//         "reference_name": "Video%20Field"
-//     },
-//     {
-//         "name": "çıkıştarihi",
-//         "type": "date",
-//         "content": {
-//             "prop1": "2022-01-02"
-//         },
-//         "reference_name": "Date%20Field"
-//     }
-// ];
+const deneme = [
+    {
+        "name": "yenivideo",
+        "type": "text",
+        "content": {
+            "value": "deneme Video"
+        },
+        "reference_name": "Text%20Field"
+    },
+    {
+        "name": "urlvideo",
+        "type": "video",
+        "content": {
+            "value": "https://www.twitch.tv/videos/1247081176"
+        },
+        "reference_name": "Video%20Field"
+    },
+    {
+        "name": "çıkıştarihi",
+        "type": "date",
+        "content": {
+            "value": "2022-01-02"
+        },
+        "reference_name": "Date%20Field"
+    }
+];
 
 export default function PostCard({ posts }) {
     const [expanded, setExpanded] = React.useState(false);
@@ -82,6 +83,33 @@ export default function PostCard({ posts }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const deneme_select = [
+        {
+            "name": "Name",
+            "type": "text",
+            "content": {
+                "value": "Muhammed"
+            }
+        },
+        {
+            "name": "Age",
+            "type": "number",
+            "content": {
+                "value": 23
+            }
+        },
+        {
+            "name": "Gender",
+            "type": "selection",
+            "content": {
+                "value": {
+                    "Male": true,
+                    "Female": false
+                }
+            }
+        }
+    ];
 
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
@@ -136,9 +164,9 @@ export default function PostCard({ posts }) {
             <CardContent>
                 {
                     posts["data_fields"].map((field) => (
-                        // deneme.map((field) => (
+                        //deneme_select.map((field) => (
                         <div>
-                            {(field["type"] === "text" || field["type"] === "date" || field["type"] === "number")
+                            {(field["type"] === "text" || field["type"] === "number")
                                 &&
                                 <Row>
                                     <Col sm={2}>
@@ -149,6 +177,40 @@ export default function PostCard({ posts }) {
                                             {field["content"][Object.keys(field["content"])[0]]}
                                         </Typography>
                                     </Col>
+                                </Row>
+                            }
+                            {field["type"] === "date"
+                                &&
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <Col>
+                                        <Typography paragraph>
+                                            {new Date(field["content"][Object.keys(field["content"])[0]]).toLocaleString('tr-TR').substring(0,10)}
+                                        </Typography>
+                                    </Col>
+                                </Row>
+                            }
+                            {field["type"] === "selection"
+                                &&
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <>
+                                        {Object.keys(field["content"]["value"]).map((key, index) => (
+                                            <Col>
+                                                <Typography paragraph>
+                                                    {field["content"]["value"][key] === true &&
+                                                        <FormControlLabel disabled control={<Checkbox defaultChecked />} label={key} />
+                                                        // :
+                                                        // <FormControlLabel disabled control={<Checkbox />} label={key} />
+                                                    }
+                                                </Typography>
+                                            </Col>
+                                        ))}
+                                    </>
                                 </Row>
                             }
                             {field["type"] === "video"
