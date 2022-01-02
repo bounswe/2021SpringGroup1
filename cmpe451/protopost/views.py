@@ -514,7 +514,7 @@ class UpdatePost(GenericAPIView):
     @extend_schema(
 		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
 		tags=["Posts"],
-		description="If the user is the owner of the post or the moderator of the community, he/she deletes the post with the given post_id",
+		description="If the user is the owner of the post or the moderator of the community, he/she edits the post with the given post_id",
 	)
     def post(self,req):
         if req.user.is_authenticated and "post_id" in req.GET:
@@ -522,9 +522,12 @@ class UpdatePost(GenericAPIView):
                 post = Post.objects.get(pk=req.GET["post_id"])
             except:
                 return Response({"Success" : False})
-            post_serial=PostSerializer(post,data=req.data,context={"request":req},partial=True)
-            if post_serial.is_valid():
-                post_serial.save()
-                return Response(post_serial.data)
-            else:
-                return Response({"Success" : False,"Error":post_serial.errors})
+            if req.user.id == post.poster_id or req.user.id == post.community.moderator_id:
+                post_serial=PostSerializer(post,data=req.data,context={"request":req},partial=True)
+                if post_serial.is_valid():
+                    post_serial.save()
+                    return Response(post_serial.data)
+                else:
+                    return Response({"Success" : False,"Error":post_serial.errors})
+        else:
+            return Response({"Success" : False,"Error":"No authentication or authorization."})
