@@ -1,6 +1,9 @@
 import React from 'react';
 import {View, Text, StyleSheet,ScrollView, Image} from 'react-native';
-
+import MapView from 'react-native-maps'
+import { Marker } from 'react-native-maps';
+import { Video, AVPlaybackStatus } from 'expo-av';
+import { WebView } from 'react-native-webview';
 
 function PostScreen({route, navigation}) {
     const {postData} = route.params;
@@ -16,6 +19,13 @@ function PostScreen({route, navigation}) {
                 </View>
             ))}
 
+            {postData["data_fields"].filter(item=>item.type==="number").map((input) => (
+                <View style={styles.textContainer}>
+                    <Text style={styles.contentTitle}>{input.name}</Text>
+                    <Text style={styles.contentText}>{input.content.prop1}</Text>
+                </View>
+            ))}
+
             {postData["data_fields"].filter(item=>item.type==="image").map((input) => (
                 <View style={styles.imageContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
@@ -23,6 +33,67 @@ function PostScreen({route, navigation}) {
                 </View>
             ))}
 
+            {/* {postData["data_fields"].filter(item=>item.type==="image").map((input) => (
+                <View style={styles.imageContainer}>
+                    <Text style={styles.contentTitle}>{input.name}</Text>
+                    <Image style={styles.contentImage} source={{uri:input.content.prop1}}/>
+                </View>
+            ))} */}
+
+            <View style={styles.imageContainer}>
+                    <Text style={styles.contentTitle}>AAA</Text>
+                    <View style={styles.video}>
+                        <WebView
+                        style={{flex:1}}
+                        javaScriptEnabled={true}
+                        source={{uri: 'https://www.youtube.com/watch?v=inBKFMB-yPg'}}
+                        />
+                    </View>
+                    {/* <Video
+                    style={styles.video}
+                    source={{
+                    uri: 'https://www.youtube.com/watch?v=3z962qK0zys',
+                    }}
+                    useNativeControls
+                    /> */}
+            </View>
+
+
+            {postData["data_fields"].filter(item=>item.type==="date").map((input) => (
+                <View style={styles.dateContainer}>
+                    <Text style={styles.contentTitle}>{input.name}</Text>
+                    <Text style={styles.contentText}>{isoDateConvert(input.content.prop1)}</Text>
+                </View>
+            ))}
+            
+            {postData["data_fields"].filter(item=>item.type==="location").map((input) => (
+                <View style={styles.dateContainer}>
+                    <Text style={styles.contentTitle}>{input.name}</Text>
+                    <Text style={styles.contentText}>{input.content.adrs}</Text>
+                    <View style={styles.mapStyle}>
+                        <MapView style={styles.map} 
+                            region={{
+                            latitude:input.content.marker.lat,
+                            longitude:input.content.marker.lng,
+                            latitudeDelta: 0.03,
+                            longitudeDelta: 0.1}}
+                        >
+                            <Marker coordinate={{
+                            latitude:input.content.marker.lat,
+                            longitude:input.content.marker.lng,
+                            latitudeDelta: 0.01,
+                            longitudeDelta: 0.1}} title='Marker'/>
+                        </MapView>
+                    </View>
+                </View>
+            ))}
+
+            <View
+            style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: 1,
+            }}
+            />
             <View style={styles.detailList}>
                 <Text style={styles.postDetail}>posted by: {postData["poster_name"]}</Text>
                 <View style={{paddingLeft: 10, padding: 10}}/>
@@ -74,6 +145,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 3
     },
+    dateContainer: {
+        alignItems: "center",
+        paddingBottom: 10
+    },
     contentTitle:{
         fontSize: 30,
         paddingVertical:5
@@ -86,7 +161,24 @@ const styles = StyleSheet.create({
         width: 300,
         height: 200,
         resizeMode: 'stretch',
-      }
+    },
+    mapStyle: {
+        width:"90%",
+        height:250
+    },
+    map: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    video: {
+        alignSelf: 'center',
+        width: 320,
+        height: 300,
+      },
+
 
 })
 
