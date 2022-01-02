@@ -33,30 +33,19 @@ function PostScreen({route, navigation}) {
                 </View>
             ))}
 
-            {/* {postData["data_fields"].filter(item=>item.type==="image").map((input) => (
-                <View style={styles.imageContainer}>
+            {postData["data_fields"].filter(item=>item.type==="video").map((input) => (
+                <View style={styles.textContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Image style={styles.contentImage} source={{uri:input.content.prop1}}/>
-                </View>
-            ))} */}
-
-            <View style={styles.imageContainer}>
-                    <Text style={styles.contentTitle}>AAA</Text>
                     <View style={styles.video}>
                         <WebView
                         style={{flex:1}}
                         javaScriptEnabled={true}
-                        source={{uri: 'https://www.youtube.com/watch?v=inBKFMB-yPg'}}
+                        source={{uri: input.content.prop1}}
                         />
                     </View>
-                    {/* <Video
-                    style={styles.video}
-                    source={{
-                    uri: 'https://www.youtube.com/watch?v=3z962qK0zys',
-                    }}
-                    useNativeControls
-                    /> */}
-            </View>
+                </View>
+            ))}
+
 
 
             {postData["data_fields"].filter(item=>item.type==="date").map((input) => (
