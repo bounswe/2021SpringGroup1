@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
 import MaterialCard from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -15,7 +16,11 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import myDate from 'utils/methods'
-import { Carousel, Image, Row, Col } from 'react-bootstrap';
+import { Carousel, Image, Row, Col, Button } from 'react-bootstrap';
+import { Grid, Paper } from "@material-ui/core";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import Modal from 'react-bootstrap/Modal'
+import ReactPlayer from 'react-player'
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -28,6 +33,32 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
+// const deneme = [
+//     {
+//         "name": "yenivideo",
+//         "type": "text",
+//         "content": {
+//             "prop1": "deneme Video"
+//         },
+//         "reference_name": "Text%20Field"
+//     },
+//     {
+//         "name": "urlvideo",
+//         "type": "video",
+//         "content": {
+//             "prop1": "https://www.youtube.com/watch?v=ysz5S6PUM-U"
+//         },
+//         "reference_name": "Video%20Field"
+//     },
+//     {
+//         "name": "çıkıştarihi",
+//         "type": "date",
+//         "content": {
+//             "prop1": "2022-01-02"
+//         },
+//         "reference_name": "Date%20Field"
+//     }
+// ];
 
 export default function PostCard({ posts }) {
     const [expanded, setExpanded] = React.useState(false);
@@ -40,6 +71,18 @@ export default function PostCard({ posts }) {
             setIsAnyImage(true)
         ))
     }
+
+    const comments = [{ username: "gktpgktp", text: "hoşgeldin deneme", date: new Date() }];
+
+    const mapRef = React.useRef();
+    const onMapLoad = React.useCallback((map) => {
+        mapRef.current = map;
+    }, []);
+
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
             <CardHeader
@@ -93,8 +136,10 @@ export default function PostCard({ posts }) {
             <CardContent>
                 {
                     posts["data_fields"].map((field) => (
+                        // deneme.map((field) => (
                         <div>
-                            {field["type"] !== "image" &&
+                            {(field["type"] === "text" || field["type"] === "date" || field["type"] === "number")
+                                &&
                                 <Row>
                                     <Col sm={2}>
                                         {field["name"] + ":"}
@@ -106,10 +151,89 @@ export default function PostCard({ posts }) {
                                     </Col>
                                 </Row>
                             }
+                            {field["type"] === "video"
+                                &&
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <Col>
+                                        <ReactPlayer
+                                            controls
+                                            url={field["content"][Object.keys(field["content"])[0]]}
+                                        />
+                                    </Col>
+                                </Row>
+                            }
+                            {field["type"] === "location"
+                                &&
+                                (Object.keys(field["content"]).length > 1
+                                    ?
+                                    <Row>
+                                        <Col sm={2}>
+                                            {field["name"] + ":"}
+                                        </Col>
+                                        <Col>
+                                            <Typography paragraph>
+                                                {field["content"]["adrs"]}
+                                            </Typography>
+                                        </Col>
+                                        <Col>
+                                            <>
+                                                <Button style={{ marginBottom: "20px" }} onClick={handleShow} variant="primary">
+                                                    Click to see the location on map.
+                                                </Button>
+
+                                                <Modal show={show} onHide={handleClose}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title>Location</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <LoadScript googleMapsApiKey="AIzaSyA-6FuNEHHEB49Rz6NL4std-cGkzKgnau8">
+                                                            <GoogleMap
+                                                                id="map"
+                                                                mapContainerStyle={{ height: "400px" }}
+                                                                zoom={8}
+                                                                center={{
+                                                                    lat: field["content"]["marker"].lat,
+                                                                    lng: field["content"]["marker"].lng
+                                                                }}
+                                                                onLoad={onMapLoad}
+                                                            >
+                                                                <Marker
+                                                                    position={{
+                                                                        lat: field["content"]["marker"].lat,
+                                                                        lng: field["content"]["marker"].lng
+                                                                    }}
+                                                                />
+                                                            </GoogleMap>
+                                                        </LoadScript>
+                                                    </Modal.Body>
+                                                    <Modal.Footer>
+                                                        <Button variant="secondary" onClick={handleClose}>
+                                                            Close
+                                                        </Button>
+                                                    </Modal.Footer>
+                                                </Modal>
+                                            </>
+                                        </Col>
+                                    </Row>
+                                    :
+                                    <Row>
+                                        <Col sm={2}>
+                                            {field["name"] + ":"}
+                                        </Col>
+                                        <Col>
+                                            <Typography paragraph>
+                                                {field["content"][Object.keys(field["content"])[0]]}
+                                            </Typography>
+                                        </Col>
+                                    </Row>
+                                )}
                         </div>
                     ))
                 }
-            </CardContent>
+            </CardContent >
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />
@@ -117,44 +241,64 @@ export default function PostCard({ posts }) {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
-                {/* <ExpandMore
+                <ExpandMore
                     expand={expanded}
                     onClick={handleExpandClick}
                     aria-expanded={expanded}
                     aria-label="show more"
                 >
                     <ExpandMoreIcon />
-                </ExpandMore> */}
+                </ExpandMore>
             </CardActions>
-            {/* <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
-                    <Typography paragraph>Method:</Typography>
-                    <Typography paragraph>
-                        Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-                        aside for 10 minutes.
-                    </Typography>
-                    <Typography paragraph>
-                        Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over
-                        medium-high heat. Add chicken, shrimp and chorizo, and cook, stirring
-                        occasionally until lightly browned, 6 to 8 minutes. Transfer shrimp to a
-                        large plate and set aside, leaving chicken and chorizo in the pan. Add
-                        pimentón, bay leaves, garlic, tomatoes, onion, salt and pepper, and cook,
-                        stirring often until thickened and fragrant, about 10 minutes. Add
-                        saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-                    </Typography>
-                    <Typography paragraph>
-                        Add rice and stir very gently to distribute. Top with artichokes and
-                        peppers, and cook without stirring, until most of the liquid is absorbed,
-                        15 to 18 minutes. Reduce heat to medium-low, add reserved shrimp and
-                        mussels, tucking them down into the rice, and cook again without
-                        stirring, until mussels have opened and rice is just tender, 5 to 7
-                        minutes more. (Discard any mussels that don’t open.)
-                    </Typography>
-                    <Typography>
-                        Set aside off of the heat to let rest for 10 minutes, and then serve.
-                    </Typography>
-                </CardContent>
-            </Collapse> */}
-        </MaterialCard>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
+                {/* <CardContent>
+                     <h1>Comments</h1>
+                    <div>
+
+                         {showAddComment()}  
+                        {comments.map((item, index) => {
+                            if (item) {
+                                return (
+                                    <Paper 
+                                        key={index}
+                                    style={{ backgroundColor: 'Lavender',}}
+                                    >
+                                        <CardHeader
+                                            avatar={
+                                                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                                                    {posts["poster_name"].substring(0, 1).toUpperCase()}
+                                                </Avatar>
+                                            }
+                                            action={
+                                                <IconButton aria-label="settings">
+                                                    <MoreVertIcon />
+                                                </IconButton>
+                                            }
+                                            title={posts["community_name"]}
+                                            // title={myDate(posts["created_date"])}
+                                            subheader={posts["poster_name"]}
+                                        />
+                                        <Grid container wrap="nowrap" spacing={2}>
+                                            <Grid item>
+                                                <Avatar alt={item.username} src="" />
+                                            </Grid>
+                                            <Grid justifyContent="left" item xs zeroMinWidth>
+                                                <h4 style={{ margin: 0, textAlign: "left" }}>
+                                                    {item.username}
+                                                </h4>
+                                                <p style={{ textAlign: "left" }}>{item.text}</p>
+                                                <p style={{ textAlign: "left", color: "gray" }}>
+                                                    {new Date(item.date).toLocaleString('tr-TR')}
+                                                </p>
+                                            </Grid>
+                                        </Grid>
+                                    </Paper>
+                                );
+                            }
+                        })}
+                    </div>
+                </CardContent> */}
+            </Collapse>
+        </MaterialCard >
     );
 }
