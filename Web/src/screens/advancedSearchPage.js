@@ -22,6 +22,8 @@ function AdvancedSearchPage(props) {
     const [dataFields, setDataFields] = useState([]);
     const { communityData, postTemplates } = useSelector(state => state.community)
     const [selectedPostTemplate, setSelectedPostTemplate] = useState('');
+    const [location, setLocation] = useState({});
+    const [address, setAddress] = useState("");
 
     // const [postTemplateNames, setPostTemplateNames] = useState([]);
     console.log('communityData: ', communityData?.Community);
@@ -60,8 +62,7 @@ function AdvancedSearchPage(props) {
             // history.push('/landingPage')
         }
     }, [])
-    const [location, setLocation] = useState({});
-    const [address, setAddress] = useState("");
+
     
 
 
@@ -76,9 +77,12 @@ function AdvancedSearchPage(props) {
         }
     }
 
-    function getLocationData(loc, add) {
-        // console.log("location: ", location);
-        // console.log("address: ", address);
+    function getLocationData(loc, add, index) {
+        let locationTmp = {lat: loc?.lat, lng: loc.lng};
+        const list = [...dataFields];
+        list[index]['value'] = locationTmp;
+        if(dataFields[index]['value']?.lat !== locationTmp?.lat && dataFields[index]['value']?.lng !== locationTmp?.lng)
+            setDataFields(list);
         setLocation(loc);
         setAddress(add);
     }
@@ -94,6 +98,19 @@ function AdvancedSearchPage(props) {
 
         // handle input change
         const handleTypeInputChange = (e, index) => {
+            console.log('e.target: ' , e.target);
+            const { name, value } = e.target;
+            console.log('name, value: ' , name, value);
+            const list = [...dataFields];
+            let type = selectedPostTemplate?.data_field_templates?.filter(field => field?.name === value)[0]?.type;
+            if(name === 'name') list[index]['type'] = type;
+            list[index][name] = value;
+            setDataFields(list);
+            console.log('dataFields: ' , dataFields);
+        };
+
+        // handle input change
+        const handleTypeConditionChange = (e, index) => {
             const { value } = e.target;
             const list = [...dataFields];
             list[index]['name'] = value;
@@ -111,9 +128,29 @@ function AdvancedSearchPage(props) {
     
         // handle click event of the Add button
         const handleAddClick = () => {
-            setDataFields([...dataFields, { name: "", value: "" }]);
+            setDataFields([...dataFields, { name: "", value: "", type: "", condition: ""}]);
         };
 
+        const filterPosts = (e) => {
+
+            e.preventDefault();
+            let communityId = id;
+            let params = {}
+            dataFields?.map(field => {
+                if(field?.type === 'location') {
+                    params[field?.name + '_' + field?.condition] = `${field?.value?.lat},${field?.value?.lng},${field?.value?.radius}`; 
+                } else if(field?.type === 'number') {
+                    params[field?.name + '_' + field?.condition] = field?.value; 
+                } else if(field?.type === 'date') {
+                    params[field?.name + '_' + field?.condition] = field?.value; 
+                } else if(field?.type === 'text') {
+                    params[field?.name] = field?.value; 
+                }
+            })
+            console.log('params: ' , params);
+            console.log('communityId: ' , communityId);
+
+        }
 
     // const [selectionFields, setSelectionFields] = useState([]);
 
@@ -126,13 +163,6 @@ function AdvancedSearchPage(props) {
             <div>
                 <SideBar />
             </div>
-
-                   
-
-                    
-
-
-
 
             <Container fluid={true} style={{ width: '55rem', margin: '0px auto', backgroundColor: "Lavender" }}>
                 <Form>
@@ -156,21 +186,84 @@ function AdvancedSearchPage(props) {
                             <div key={i}>
                                 <Row>
                                     <Col>
-                                        <Form.Control style={{ margin: "10px" }} as="select" value={field.name} name="type" aria-label="Default select example" onChange={e => handleTypeInputChange(e, i)}>
+                                        <Form.Control style={{ margin: "10px" }} as="select" value={field.name} name="name" aria-label="Default select example" onChange={e => handleTypeInputChange(e, i)}>
                                             <option value="0">Select Field Type</option>
                                             {selectedPostTemplate?.data_field_templates?.map((field, i) => {
                                                 for(var i = 0; i < dataFields?.length; i++) {
-                                                    if(dataFields[i]?.name?.includes(field?.name))
+                                                    if(dataFields[i]?.name?.includes(field?.name) || field[i]?.type?.includes('image') || field[i]?.type?.includes('video'))
                                                         return <option value={field?.name} disabled>{field?.name}</option>;
                                                 }
+                                             
+                                                if(field?.type?.includes('image') || field?.type?.includes('video'))
+                                                    return <option value={field?.name} disabled>{field?.name}</option>;
                                                 return <option value={field?.name}>{field?.name}</option>
                                             })}
                                         
                                         </Form.Control>
                                     </Col>
                                     <Col style={{ margin: "10px" }}>
-                                        <FormControl placeholder="Enter Field Name" value={field.value} type="text" name="value" onChange={e => handleInputChange(e, i)} >
-                                        </FormControl>
+                                        <>
+                                            {field?.type === 'number' && 
+                                                <>
+                                                <Form.Control style={{ margin: "10px" }} as="select" value={field.condition} name="condition" aria-label="Default select example" onChange={e => handleTypeInputChange(e, i)}>
+                                                    <option value="0">Select Field Condition</option>
+                                                    <option value={'lg'} >gt</option>
+                                                    <option value={'eq'} >eq</option>
+                                                    <option value={'lt'} >lt</option>
+                                                </Form.Control>
+
+                                                </>
+                                            
+                                            }
+
+                                            {field?.type === 'date' && 
+                                                <>
+                                                <Form.Control style={{ margin: "10px" }} as="select" value={field.condition} name="condition" aria-label="Default select example" onChange={e => handleTypeInputChange(e, i)}>
+                                                    <option value="0">Select Field Condition</option>
+                                                    <option value={'before'} >before</option>
+                                                    <option value={'equal'} >equal</option>
+                                                    <option value={'after'} >after</option>
+                                                </Form.Control>
+                                                </>
+                                            
+                                            }
+
+                                            {field?.type === 'location' && 
+                                                <>
+                                                <Form.Control style={{ margin: "10px" }} as="select" value={field.condition} name="condition" aria-label="Default select example" onChange={e => handleTypeInputChange(e, i)}>
+                                                    <option value="0">Select Field Condition</option>
+                                                    <option value={'near'} >near</option>
+                                                </Form.Control>
+                                                </>
+                                            
+                                            }
+
+                                            {/* {field?.type === 'text' && 
+                                                <>
+                                                    <FormControl placeholder="Value" value={field.condition} type="text" name="condition" onChange={e => handleInputChange(e, i)} >
+                                                    </FormControl>
+                                                </>
+                                            } */}
+                                            
+                                        </>
+                                    </Col>
+                                    <Col style={{ margin: "10px" }}>
+                                        {field?.type === 'number' && 
+                                            <FormControl placeholder="Condition" value={field.value} type="number" name="value" onChange={e => handleTypeInputChange(e, i)} >
+                                            </FormControl>
+                                        }
+                                        {field?.type === 'text' && 
+                                                <FormControl placeholder="Write Something" value={field.value} type="text" name="value" onChange={e => handleTypeInputChange(e, i)} >
+                                                </FormControl>
+                                            }
+                                        {field?.type === 'date' && 
+                                            <FormControl placeholder="Date" value={field.value} type="date" name="value" onChange={e => handleTypeInputChange(e, i)} >
+                                            </FormControl>
+                                        }
+                                        {field?.type === "location" &&
+                                            <MapGoogle getLocationData={(loc, add) => getLocationData(loc, add, i)} name="value"/>
+                                        }
+                                        
                                     </Col>
                                     <Col style={{ margin: "10px" }}>
                                         {dataFields.length !== 0 && <Button variant="danger" onClick={() => handleRemoveClick(dataFields[i]?.name)}>Remove</Button>}
@@ -185,7 +278,7 @@ function AdvancedSearchPage(props) {
                             Add Field
                         </Button> }
                         <br />
-                        <Button style={{ margin: "20px" }} variant="primary" type="submit" onClick={e => console.log('filter')}>
+                        <Button style={{ margin: "20px" }} variant="primary" onClick={e => filterPosts(e)}>
                             Filter
                         </Button>
                     </FormGroup>

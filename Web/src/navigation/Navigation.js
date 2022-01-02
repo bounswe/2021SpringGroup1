@@ -48,8 +48,8 @@ const Navigation = (props) => {
   }
 
   var ROUTES = <Switch>
-    <Route key={idd++} exact path={urls.advancedSearchPage} component={AdvancedSearchPage} />
     <Route key={idd++} exact path={urls.home} component={home} />
+    <Route key={idd++} exact path={urls.advancedSearchPage} component={AdvancedSearchPage} />
     <Route key={idd++} exact path={urls.bootstrap} component={bootstrap} />
     <Route key={idd++} exact path={urls.landingPage} component={landingPage} />
     <Route key={idd++} exact path={urls.createPostTemplate} component={CreatePostTemplate} />
