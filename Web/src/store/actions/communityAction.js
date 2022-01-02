@@ -169,7 +169,6 @@ export const getCommunityData = (id) => {
                 //   withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: GET_COMMUNITY_DATA,
                 data: responseData
@@ -180,6 +179,34 @@ export const getCommunityData = (id) => {
         }
     }
 };
+
+//TODO getCommunityData
+export const filterPostsRedux = (communityId, params) => {
+    return async (dispatch, getState) => {
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'GET',
+                url: ROOT_URL + '/communities/' + communityId + '/filter_posts',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: params,
+                //   withCredentials: true,
+            });
+            const responseData = response.data;
+            dispatch({
+                type: GET_COMMUNITY_DATA,
+                data: responseData
+            });
+        } catch (error) {
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
+
+
 
 //TODO getCommunityData
 export const listCommunityPosts = (id) => {
@@ -196,7 +223,6 @@ export const listCommunityPosts = (id) => {
                 //   withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: LIST_COMMUNITY_POSTS,
                 data: responseData
@@ -252,7 +278,6 @@ export const getMyPosts = () => {
                 withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: MY_POSTS,
                 data: responseData
@@ -279,7 +304,6 @@ export const checkSubscribeCommunity = (id) => {
                 // withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: MY_POSTS,
                 data: responseData
@@ -311,7 +335,6 @@ export const subscribeCommunity = (id, isJoined) => {
                 // withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: MY_POSTS,
                 data: responseData

@@ -11,7 +11,6 @@ export const SideBar = props => {
     const [isCollabsed, setIsCollabsed] = useState(true);
     const history = useHistory();
     const dispatch = useDispatch();
-    console.log('history: ', history);
     return (
         <ProSidebar collapsed={isCollabsed} style={{ position: 'fixed' }} onMouseLeave={() => setIsCollabsed(true)} onMouseOver={() => setIsCollabsed(false)}>
             <Menu iconShape="square">

@@ -16,7 +16,6 @@ import MapGoogle from 'components/googleMaps';
 
 function CreatePostPage(props) {
     const history = useHistory();
-
     let listOfPath = props?.location?.pathname?.split('/');
     let id = listOfPath[listOfPath?.length - 1];
 
