@@ -20,6 +20,7 @@ import { Carousel, Image, Row, Col, Button } from 'react-bootstrap';
 import { Grid, Paper } from "@material-ui/core";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import Modal from 'react-bootstrap/Modal'
+import ReactPlayer from 'react-player'
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -32,6 +33,32 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
+// const deneme = [
+//     {
+//         "name": "yenivideo",
+//         "type": "text",
+//         "content": {
+//             "prop1": "deneme Video"
+//         },
+//         "reference_name": "Text%20Field"
+//     },
+//     {
+//         "name": "urlvideo",
+//         "type": "video",
+//         "content": {
+//             "prop1": "https://www.youtube.com/watch?v=ysz5S6PUM-U"
+//         },
+//         "reference_name": "Video%20Field"
+//     },
+//     {
+//         "name": "çıkıştarihi",
+//         "type": "date",
+//         "content": {
+//             "prop1": "2022-01-02"
+//         },
+//         "reference_name": "Date%20Field"
+//     }
+// ];
 
 export default function PostCard({ posts }) {
     const [expanded, setExpanded] = React.useState(false);
@@ -45,7 +72,7 @@ export default function PostCard({ posts }) {
         ))
     }
 
-    // const comments = [{ username: "gktpgktp", text: "hoşgeldin deneme", date: new Date() }];
+    const comments = [{ username: "gktpgktp", text: "hoşgeldin deneme", date: new Date() }];
 
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
@@ -109,82 +136,104 @@ export default function PostCard({ posts }) {
             <CardContent>
                 {
                     posts["data_fields"].map((field) => (
+                        // deneme.map((field) => (
                         <div>
-                            {field["type"] !== "image" &&
+                            {(field["type"] === "text" || field["type"] === "date" || field["type"] === "number")
+                                &&
                                 <Row>
                                     <Col sm={2}>
                                         {field["name"] + ":"}
                                     </Col>
                                     <Col>
-
-                                        {field["type"] !== "location" ?
-                                            (
-                                                <Typography paragraph>
-                                                    {field["content"][Object.keys(field["content"])[0]]}
-                                                </Typography>
-                                            )
-                                            :
-                                            Object.keys(field["content"]).length > 1
-
-                                                ?
-                                                <Row>
-                                                    <Col>
-                                                        <Typography paragraph>
-                                                            {field["content"]["adrs"]}
-                                                        </Typography>
-                                                    </Col>
-                                                    <Col>
-                                                        <>
-                                                            <Button style={{ marginBottom: "20px" }} onClick={handleShow} variant="primary">
-                                                                Click to see the location on map.
-                                                            </Button>
-
-                                                            <Modal show={show} onHide={handleClose}>
-                                                                <Modal.Header closeButton>
-                                                                    <Modal.Title>Location</Modal.Title>
-                                                                </Modal.Header>
-                                                                <Modal.Body>
-                                                                    <LoadScript googleMapsApiKey="AIzaSyA-6FuNEHHEB49Rz6NL4std-cGkzKgnau8">
-                                                                        <GoogleMap
-                                                                            id="map"
-                                                                            mapContainerStyle={{ height: "400px" }}
-                                                                            zoom={8}
-                                                                            center={{
-                                                                                lat: field["content"]["marker"].lat,
-                                                                                lng: field["content"]["marker"].lng
-                                                                            }}
-                                                                            onLoad={onMapLoad}
-                                                                        >
-                                                                            <Marker
-                                                                                position={{
-                                                                                    lat: field["content"]["marker"].lat,
-                                                                                    lng: field["content"]["marker"].lng
-                                                                                }}
-                                                                            />
-                                                                        </GoogleMap>
-                                                                    </LoadScript>
-                                                                </Modal.Body>
-                                                                <Modal.Footer>
-                                                                    <Button variant="secondary" onClick={handleClose}>
-                                                                        Close
-                                                                    </Button>
-                                                                </Modal.Footer>
-                                                            </Modal>
-                                                        </>
-                                                    </Col>
-                                                </Row>
-                                                :
-                                                <Typography paragraph>
-                                                    {field["content"][Object.keys(field["content"])[0]]}
-                                                </Typography>
-                                        }
+                                        <Typography paragraph>
+                                            {field["content"][Object.keys(field["content"])[0]]}
+                                        </Typography>
                                     </Col>
                                 </Row>
                             }
+                            {field["type"] === "video"
+                                &&
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <Col>
+                                        <ReactPlayer
+                                            controls
+                                            url={field["content"][Object.keys(field["content"])[0]]}
+                                        />
+                                    </Col>
+                                </Row>
+                            }
+                            {field["type"] === "location"
+                                &&
+                                (Object.keys(field["content"]).length > 1
+                                    ?
+                                    <Row>
+                                        <Col sm={2}>
+                                            {field["name"] + ":"}
+                                        </Col>
+                                        <Col>
+                                            <Typography paragraph>
+                                                {field["content"]["adrs"]}
+                                            </Typography>
+                                        </Col>
+                                        <Col>
+                                            <>
+                                                <Button style={{ marginBottom: "20px" }} onClick={handleShow} variant="primary">
+                                                    Click to see the location on map.
+                                                </Button>
+
+                                                <Modal show={show} onHide={handleClose}>
+                                                    <Modal.Header closeButton>
+                                                        <Modal.Title>Location</Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body>
+                                                        <LoadScript googleMapsApiKey="AIzaSyA-6FuNEHHEB49Rz6NL4std-cGkzKgnau8">
+                                                            <GoogleMap
+                                                                id="map"
+                                                                mapContainerStyle={{ height: "400px" }}
+                                                                zoom={8}
+                                                                center={{
+                                                                    lat: field["content"]["marker"].lat,
+                                                                    lng: field["content"]["marker"].lng
+                                                                }}
+                                                                onLoad={onMapLoad}
+                                                            >
+                                                                <Marker
+                                                                    position={{
+                                                                        lat: field["content"]["marker"].lat,
+                                                                        lng: field["content"]["marker"].lng
+                                                                    }}
+                                                                />
+                                                            </GoogleMap>
+                                                        </LoadScript>
+                                                    </Modal.Body>
+                                                    <Modal.Footer>
+                                                        <Button variant="secondary" onClick={handleClose}>
+                                                            Close
+                                                        </Button>
+                                                    </Modal.Footer>
+                                                </Modal>
+                                            </>
+                                        </Col>
+                                    </Row>
+                                    :
+                                    <Row>
+                                        <Col sm={2}>
+                                            {field["name"] + ":"}
+                                        </Col>
+                                        <Col>
+                                            <Typography paragraph>
+                                                {field["content"][Object.keys(field["content"])[0]]}
+                                            </Typography>
+                                        </Col>
+                                    </Row>
+                                )}
                         </div>
                     ))
                 }
-            </CardContent>
+            </CardContent >
             <CardActions disableSpacing>
                 <IconButton aria-label="add to favorites">
                     <FavoriteIcon />
@@ -206,13 +255,13 @@ export default function PostCard({ posts }) {
                      <h1>Comments</h1>
                     <div>
 
-                        {showAddComment()} 
+                         {showAddComment()}  
                         {comments.map((item, index) => {
                             if (item) {
                                 return (
-                                    <Paper
+                                    <Paper 
                                         key={index}
-                                    // style={{ padding: "40px 20px"}}
+                                    style={{ backgroundColor: 'Lavender',}}
                                     >
                                         <CardHeader
                                             avatar={
