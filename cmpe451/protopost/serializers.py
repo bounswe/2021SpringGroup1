@@ -1,3 +1,4 @@
+from functools import partial
 import re
 import urllib.parse
 from django.core.checks.messages import Error
@@ -41,7 +42,33 @@ class CommunitySerializer(serializers.ModelSerializer):
         }
         representation.update(super().to_representation(instance))
         return representation
-    
+
+DATA_FIELD_FORMAT_CHECK=True
+
+data_field_formats={
+    "location": {"adrs":str,"marker":{"lat":float,"lng":float}},
+    "text":{"value":str},
+    "number":{"value":int},
+    "image":{"url":str},
+    "date":{"value":str}
+}
+
+def content_format_check(content,format):
+    if isinstance(content,dict) and isinstance(format,dict):
+        for field_name,type in format.items():
+            field_to_check=content.get(field_name,None)
+            if field_to_check:
+                if isinstance(type,dict):
+                    if not content_format_check(field_to_check,type):
+                        return False
+                else:
+                    if not isinstance(field_to_check,type):
+                        return False
+            else:
+                return False
+        return True
+    else:
+        return False    
 
 class DataFieldSerializer(serializers.ModelSerializer):
     reference_name=serializers.SerializerMethodField()
@@ -49,6 +76,15 @@ class DataFieldSerializer(serializers.ModelSerializer):
         model = DataField
         fields = ["name","type","content","reference_name"]
         read_only_fields=["reference_name"]
+    
+    def validate(self, attrs):
+        attrs=super().validate(attrs)
+        df_type=attrs.get("type",None)
+        if DATA_FIELD_FORMAT_CHECK:
+            if not content_format_check(attrs["content"],data_field_formats[df_type]):
+                raise ValidationError("Data field %s are in wrong format" % (attrs.get("name","unknown")))
+        return attrs
+    
     def get_reference_name(self,obj):
         try:
             return urllib.parse.quote(obj.name)
@@ -119,6 +155,20 @@ class PostSerializer(serializers.ModelSerializer):
                 post.delete()
                 raise Error
         return post
+    def update(self, instance, validated_data):
+        instance.title=validated_data.get('title',instance.title)
+        instance.save()
+        post_data_fields=instance.data_fields.all()
+        request_data_fields=validated_data.get("data_fields",[])
+
+        for df in request_data_fields:
+            for data_field in post_data_fields:
+                if data_field.name==df["name"]:
+                    update_data_field=DataFieldSerializer(data_field,data=df,partial=True)
+                    if update_data_field.is_valid():update_data_field.save()
+
+        return instance
+    
     def validate(self, attrs):
         attrs = super().validate(attrs)
         if "data_fields" in attrs and "post_template" in attrs:
