@@ -1,13 +1,17 @@
 from functools import partial
 import re
 import urllib.parse
+#from django.conf import _DjangoConfLazyObject
 from django.core.checks.messages import Error
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
-from .models import Community, DataField, DataFieldTemp, Post, PostTemplate
+from django.db.models import fields
+from rest_framework.fields import ImageField
+from .models import Community, DataField, DataFieldTemp, Post, PostTemplate,Comment
 from rest_framework import serializers, validators
 from rest_framework.validators import UniqueTogetherValidator
+from drf_spectacular.utils import extend_schema_serializer
 
 from .models import *
 
@@ -70,13 +74,20 @@ def content_format_check(content,format):
     else:
         return False    
 
+
 class DataFieldSerializer(serializers.ModelSerializer):
     reference_name=serializers.SerializerMethodField()
+    image=serializers.ImageField(use_url=True,required=False)
     class Meta:
         model = DataField
-        fields = ["name","type","content","reference_name"]
+        fields = ["name","type","content","reference_name","image"]
         read_only_fields=["reference_name"]
-    
+    def to_representation(self, instance):
+        repr=super().to_representation(instance)
+        if repr["image"]:
+            repr["content"]["url"]=repr["image"]
+        repr.pop("image")
+        return repr
     def validate(self, attrs):
         attrs=super().validate(attrs)
         df_type=attrs.get("type",None)
@@ -130,6 +141,7 @@ class PostTemplateSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     data_fields=DataFieldSerializer(many=True)
+
     class Meta:
         model = Post
         fields = ['id','poster','community',"title","post_template","data_fields",'created_date']
@@ -148,12 +160,25 @@ class PostSerializer(serializers.ModelSerializer):
         created_fields=[]
         for field in data_fields:
             try:
-                created_fields.append(DataField.objects.create(**field,post=post))
-            except:
+                if field["type"]=="image":
+                    image_data=validated_data.get(field["name"]+"_image",None)
+                    if image_data:
+                        field["image"]=image_data
+                data_field_instance=DataFieldSerializer(data=field)
+                #field_instance=DataField.objects.create(**field,post=post)
+                if data_field_instance.is_valid():
+                    data_field_instance.save(post=post)
+                    created_fields.append(data_field_instance)
+                else:
+                    for field in created_fields:
+                        field.delete()
+                    post.delete()
+                    raise Error
+            except Exception as e:
                 for field in created_fields:
                     field.delete()
                 post.delete()
-                raise Error
+                raise e
         return post
     def update(self, instance, validated_data):
         instance.title=validated_data.get('title',instance.title)
@@ -164,6 +189,10 @@ class PostSerializer(serializers.ModelSerializer):
         for df in request_data_fields:
             for data_field in post_data_fields:
                 if data_field.name==df["name"]:
+                    if data_field.type=="image":
+                        image_data=validated_data.get(data_field.name+"_image",None)
+                        if image_data:
+                            df["image"]=image_data
                     update_data_field=DataFieldSerializer(data_field,data=df,partial=True)
                     if update_data_field.is_valid():update_data_field.save()
 
@@ -179,4 +208,23 @@ class PostSerializer(serializers.ModelSerializer):
                 raise ValidationError("Data fields does not match")
         return attrs
 
+'''
+This serializer (RecursiveField) is from https://stackoverflow.com/a/27236783. 
+It is used to add a serializer field that has the same representation with its parent serializer.
+Since native DRF does not support recursive fields, I decided to use this simple workaround.
+'''
+class RecursiveField(serializers.Serializer):
+    def to_representation(self, instance):
+        serializer=self.parent.parent.__class__(instance,context=self.context)
+        return serializer.data  
+
+class CommentSerializer(serializers.ModelSerializer):
+    replies=RecursiveField(many=True,required=False)
+    class Meta:
+        model=Comment
+        fields = ['id','post','replied_comment','commenter','body','created_date','replies']
+        read_only_fields=['id','commenter','created_date','replies']
+    
+       
+    
 

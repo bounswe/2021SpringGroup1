@@ -57,6 +57,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Your project description',
     'VERSION': '1.0.0',
     'SCHEMA_PATH_PREFIX' : '/api/v[0-9]/protopost',
+    'COMPONENT_SPLIT_REQUEST': True,
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -162,7 +163,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

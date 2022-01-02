@@ -7,9 +7,6 @@ from rest_framework import response
 from .register import *
 from .serializers import *
 from rest_framework.generics import GenericAPIView
-from rest_framework.generics import ListAPIView
-from rest_framework.generics import CreateAPIView
-from rest_framework.generics import UpdateAPIView
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -103,8 +100,8 @@ class CreatePost(GenericAPIView):
             try:
                 post_serializer.save(poster=req.user,community=community)
                 return Response({"Success" : True, "Post" : post_serializer.data})
-            except:
-                return Response({"Success" : False, "Error" : "Something went wrong, is field names unique?"})
+            except Exception as e:
+                return Response({"Success" : False, "Error" : e.__str__()})
         else:
                 return Response({"Success" : False, "Error" : post_serializer.errors})
 
@@ -531,3 +528,57 @@ class UpdatePost(GenericAPIView):
                     return Response({"Success" : False,"Error":post_serial.errors})
         else:
             return Response({"Success" : False,"Error":"No authentication or authorization."})
+
+class CreateComment(GenericAPIView):
+    serializer_class=CommentSerializer
+    def post(self,req):
+        if req.user.is_authenticated:
+            comment=CommentSerializer(data=req.data)
+            if comment.is_valid():
+                try:
+                    community=Post.objects.get(pk=req.data["post"]).community
+                except Exception as exception:
+                    return Response({"Success":False,"Error":exception.__str__()})
+                if community in req.user.joined_communities.all():
+                    comment.save(commenter=req.user)
+                    return Response({"Success":True,"Comment":comment.data})
+                else:
+                    return Response({"Success":False,"Error":"User is not subscribed to this community."})
+            else:
+                return Response({"Success":False,"Error":comment.errors})
+        return Response({"Success":False})
+
+class DeleteComment(GenericAPIView):
+    serializer_class=CommentSerializer
+    @extend_schema(
+		parameters=[OpenApiParameter("comment_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+		request=None,responses=None, tags=["Posts"],
+		description="Delete comment"
+	)
+    def post(self, req):
+        if req.user.is_authenticated or "comment_id" not in req.GET:
+            comment = Comment.objects.get(pk=req.GET["comment_id"])
+            if req.user == comment.commenter or req.user == comment.post.community.moderator:
+                comment.delete()
+                return Response({"Success" : True})
+            return Response({"Success" : False, "Error": "No Authentication to delete this comment"})
+        return Response({"Success" : False, "Error" : "No Authentication or missing data"})
+
+
+class GetPostData(GenericAPIView):
+    serializer_class=PostSerializer
+    @extend_schema(
+		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+		tags=["Posts"],
+		description="sad",
+	)
+    def get(self,req):
+        if req.user.is_authenticated and "post_id" in req.GET:
+            try:
+                post = Post.objects.get(pk=req.GET["post_id"])
+            except:
+                return Response({"Success" : False})
+            comments=CommentSerializer(post.comments.all(),many=True)
+            post=PostSerializer(post)
+            return Response({"Post":post.data,"Comments":comments.data})
+        return Response({"Success":False})

@@ -8,7 +8,8 @@ DATA_TYPES = (
         ('image', 'Image'),
         ('location', 'Location'),
         ('date', 'Date'),
-        ('number','Number')
+        ('number','Number'),
+        ('selection','Selection')
     )
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
@@ -93,6 +94,7 @@ class DataField(models.Model):
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type',choices=DATA_TYPES)
     content=models.JSONField(max_length=max, verbose_name='Data')
+    image=models.ImageField(upload_to="images/",blank=True,null=True)
     def __str__(self) -> str:
         data = {
             "id": self.id,
@@ -125,6 +127,17 @@ class DataFieldTemp(models.Model):
             )
         ]
 
+class Comment(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='Id')
+    commenter = models.ForeignKey(User,on_delete=models.CASCADE,related_name='comments', blank=True, null=True)
+    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
+    replied_comment=models.ForeignKey("self", on_delete=models.CASCADE, related_name='replies', blank=True, null=True)
+    body=models.CharField(max_length=1000)
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name="Created Date")
+'''
+class Image(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='Id')
+    data_field=models.ForeignKey(DataField,related_name="image",on_delete=models.CASCADE)
+    image_file=models.ImageField(upload_to="images/")
 
-
-
+'''
