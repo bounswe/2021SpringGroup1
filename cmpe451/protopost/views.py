@@ -7,13 +7,10 @@ from rest_framework import response
 from .register import *
 from .serializers import *
 from rest_framework.generics import GenericAPIView
-from rest_framework.generics import ListAPIView
-from rest_framework.generics import CreateAPIView
-from rest_framework.generics import UpdateAPIView
 
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-
+import datetime
 
 from rest_framework.response import Response
 
@@ -103,8 +100,8 @@ class CreatePost(GenericAPIView):
             try:
                 post_serializer.save(poster=req.user,community=community)
                 return Response({"Success" : True, "Post" : post_serializer.data})
-            except:
-                return Response({"Success" : False, "Error" : "Something went wrong, is field names unique?"})
+            except Exception as e:
+                return Response({"Success" : False, "Error" : e.__str__()})
         else:
                 return Response({"Success" : False, "Error" : post_serializer.errors})
 
@@ -125,15 +122,16 @@ class CreatePostTemplate(GenericAPIView):
                 community=req.user.joined_communities.get(pk=community_id)
             except:
                 return Response({"Success" : False,"Error": "User is not subscribed to this community."}) 
-        post_template_serializer=PostTemplateSerializer(data=req.data)
-        if post_template_serializer.is_valid():
-            try:
-                post_template_serializer.save(community=community)
-                return Response({"Success" : True,"PostTemplate": post_template_serializer.data})
-            except:
-                return Response({"Success" : False, "Error" : "Something went wrong"})
-        else:
-            return Response({"Success" : False, "Error" : post_template_serializer.errors})
+            post_template_serializer=PostTemplateSerializer(data=req.data)
+            if post_template_serializer.is_valid():
+                try:
+                    post_template_serializer.save(community=community)
+                    return Response({"Success" : True,"PostTemplate": post_template_serializer.data})
+                except Exception as e:
+                    return Response({"Success" : False, "Error" : e.__str__()})
+            else:
+                return Response({"Success" : False, "Error" : post_template_serializer.errors})
+        return Response({"Success" : False,"Error": "No authorization."})
 
 class GetCommunityData(GenericAPIView):
     serializer_class=CommunitySerializer
@@ -333,7 +331,7 @@ class SearchPostsInCommunity(GenericAPIView):
             "Error": inline_serializer("SearchPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
             
             },
-        tags=["Posts"],
+        tags=["Search"],
     )
 
     def get(self,req,community_id):
@@ -353,7 +351,7 @@ class SearchCommunities(GenericAPIView):
         ],
         description= "Lists all Communities that contain the given parameter in their name.",
         request=None,
-        tags=["Community"]
+        tags=["Search"]
     )
 
     def get(self,req):
@@ -382,18 +380,45 @@ class QueryFunctions:
         xdist=float(coord1[0])-float(coord2[0])
         ydist=float(coord1[1])-float(coord2[1])
         return ((xdist*xdist+ydist*ydist)<(dist*dist))
-
-    location_queries={
-        "near": lambda content,val:QueryFunctions.is_near_location(content,val)
+    def selection(content,val,check):
+        tests=val.split(',')
+        for test in tests:
+            value=content.get(test,None)
+            if value:
+                if value==check:
+                    continue
+            return False
+        return True
+    def toDate(val):
+        return datetime.datetime(val)
+    
+    def date_between(content,val):
+        value=datetime.datetime(content["value"])
+        dates=[datetime.datetime(d) for d in val.split(',')]
+        return dates[0]<value and value<dates[1]
+    text_queries={
+        "eq": lambda content,val:content["value"]==val,
+        "st": lambda content,val:content["value"].startswith(val),
+        "en": lambda content,val:content["value"].endswith(val)
     }
-    date_queries={}
+    location_queries={
+        "near": lambda content,val:is_near_location(content,val)
+    }
+    date_queries={
+        "before": lambda content,val:toDate(content["value"])<toDate(val),
+        "after": lambda content,val:toDate(content["value"])>toDate(val),
+        "btwn": lambda content,val:date_between(content,val)
+    }
     number_queries={
         "gt": lambda content,val:int(content["value"])>int(val),
         "eq": lambda content,val:int(content["value"])==int(val),
         "lt": lambda content,val:int(content["value"])<int(val)
         }
-    queries={"location":location_queries,"date":date_queries,"number":number_queries}
-
+    selection_queries={
+        "slctd": lambda content,val:selection(content,val,True),
+        "ntslctd": lambda content,val:selection(content,val,False)
+    }
+    queries={"location":location_queries,"date":date_queries,"number":number_queries,"selection":selection_queries,"text":text_queries}
 class FilterPosts(GenericAPIView):
     serializer_class=PostSerializer
     queryset=Post.objects.all()
@@ -425,15 +450,39 @@ class FilterPosts(GenericAPIView):
                         <li>```<name>_gt=<int_value>``` → Returns true for fields greater than ```<int_value>```.</li>\
                         <li>```<name>_eq=<int_value>``` → Returns true for fields equal to ```<int_value>```.</li>\
                         <li>```<name>_lt=<int_value>``` → Returns true for fields less than ```<int_value>```.</li>\
+                    </ul>\
+                </li>\
+                <li>Text\
                     <ul>\
+                        <li>```<name>_en=<str>``` → Returns true for strings ending with ```<str>```.</li>\
+                        <li>```<name>_st=<str>``` → Returns true for strings starting with ```<str>```.</li>\
+                        <li>```<name>_eq=<str>``` → Returns true for strings equal to ```<str>```.</li>\
+                    </ul>\
+                </li>\
+                <li>Selection\
+                    <ul>\
+                        <li>```<name>_slctd=<s1>,<s2>...``` → Returns true if ```<s1>,<s2>...``` is selected.</li>\
+                        <li>```<name>_ntslctd=<s1>,<s2>...``` → Returns true if ```<s1>,<s2>...``` is not selected.</li>\
+                    </ul>\
+                </li>\
+                <li>Date\
+                    <ul>\
+                        <li>```<name>_before=<date>``` → Returns true if date is before ```<date>```.</li>\
+                        <li>```<name>_after=<date>``` → Returns true if date is after ```<date>```.</li>\
+                        <li>```<name>_btwn=<date1>,<date2>``` → Returns true if date is between ```<date1>,<date2>```.</li>\
+                    </ul>\
                 </li>\
             </ul>",
-        tags=["Posts"]
+        tags=["Search"]
     )
     def get(self,req,community_id):
         if req.user.is_authenticated:
-            current_community=Community.objects.get(pk=community_id)
-            relevant_posts = current_community.posts.filter(post_template=req.GET["post_template_id"])
+            try:
+                current_community=Community.objects.get(pk=community_id)
+                relevant_posts = current_community.posts.filter(post_template=req.GET["post_template_id"])
+            except Exception as e:
+                return Response({"Success":False,"Error":e.__str__()})
+
             relevant_posts=PostSerializer(relevant_posts,many=True).data
             get_params=req.GET.keys()
             queries_requested={}
@@ -461,7 +510,7 @@ class FilterPosts(GenericAPIView):
                             break
                     if query_failed:
                         continue
-                except:
+                except Exception as e:
                     continue
                 posts_to_return.append(post)
             
@@ -531,3 +580,61 @@ class UpdatePost(GenericAPIView):
                     return Response({"Success" : False,"Error":post_serial.errors})
         else:
             return Response({"Success" : False,"Error":"No authentication or authorization."})
+
+class CreateComment(GenericAPIView):
+    serializer_class=CommentSerializer
+    @extend_schema(
+        tags=["Comment"],
+		description="Endpoint for creating a comment. User must be subscribed to the community that the post belongs."
+	)
+    def post(self,req):
+        if req.user.is_authenticated:
+            comment=CommentSerializer(data=req.data)
+            if comment.is_valid():
+                try:
+                    community=Post.objects.get(pk=req.data["post"]).community
+                except Exception as exception:
+                    return Response({"Success":False,"Error":exception.__str__()})
+                if community in req.user.joined_communities.all():
+                    comment.save(commenter=req.user)
+                    return Response({"Success":True,"Comment":comment.data})
+                else:
+                    return Response({"Success":False,"Error":"User is not subscribed to this community."})
+            else:
+                return Response({"Success":False,"Error":comment.errors})
+        return Response({"Success":False})
+
+class DeleteComment(GenericAPIView):
+    serializer_class=CommentSerializer
+    @extend_schema(
+		parameters=[OpenApiParameter("comment_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+		request=None,responses=None, tags=["Comment"],
+		description="Endpoint for deleting a comment. Requested user must be the owner or the moderator of the group."
+	)
+    def post(self, req):
+        if req.user.is_authenticated or "comment_id" not in req.GET:
+            comment = Comment.objects.get(pk=req.GET["comment_id"])
+            if req.user == comment.commenter or req.user == comment.post.community.moderator:
+                comment.delete()
+                return Response({"Success" : True})
+            return Response({"Success" : False, "Error": "No Authentication to delete this comment"})
+        return Response({"Success" : False, "Error" : "No Authentication or missing data"})
+
+
+class GetPostData(GenericAPIView):
+    serializer_class=PostSerializer
+    @extend_schema(
+		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+		tags=["Posts"],
+		description="Endpoint for getting post data with comments.",
+	)
+    def get(self,req):
+        if req.user.is_authenticated and "post_id" in req.GET:
+            try:
+                post = Post.objects.get(pk=req.GET["post_id"])
+            except:
+                return Response({"Success" : False})
+            comments=CommentSerializer(post.comments.all(),many=True)
+            post=PostSerializer(post)
+            return Response({"Post":post.data,"Comments":comments.data})
+        return Response({"Success":False})

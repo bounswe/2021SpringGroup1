@@ -26,6 +26,10 @@ urlpatterns = [
 	path("communities/<int:community_id>/create_post_template",views.CreatePostTemplate.as_view(),name="create_post_template"),
 	path("communities/<int:community_id>/get_community_data",views.GetCommunityData.as_view(),name="get_community_data"),
 	
+	path("communities/create_comment",views.CreateComment.as_view(),name="create_comment"),
+	path("communities/delete_comment",views.DeleteComment.as_view(),name="delete_comment"),
+	path("communities/get_post_data",views.GetPostData().as_view(),name="get_post_data"),
+	
 	path("communities/<int:community_id>/list_post_templates",views.ListPostTemplates.as_view(),name="list_post_templates"),
 	path("communities/<int:community_id>/list_community_posts",views.ListCommunityPosts.as_view(),name="list_community_post"),
 	path("communities/<int:community_id>/user_subscription", views.UserSubscriptionStatus.as_view(), name= "user_subscription"),
