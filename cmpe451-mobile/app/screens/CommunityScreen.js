@@ -2,8 +2,14 @@ import React, {useEffect, useState} from 'react';
 import {TextInput, RefreshControl, View, Text, StyleSheet, Button, FlatList, TouchableOpacity, ImageBackground, Image} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import CreatePostTemplateScreen from './CreatePostTemplateScreen';
+import SelectDropdown from 'react-native-select-dropdown'
 
 function CommunityScreen({route, navigation}) {
+    const [keyword, setKeyword] = React.useState('');
+    const [selectedTemplate, setSelectedTemplate] = React.useState('All');
+    const [templates, setTemplates] = React.useState([]);
+    const [templateNames, setTemplateNames] = React.useState([]);
+
     const [refreshing, setRefreshing] = React.useState(false);
     let bannerStatus = false;
     const onRefresh = React.useCallback(() => {
@@ -32,7 +38,29 @@ function CommunityScreen({route, navigation}) {
             checkSubscriptionStatus();
         }, []
     );
+///////
+    useEffect(() => {
+        getCommunityTemplates();
+    }, []
+    );
 
+    const getCommunityTemplates = () => {
+        let uri = 'communities/' + commData["id"] + '/list_post_templates';
+        axiosInstance.get(uri, {}).then(async response => {
+            if (response.status === 200) {
+                //console.log("getting comm posts success!");
+                const template_array = response.data.Post_templates;
+                let temp_names = [];
+                for(let i = 0; i<template_array.length; i++){
+                    temp_names.push(template_array[i]["name"]);
+                }
+                temp_names.push("All");
+                setTemplates(template_array);
+                setTemplateNames(temp_names);
+            }
+        })
+    };
+///////
     const getCommunityPosts = () => {
         let uri = 'communities/' + commData["id"] + '/list_community_posts';
         axiosInstance.get(uri, {}).then(async response => {
@@ -42,6 +70,7 @@ function CommunityScreen({route, navigation}) {
                 console.log(communData["community_image_url"]);
             }
         })
+    
     }
     const getCommunityData = () => {
         let uri = 'communities/' + commData["id"] + '/get_community_data';
@@ -155,11 +184,57 @@ function CommunityScreen({route, navigation}) {
                 <View style={styles.searchContainer}>
                         <TextInput style={styles.textInput}
                         placeholder="Search Posts"
-                        onChangeText={keyword=>filterPosts(keyword,changePosts, commData["id"])}></TextInput>
-                            <TouchableOpacity style={styles.advanced}
-                            onPress={()=>navigation.navigate("AdvancedSearch", {communityData: communData})}>
-                                <Text>Advanced Search</Text>
-                            </TouchableOpacity>
+                        onChangeText={keyword=>{setKeyword(keyword);filterPosts(keyword,changePosts, commData["id"], selectedTemplate, templates)}}></TextInput>
+
+                        <SelectDropdown
+                            style={styles.dropdown}
+                            data={templateNames}
+                            defaultButtonText='All'
+                            onSelect={(selectedItem, index) => {
+                                setSelectedTemplate(selectedItem);
+                                let id = 0;
+                                
+                                for(let i = 0; i<templates.length; i++){
+                                    if(templates[i]["name"] === selectedItem){
+                                        id = templates[i]["id"];
+                                        break;
+                                    }
+                                }
+                                console.log(templates);
+                                console.log(id);
+                                console.log(selectedItem);
+                                let uri = 'communities/' + commData["id"] + '/search_posts_in_community?text=' + keyword;
+                                axiosInstance.get(uri, {}).then(async response => {
+                                    if (response.status === 200) {
+                                        //console.log("getting comm posts success!");
+                                        if(selectedItem === "All"){
+                                            changePosts(response.data);
+                                        }
+                                        else{
+                                            changePosts(response.data.filter((input) => input.post_template === id));
+                                        }
+                                        console.log(communData["community_image_url"]);
+                                    }
+                                })
+                    
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                // text represented after item is selected
+                                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                                return selectedItem
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                // text represented for each item in dropdown
+                                // if data array is an array of objects then return item.property to represent item in dropdown
+                                return item
+                            }}
+                        />
+
+{/*                         
+                        <TouchableOpacity style={styles.advanced}
+                        onPress={()=>navigation.navigate("AdvancedSearch", {communityData: communData})}>
+                            <Text>Advanced Search</Text>
+                        </TouchableOpacity> */}
                 </View>
             </View>
             <View style={styles.listContainer}>
@@ -189,7 +264,7 @@ function CommunityScreen({route, navigation}) {
         </View>
     );
 }
-async function filterPosts(word, changePosts, communId) {
+async function filterPosts(word, changePosts, communId, selectedTemp, templates) {
     let uri = 'communities/' + communId + '/search_posts_in_community?text=' + word;
     console.log(communId);
     console.log(word);
@@ -198,9 +273,24 @@ async function filterPosts(word, changePosts, communId) {
     ).then(async response => {
         if (response.status === 200) {
             console.log("filtering posts success!");
-            changePosts(response.data);
+            let id = 0;
+                                
+            for(let i = 0; i<templates.length; i++){
+                if(templates[i]["name"] === selectedTemp){
+                    id = templates[i]["id"];
+                    break;
+                }
+            }
+
+            if(selectedTemp === "All"){
+                changePosts(response.data);
+            }
+            else{
+                changePosts(response.data.filter((input) => input.post_template === id));
+            }
         }
     })
+
     return
 }
 
