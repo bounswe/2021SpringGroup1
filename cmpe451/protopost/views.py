@@ -515,7 +515,7 @@ class FilterPosts(GenericAPIView):
                     continue
                 posts_to_return.append(post)
             
-            return Response(posts_to_return)
+            return Response({"Success":True,"Posts":posts_to_return})
 
 
 class GetUserProfile(GenericAPIView):
