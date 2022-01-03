@@ -17,6 +17,20 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
 
+from ActivityStream.views import *
+
+def try_save(*kwargs): #(summary,type,actor,object,tosuccess):
+    try:
+        saveActivity(*kwargs)
+    except:
+        pass
+
+def try_req_user_id(req):
+    try:
+        return req.user.id
+    except:
+        return None
+
 class Login(ObtainAuthToken):
     @extend_schema(description= "The user logs in. As a response, the Success field and token are returned.",
         tags=["User"]
@@ -26,9 +40,13 @@ class Login(ObtainAuthToken):
         if user_serializer.is_valid():
             try:
                 token = Token.objects.get(user=user_serializer.validated_data['user'])
+                user= User.objects.get(username = user_serializer.validated_data['user'])
             except:
+                try_save("User tried log in ", "log in", None, "Protopost",False)
                 return Response({"Success":False,"Message":"No user found."})
+            try_save("User tried log in ", "log in", try_req_user_id(req), "Protopost", True)
             return Response({"Success":True,"Token":token.key})
+        try_save("User tried log in ", "log in", None, "Protopost", False)
         return Response({"Success":False})
             
 
@@ -44,8 +62,10 @@ class Register(GenericAPIView):
             user=user_serializer.save()
             Token.objects.create(user=user)
             UserProfile.objects.create(user=user)
+            try_save("New User registers", "register", None, "Protopost", True)
             return Response({"Success":True,"Message":"Successfully registered."})
         else:
+            try_save("New User registers", "register", None, "Protopost", False)
             return Response({"Success":False,"Message":user_serializer.errors})
 
 class Logout(GenericAPIView):
@@ -72,9 +92,13 @@ class CreateCommunity(GenericAPIView):
                 community=community_serializer.save(moderator=req.user)
                 req.user.joined_communities.add(community)
                 community_serializer=CommunitySerializer(community,context={"request":req})
+                try_save("User create Community", "create", try_req_user_id(req), "Community", True)
                 return Response({"Success":True, "Community": community_serializer.data})
             else:
+                try_save("User create Community", "create", try_req_user_id(req), "Community", False)
                 return Response({"Success":False, "Error": community_serializer.errors})
+        
+        try_save("User create Community", "create", None, "Community", False)
         return Response({"Success":False, "Error": "No authentication."})
 
 class CreatePost(GenericAPIView):
@@ -84,7 +108,6 @@ class CreatePost(GenericAPIView):
         responses={
             "Success": inline_serializer("CreatePostSuccess",{"Success" : serializers.BooleanField(initial=True), "Post": PostSerializer()}),
             "Error": inline_serializer("CreatePostError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
-            
             },
         tags=["Posts"],
     )
@@ -93,17 +116,23 @@ class CreatePost(GenericAPIView):
             try:
                 community=req.user.joined_communities.get(pk=community_id)
             except:
+                try_save("User create Post", "create", try_req_user_id(req), "Post", False)
                 return Response({"Success" : False,"Error": "User is not subscribed to this community."}) 
         else:
+            try_save("Not Auth. User create Post", "create", None, "Post", False)
             return Response({"Success" : False,"Error": "User is not logged in."}) 
+
         post_serializer = PostSerializer(data=req.data)
         if post_serializer.is_valid():
             try:
                 post_serializer.save(poster=req.user,community=community)
+                try_save("User create Post", "create", try_req_user_id(req), "Post", True)
                 return Response({"Success" : True, "Post" : post_serializer.data})
             except Exception as e:
+                try_save("User create Post", "create", try_req_user_id(req), "Post", False)
                 return Response({"Success" : False, "Error" : e.__str__()})
         else:
+                try_save("User create Post", "create", try_req_user_id(req), "Post", False)
                 return Response({"Success" : False, "Error" : post_serializer.errors})
 
 class CreatePostTemplate(GenericAPIView):
@@ -122,16 +151,22 @@ class CreatePostTemplate(GenericAPIView):
             try:
                 community=req.user.joined_communities.get(pk=community_id)
             except:
+                try_save("User create Post Template", "create", try_req_user_id(req), "Template", False)
                 return Response({"Success" : False,"Error": "User is not subscribed to this community."}) 
             post_template_serializer=PostTemplateSerializer(data=req.data)
             if post_template_serializer.is_valid():
                 try:
                     post_template_serializer.save(community=community)
+                    try_save("User create Post Template", "create", try_req_user_id(req), "Template", True)
                     return Response({"Success" : True,"PostTemplate": post_template_serializer.data})
                 except Exception as e:
+                    try_save("User create Post Template", "create", try_req_user_id(req), "Template", False)
                     return Response({"Success" : False, "Error" : e.__str__()})
             else:
+                try_save("User create Post Template", "create", try_req_user_id(req), "Template", False)
                 return Response({"Success" : False, "Error" : post_template_serializer.errors})
+        
+        try_save("User create Post Template", "create", None, "Template", False)
         return Response({"Success" : False,"Error": "No authorization."})
 
 class GetCommunityData(GenericAPIView):
@@ -340,7 +375,9 @@ class SearchPostsInCommunity(GenericAPIView):
             current_community=Community.objects.get(pk=community_id)
             posts = current_community.posts.filter(title__icontains = req.GET["text"])
             posts=PostSerializer(posts,many=True,context={"request":req})
-            return Response(posts.data)    
+            try_save("User search Post in Community", "search", try_req_user_id(req), "Post", True)
+            return Response(posts.data)
+        try_save("User search Post in Community", "search", None, "Post", False)    
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class SearchCommunities(GenericAPIView):
@@ -359,7 +396,10 @@ class SearchCommunities(GenericAPIView):
         if req.user.is_authenticated and "text" in req.GET:
             communities = Community.objects.filter(name__icontains = req.GET["text"])
             communities=CommunitySerializer(communities,many=True,context={"request":req})
-            return Response(communities.data)    
+            try_save("User search communities", "search", try_req_user_id(req), "Community", True)
+            return Response(communities.data)
+
+        try_save("User search communities", "search", None, "Community", False)    
         return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class GetUserCreatedPosts(GenericAPIView):
@@ -530,13 +570,17 @@ class UpdateUserProfile(GenericAPIView):
             try:
                 profile=UserProfile.objects.get(pk=req.user)
             except Exception as e:
+                try_save("Update User Profile", "update", try_req_user_id(req), "User Profile", False)
                 return Response({"Success":False,"Error":e.__str__()})
             new_profile=UserProfileSerializer(profile,data=req.data)
             if new_profile.is_valid():
                 new_profile.save()
+                try_save("Update User Profile", "update", try_req_user_id(req), "User Profile", True)
             else:
+                try_save("Update User Profile", "update", try_req_user_id(req), "User Profile", False)
                 return Response({"Success":False,"Error":new_profile.errors}) 
         else:
+            try_save("Update User Profile", "update", None, "User Profile", False)
             return Response({"Success":False,"Error":"No authention"})
 
 class GetUserProfile(GenericAPIView):
@@ -574,10 +618,13 @@ class DeletePost(GenericAPIView):
         if req.user.is_authenticated or "post_id" not in req.GET:
             post = Post.objects.get(pk=req.GET["post_id"])
             if req.user.id == post.poster_id or req.user.id == post.community.moderator_id:
-                post.delete()	
+                post.delete()
+                try_save("User Delete Post", "delete", try_req_user_id(req), "Post", True)	
                 return Response({"Success" : True})
+            try_save("User Delete Post", "delete", try_req_user_id(req), "Post", False)
             return Response({"Success" : False, "Error": "No Authentication to delete this post"})
-
+        
+        try_save("User Delete Post", "delete", None, "Post", True)
         return Response({"Success" : False, "Error" : "No Authentication or missing data"})
 
 class UpdatePost(GenericAPIView):
@@ -592,15 +639,19 @@ class UpdatePost(GenericAPIView):
             try:
                 post = Post.objects.get(pk=req.GET["post_id"])
             except:
+                try_save("Update Post", "update", try_req_user_id(req), "Post", False)
                 return Response({"Success" : False})
             if req.user.id == post.poster_id or req.user.id == post.community.moderator_id:
                 post_serial=PostSerializer(post,data=req.data,context={"request":req},partial=True)
                 if post_serial.is_valid():
                     post_serial.save()
+                    try_save("Update Post", "update", try_req_user_id(req), "Post", True)
                     return Response(post_serial.data)
                 else:
+                    try_save("Update Post", "update", try_req_user_id(req), "Post", False)
                     return Response({"Success" : False,"Error":post_serial.errors})
         else:
+            try_save("Update Post", "update", None, "Post", False)
             return Response({"Success" : False,"Error":"No authentication or authorization."})
 
 class CreateComment(GenericAPIView):
@@ -616,14 +667,20 @@ class CreateComment(GenericAPIView):
                 try:
                     community=Post.objects.get(pk=req.data["post"]).community
                 except Exception as exception:
+                    try_save("User create Comment", "create", try_req_user_id(req), "Comment", False)
                     return Response({"Success":False,"Error":exception.__str__()})
                 if community in req.user.joined_communities.all():
                     comment.save(commenter=req.user)
+                    try_save("User create Comment", "create", try_req_user_id(req), "Comment", True)
                     return Response({"Success":True,"Comment":comment.data})
                 else:
+                    try_save("User create Comment", "create", try_req_user_id(req), "Comment", False)
                     return Response({"Success":False,"Error":"User is not subscribed to this community."})
             else:
+                try_save("User create Comment", "create", try_req_user_id(req), "Comment", False)
                 return Response({"Success":False,"Error":comment.errors})
+        
+        try_save("User create Comment", "create", None, "Comment", False)
         return Response({"Success":False})
 
 class DeleteComment(GenericAPIView):
@@ -638,8 +695,12 @@ class DeleteComment(GenericAPIView):
             comment = Comment.objects.get(pk=req.GET["comment_id"])
             if req.user == comment.commenter or req.user == comment.post.community.moderator:
                 comment.delete()
+                try_save("User delete Comment", "delete", try_req_user_id(req), "Comment", True)
                 return Response({"Success" : True})
+            try_save("User delete Comment", "delete", try_req_user_id(req), "Comment", False)
             return Response({"Success" : False, "Error": "No Authentication to delete this comment"})
+        
+        try_save("User delete Comment", "delete", None, "Comment", False)
         return Response({"Success" : False, "Error" : "No Authentication or missing data"})
 
 
