@@ -51,10 +51,10 @@ DATA_FIELD_FORMAT_CHECK=True
 
 data_field_formats={
     "location": {"adrs":str,"marker":{"lat":float,"lng":float}},
-    "text":{"value":str},
-    "number":{"value":int},
-    "image":{"url":str},
-    "date":{"value":str}
+    "text":{"value":"any"},
+    "number":{"value":"any"},
+    "image":{"url":"any"},
+    "date":{"value":"any"}
 }
 
 def content_format_check(content,format):
@@ -65,6 +65,8 @@ def content_format_check(content,format):
                 if isinstance(type,dict):
                     if not content_format_check(field_to_check,type):
                         return False
+                elif type=="any":
+                    return True
                 else:
                     if not isinstance(field_to_check,type):
                         return False
@@ -207,7 +209,7 @@ class PostSerializer(serializers.ModelSerializer):
             data_fields=attrs["data_fields"]
             df_name_value_pairs=[(df["name"],df["type"]) for df in data_fields]
             dft_name_value_pairs=[(dft.name,dft.type) for dft in attrs["post_template"].data_field_templates.all()]
-            if not df_name_value_pairs == dft_name_value_pairs:
+            if not set(df_name_value_pairs) == set(dft_name_value_pairs):
                 raise ValidationError("Data fields does not match")
         return attrs
 
