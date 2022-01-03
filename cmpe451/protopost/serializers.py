@@ -259,6 +259,10 @@ class CommentThreadSerializer(serializers.ModelSerializer):
         read_only_fields=['id','commenter','created_date','replies']
 
 class CommentFlatSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        repr=super().to_representation(instance)
+        repr["commenter_name"]=instance.commenter.username
+        return repr
     class Meta:
         model=Comment
         fields = ['id','post','replied_comment','commenter','body','created_date']
