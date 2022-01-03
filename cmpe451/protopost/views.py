@@ -397,9 +397,10 @@ class QueryFunctions:
         dates=[datetime.datetime(d) for d in val.split(',')]
         return dates[0]<value and value<dates[1]
     text_queries={
-        "eq": lambda content,val:content["value"]==val,
-        "st": lambda content,val:content["value"].startswith(val),
-        "en": lambda content,val:content["value"].endswith(val)
+        "equal": lambda content,val:content["value"]==val,
+        "contains": lambda content,val: val in content["value"],
+        "startsWith": lambda content,val:content["value"].startswith(val),
+        "endsWith": lambda content,val:content["value"].endswith(val)
     }
     location_queries={
         "near": lambda content,val:is_near_location(content,val)
