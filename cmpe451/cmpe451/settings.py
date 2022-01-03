@@ -54,10 +54,11 @@ CORS_ALLOW_CREDENTIALS=True
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Protopost API',
-    'DESCRIPTION': 'Your project description',
+    'DESCRIPTION': 'Dynamic documentation for Protopost API',
     'VERSION': '1.0.0',
     'SCHEMA_PATH_PREFIX' : '/api/v[0-9]/protopost',
     'COMPONENT_SPLIT_REQUEST': True,
+    'GENERIC_ADDITIONAL_PROPERTIES':None
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

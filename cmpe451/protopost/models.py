@@ -9,7 +9,8 @@ DATA_TYPES = (
         ('location', 'Location'),
         ('date', 'Date'),
         ('number','Number'),
-        ('selection','Selection')
+        ('selection','Selection'),
+        ('video','Video')
     )
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
@@ -109,7 +110,7 @@ class DataFieldTemp(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type',choices=DATA_TYPES)
-    form_content=models.JSONField(max_length=max, verbose_name='Data', blank=True, null=True)
+    options=models.JSONField(max_length=max, verbose_name='Data', blank=True, null=True)
     post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, related_name='data_field_templates', blank=True, null=True)
     def __str__(self) -> str:
         data = {

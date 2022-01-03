@@ -71,6 +71,8 @@ def content_format_check(content,format):
             else:
                 return False
         return True
+    elif isinstance(format,None):
+        return True
     else:
         return False    
 
@@ -92,8 +94,9 @@ class DataFieldSerializer(serializers.ModelSerializer):
         attrs=super().validate(attrs)
         df_type=attrs.get("type",None)
         if DATA_FIELD_FORMAT_CHECK:
-            if not content_format_check(attrs["content"],data_field_formats[df_type]):
-                raise ValidationError("Data field %s are in wrong format" % (attrs.get("name","unknown")))
+            if df_type in data_field_formats:
+                if not content_format_check(attrs["content"],data_field_formats[df_type]):
+                    raise ValidationError("Data field %s are in wrong format" % (attrs.get("name","unknown")))
         return attrs
     
     def get_reference_name(self,obj):
@@ -108,7 +111,7 @@ class DataFieldTempSerializer(serializers.ModelSerializer):
     reference_name=serializers.SerializerMethodField()
     class Meta:
         model = DataFieldTemp
-        fields = ["name","type","reference_name"]
+        fields = ["name","type","options","reference_name"]
         read_only_fields=["reference_name"]
     
     def get_reference_name(self,obj):
@@ -132,11 +135,11 @@ class PostTemplateSerializer(serializers.ModelSerializer):
         for field in data_field_templates:
             try:
                 created_fields.append(DataFieldTemp.objects.create(**field,post_template=post_template))
-            except:
+            except Exception as e:
                 for field in created_fields:
                     field.delete()
                 post_template.delete()
-                raise Error
+                raise e
         return post_template
 
 class PostSerializer(serializers.ModelSerializer):
