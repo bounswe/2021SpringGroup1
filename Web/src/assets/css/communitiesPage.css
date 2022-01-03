@@ -9,3 +9,7 @@
   cursor: pointer;
   text-decoration: underline
 }
+
+#imagelink:hover {
+  cursor: pointer;
+}
