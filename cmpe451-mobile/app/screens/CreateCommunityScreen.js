@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
 
 function CreateCommunityScreen(props) {
@@ -10,6 +10,7 @@ function CreateCommunityScreen(props) {
 
     return (
         <View style={styles.background}>
+            <Text style={styles.titleStyle}>Create Your Own Community</Text>
             <TextInput
                 style={styles.textInput}
                 placeholder="Community name"
@@ -28,9 +29,10 @@ function CreateCommunityScreen(props) {
             />
             <View style={{paddingBottom: 20}}/>
             <View style={styles.buttonView}>
-                <Button title="Create Community"
-                        color="dodgerblue"
-                        onPress={() => createComm(name, description, url)}/>
+                <TouchableOpacity style={styles.createButton}
+                onPress={() => createComm(name, description, url)}>
+                    <Text style={styles.createText}>CREATE COMMUNITY</Text>
+                </TouchableOpacity>
             </View>
             <View style={{paddingBottom: 200}}/>
         </View>
@@ -44,11 +46,21 @@ async function createComm(name, description, url) {
     console.log(response);
     if (response["Success"]) {
         Alert.alert("Success", "Community Creation Successful!");
+        return true
 
     } else {
-        Alert.alert("Failure", "Community Creation Failed.");
+        const result = response["Error"];
+        console.log(result);
+        let errormessage = "";
+        if(result.hasOwnProperty("name")){
+            errormessage = "Community name: " + result["name"] + "\n";
+        }
+        if(result.hasOwnProperty("description")){
+            errormessage = errormessage + "Community description: " + result["description"];
+        }
+        Alert.alert("Failure", errormessage);
+        return false
     }
-    return true
 }
 
 async function commCall(name, description, url) {
@@ -73,6 +85,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+    titleStyle: {
+        fontSize: 30,
+        paddingBottom:30
+    }, 
     title: {
         fontSize: 20,
         color: "white"
@@ -90,8 +106,18 @@ const styles = StyleSheet.create({
     buttonView: {
         backgroundColor: "rgb(77, 160, 240)",
         width: '50%',
+        height: 70,
         padding: 10,
     },
+    createButton: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    createText:{
+        fontSize:20,
+        color:"white"
+    }
 })
 
 export default CreateCommunityScreen;

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
+import {View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
 
 function RegisterScreen({navigation}) {
@@ -10,17 +10,20 @@ function RegisterScreen({navigation}) {
 
     return (
         <View style={styles.background}>
+            <Text
+            style={styles.titleStyle}
+            >Create Your Account</Text>
             <TextInput
                 autoCapitalize="none"
                 style={styles.textInput}
-                placeholder="unique username"
+                placeholder="your unique username"
                 onChangeText={name => setName(name)}
             />
             <View style={{paddingBottom: 5}}/>
             <TextInput
                 autoCapitalize="none"
                 style={styles.textInput}
-                placeholder="email address"
+                placeholder="your email address"
                 onChangeText={mail => setMail(mail)}
             />
             <View style={{paddingBottom: 5}}/>
@@ -36,12 +39,13 @@ function RegisterScreen({navigation}) {
                        onChangeText={pass2 => setPass2(pass2)}
             />
             <View style={{paddingBottom: 20}}/>
-            <View style={styles.buttonView}>
-                <Button
-                    title="Register"
-                    color="darkblue"
+            <View style={styles.buttonContainer}>
+            <TouchableOpacity
+                    style={styles.registerButton}
                     onPress={() => makeRegistration(name, mail, pass, pass2)}
-                />
+                >
+                    <Text style={styles.registerText}>REGISTER</Text>
+                </TouchableOpacity>
             </View>
             <View style={{paddingBottom: 100}}/>
         </View>
@@ -128,9 +132,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    title: {
-        fontSize: 20
-    },
+    titleStyle: {
+        fontSize: 30,
+        paddingBottom:30
+    }, 
     textInput: {
         width: "80%",
         height: 50,
@@ -141,10 +146,21 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderColor: "gray"
     },
-    buttonView: {
+    buttonContainer: {
         backgroundColor: "rgb(39, 84, 125)",
         width: '50%',
+        height: 70,
         padding: 10,
     },
+    registerButton: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    registerText: {
+        color: "white",
+        fontSize: 20
+    },
+    
 })
 export default RegisterScreen;

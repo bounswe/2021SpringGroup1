@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, Button, StyleSheet,TextInput,ScrollView, Alert} from "react-native";
+import {View, Text, Button, StyleSheet,TextInput,ScrollView, Alert, TouchableOpacity} from "react-native";
 import { axiosInstance } from "../service/axios_client_service";
 
 function CreatePostTemplateScreen({ route, navigation }) {
@@ -13,6 +13,8 @@ function CreatePostTemplateScreen({ route, navigation }) {
   const dateFieldKey = 'date';
   const locationFieldKey = 'location';
   const imageFieldKey = 'image';
+  const numberFieldKey = 'number';
+  const videoFieldKey = 'video';
 
   const addField = fieldType => {
     const _dataFields = [...dataFields];
@@ -33,36 +35,6 @@ function CreatePostTemplateScreen({ route, navigation }) {
     setDataFields(_dataFields);
   };
 
-  // api call
-  const createPostTemplate = async () => {
-
-    let values = [];
-    for(let i = 0; i<dataFields.length; i++){
-      let item = {name: dataFields[i].name, type: dataFields[i].type};
-      values.push(item);
-    }
-
-    console.log(values);
-
-    var sendData = { "name": name, "data_field_templates": values };
-    var url = "communities/" + String(community) + "/create_post_template";
-    const res = axiosInstance.post(
-      url, sendData
-    );
-    console.log("aaaaa");
-    // success
-    if((await res).data.Success){
-      Alert.alert("Sucess","Template created sucessfully.");
-    }
-    else{
-      console.log(res);
-      Alert.alert("Failure",res.Error.name);
-
-    }
-    console.log((await res).data);
-    return (await res).data;
-  };
-
   return (
     <View style={styles.background}
     >
@@ -76,38 +48,52 @@ function CreatePostTemplateScreen({ route, navigation }) {
             onChangeText={Name => setName(Name)}
             placeholder="Post Template Name"
           />
+          <TouchableOpacity style={styles.createButton}
+          onPress={() => createPostTemplate(dataFields, name, community)}
+          >
+          <Text style={styles.createText}>Create Post Template</Text>
+        </TouchableOpacity>
         </View>
-        <Button
-          title="Create Post Template"
-          onPress={createPostTemplate} />
 
         <View style={styles.addFieldContainer}>
           <View style={styles.buttonView}>
-            <Button
-              title="Add Text Field"
-              onPress={() => addField(textFieldKey)}
-            />
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(textFieldKey)}>
+              <Text style={styles.addFieldText}>Text Field</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
-            <Button
-              title="Add Date Field"
-              onPress={() => addField(dateFieldKey)}
-            />
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(dateFieldKey)}>
+              <Text style={styles.addFieldText}>Date Field</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(numberFieldKey)}>
+              <Text style={styles.addFieldText}>Number Field</Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View style={styles.addFieldContainer}>
           <View style={styles.buttonView}>
-              <Button
-                title="Add Location Field"
-                onPress={() => addField(locationFieldKey)}
-              />
-            </View>
-            <View style={styles.buttonView}>
-              <Button
-                title="Add Image Field"
-                onPress={() => addField(imageFieldKey)}
-              />
-            </View>
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(locationFieldKey)}>
+              <Text style={styles.addFieldText}>Location Field</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(imageFieldKey)}>
+              <Text style={styles.addFieldText}>Image Field</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(videoFieldKey)}>
+              <Text style={styles.addFieldText}>Video Field</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View
           style={{
@@ -124,20 +110,61 @@ function CreatePostTemplateScreen({ route, navigation }) {
               value={input.name}
               onChangeText={text => updateField(input.type, text, key)}
             />
-            <Button
-              title="Delete"
-              onPress={() => deleteField(key)}
-            />
+            <TouchableOpacity style={styles.deleteButton}
+            onPress={() => deleteField(key)}>
+              <Text style={styles.deleteText}>Click to remove this {input.type} field</Text>
+            </TouchableOpacity>
+
           </View>
         ))}
       </ScrollView>
     </View>
   );
 }
+
+async function createPostTemplate(dataFields, name, community){
+  let values = [];
+    for(let i = 0; i<dataFields.length; i++){
+      let item = {name: dataFields[i].name, type: dataFields[i].type};
+      values.push(item);
+    }
+    console.log("values");
+    console.log(values);
+
+    var sendData = { "name": name, "data_field_templates": values };
+    var url = "communities/" + String(community) + "/create_post_template";
+    const response = await createTemplate(url, sendData);
+    console.log("aaaaa");
+    // success
+    if(response.data.Success){
+      Alert.alert("Sucess","Template created sucessfully.");
+    }
+    else{
+      // let message = "";
+      // if(response.data.Error.hasOwnProperty("name")){
+      //   message = "Template name: " + response.data.Error.name[0];
+      // }
+      console.log(response.data);
+      Alert.alert("Failure","You need to fill every field for the template!");
+
+    }
+    return response;
+}
+
+async function createTemplate(url, sendData) {
+  console.log("here");
+  const res = axiosInstance.post(
+    url, sendData
+  );
+  return res;
+}
+
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: "white"
+    // backgroundColor: "rgb(39, 84, 125)",
+
   },
   templateNameContainer: {
     width: "100%",
@@ -171,10 +198,33 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   buttonView: {
-    backgroundColor: "white",
+    backgroundColor: "lightblue",
     padding: 5,
     margin: 5,
-    borderWidth: 1
+    alignItems: "center"
+  },
+  createButton: {
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  createText: {
+    color: "black",
+    fontSize: 20
+  },
+  addField:{
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  addFieldText:{
+    color: "black",
+    fontSize: 20
+  },
+  deleteButton: {
+
+  },
+  deleteText: {
+    fontSize: 17
   }
 })
 

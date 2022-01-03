@@ -6,6 +6,7 @@ import UserCommunitiesScreen from './UserCommunitiesScreen';
 import UserPostsScreen from './UserPostsScreen';
 import SettingsScreen from './SettingsScreen';
 import CreateCommunityScreen from './CreateCommunityScreen';
+import ProfileScreen from './ProfileScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -17,8 +18,8 @@ function Home(props) {
             <Drawer.Screen name="User Posts" component={UserPostsScreen}/>
             <Drawer.Screen name="User Communities" component={UserCommunitiesScreen}/>
             <Drawer.Screen name="Create Community" component={CreateCommunityScreen}/>
+            <Drawer.Screen name="Profile" component={ProfileScreen} />
             <Drawer.Screen name="Settings" component={SettingsScreen}/>
-
         </Drawer.Navigator>
 
     );
