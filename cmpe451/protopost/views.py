@@ -582,14 +582,14 @@ class UpdatePost(GenericAPIView):
             return Response({"Success" : False,"Error":"No authentication or authorization."})
 
 class CreateComment(GenericAPIView):
-    serializer_class=CommentSerializer
+    serializer_class=CommentFlatSerializer
     @extend_schema(
         tags=["Comment"],
 		description="Endpoint for creating a comment. User must be subscribed to the community that the post belongs."
 	)
     def post(self,req):
         if req.user.is_authenticated:
-            comment=CommentSerializer(data=req.data)
+            comment=CommentFlatSerializer(data=req.data)
             if comment.is_valid():
                 try:
                     community=Post.objects.get(pk=req.data["post"]).community
@@ -605,7 +605,7 @@ class CreateComment(GenericAPIView):
         return Response({"Success":False})
 
 class DeleteComment(GenericAPIView):
-    serializer_class=CommentSerializer
+    serializer_class=CommentFlatSerializer
     @extend_schema(
 		parameters=[OpenApiParameter("comment_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
 		request=None,responses=None, tags=["Comment"],
@@ -626,6 +626,7 @@ class GetPostData(GenericAPIView):
     @extend_schema(
 		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
 		tags=["Posts"],
+        responses={"Success":inline_serializer("GetPostDataSuccess",{"Post": PostTemplateSerializer(many=True),"Comments":CommentFlatSerializer(many=True)})},
 		description="Endpoint for getting post data with comments.",
 	)
     def get(self,req):
@@ -634,7 +635,7 @@ class GetPostData(GenericAPIView):
                 post = Post.objects.get(pk=req.GET["post_id"])
             except:
                 return Response({"Success" : False})
-            comments=CommentSerializer(post.comments.all(),many=True)
+            comments=CommentFlatSerializer(post.comments.all(),many=True)
             post=PostSerializer(post)
             return Response({"Post":post.data,"Comments":comments.data})
         return Response({"Success":False})

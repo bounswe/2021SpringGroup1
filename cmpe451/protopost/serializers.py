@@ -221,13 +221,18 @@ class RecursiveField(serializers.Serializer):
         serializer=self.parent.parent.__class__(instance,context=self.context)
         return serializer.data  
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentThreadSerializer(serializers.ModelSerializer):
     replies=RecursiveField(many=True,required=False)
     class Meta:
         model=Comment
         fields = ['id','post','replied_comment','commenter','body','created_date','replies']
         read_only_fields=['id','commenter','created_date','replies']
-    
+
+class CommentFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Comment
+        fields = ['id','post','replied_comment','commenter','body','created_date']
+        read_only_fields=['id','commenter','created_date']
        
     
 
