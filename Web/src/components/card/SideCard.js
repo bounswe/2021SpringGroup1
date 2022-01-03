@@ -6,7 +6,7 @@ import 'assets/css/home.css';
 import { Card, ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { subscribeCommunity } from 'store/actions/communityAction';
+import { FILTER_RESULT, subscribeCommunity } from 'store/actions/communityAction';
 
 export default function SideCard({ props, communityData,handleCommunityData }) {
     const history = useHistory();
@@ -62,7 +62,9 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         backgroundColor:"cornsilk"
 
                     }}>
-                        <Button onClick={() => history.push('/community/' + communityData?.Community?.id)} variant="success">Feed Page</Button>{' '}
+                        <Button onClick={() => {
+                            history.push('/community/' + communityData?.Community?.id)
+                            }} variant="success">Feed Page</Button>{' '}
                     </ListGroupItem>
                     {communityData?.Community?.isJoined &&
                     <ListGroupItem style={{

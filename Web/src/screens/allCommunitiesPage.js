@@ -48,7 +48,7 @@ const AllCommunitiesPage = props => {
             <div >
               <Row>
                 <Col>
-                  <Image onClick={() => history.push('/community/' + community.id)} roundedCircle style={{marginTop:'10px',marginBottom:'10px', height: "120px", width: "120px" }} src={community["community_image_url"]} />
+                  <Image id="imagelink" onClick={() => history.push('/community/' + community.id)} roundedCircle style={{marginTop:'10px',marginBottom:'10px', height: "120px", width: "120px" }} src={community["community_image_url"]} />
                 </Col>
                 <Col xs={8}>
                   <a onClick={() => history.push('/community/' + community.id)} style={{ cursor: 'pointer', fontSize: "26px" }} id="linkid"> {community.name}</a>

@@ -16,6 +16,10 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { format } from "date-fns";
+
+
 import myDate from 'utils/methods'
 import { Carousel, Image, Row, Col, Button } from 'react-bootstrap';
 import { Grid, Paper } from "@material-ui/core";
@@ -24,6 +28,8 @@ import Modal from 'react-bootstrap/Modal'
 import ReactPlayer from 'react-player'
 import { FormControlLabel, Checkbox, Link } from '@mui/material';
 import MUIButton from '@mui/material/Button';
+import { deletePost } from 'store/actions/communityAction';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -63,7 +69,8 @@ const deneme = [
     }
 ];
 
-export default function PostCard({ posts }) {
+export default function PostCard({ posts ,canDelete,handleParentData}) {
+    const dispatch = useDispatch();
     const history = useHistory();
     const [isAnyImage, setIsAnyImage] = React.useState(false)
 
@@ -82,19 +89,38 @@ export default function PostCard({ posts }) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const handleDeleteClick = async (postId) => {
+
+        if (window.confirm('Are you sure you want to delete this post?')) {
+            let result = await dispatch(deletePost({ post_id: postId }));
+            handleParentData();
+            console.log('Post deleted successfully.');
+          } else {
+            // Do nothing!
+            console.log('Post not deleted.');
+          }
+
+      };
+
+
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        {posts?.["poster_name"].substring(0, 1).toUpperCase()}
+
+                    <Avatar onClick={()=>history.push('/profile/'+posts?.poster)} sx={{ bgcolor: red[500], cursor: 'pointer' }} aria-label="recipe">
+                        {posts["poster_name"].substring(0, 1).toUpperCase()}
                     </Avatar>
                 }
-                action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
-                }
+                action=
+                    {canDelete && <IconButton onClick={() => {
+                        handleDeleteClick(posts["id"]);
+                    }} aria-label="settings">
+                    <DeleteIcon />
+
+                    
+
+                </IconButton>}
                 title={
                     posts?.["community_name"]
                 }
@@ -158,7 +184,7 @@ export default function PostCard({ posts }) {
                                     </Col>
                                     <Col>
                                         <Typography paragraph>
-                                            {new Date(field?.["content"][Object.keys(field?.["content"])[0]]).toLocaleString('tr-TR').substring(0, 10)}
+                                            {format(new Date(field["content"][Object.keys(field["content"])[0]]),"d MMMM yyyy, EEEE")}
                                         </Typography>
                                     </Col>
                                 </Row>

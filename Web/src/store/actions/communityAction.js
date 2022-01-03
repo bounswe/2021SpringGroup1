@@ -17,9 +17,7 @@ export const MY_POSTS = "MY_POSTS";
 export const LIST_POST_TEMPLATES = "LIST_POST_TEMPLATES";
 export const POST_COMMENT = "POST_COMMENT";
 export const CREATE_COMMENT = "CREATE_COMMENT";
-
-
-let token = '641895a64fcaf3dad5773d36725e0a9c722adc88';
+export const FILTER_RESULT = "FILTER_RESULT";
 
 
 export const createCommunity = data => {
@@ -198,10 +196,12 @@ export const filterPostsRedux = (communityId, params) => {
             });
             const responseData = response.data;
             dispatch({
-                type: GET_COMMUNITY_DATA,
+                type: FILTER_RESULT,
                 data: responseData
             });
+            return true;
         } catch (error) {
+            return false;
             // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
             // throw error.response.data;
         }
@@ -220,7 +220,7 @@ export const listCommunityPosts = (id) => {
             const response = await axios({
                 method: 'GET',
                 url: ROOT_URL + '/communities/' + id + '/list_community_posts',//PRE_LOGIN_EMAIL_REQUEST,
-                // headers: API_HEADERS_UNAUTHORIZED,
+                headers: API_HEADERS_BEARER_TOKEN(token),
                 params: { community_id: id },
                 //   withCredentials: true,
             });
@@ -454,11 +454,26 @@ export const sendCommentBackend = (data) => {
                 type: CREATE_COMMENT,
                 data: responseData
             });
+
+export const deletePost = (id) => {
+    return async (dispatch, getState) => {
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        console.log('data: token, ', id, token);
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'POST',
+                url: ROOT_URL + '/communities/delete_post',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: id,
+                withCredentials: true,
+            });
+            const responseData = response.data;
         } catch (error) {
             // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
             // throw error.response.data;
         }
     }
 };
-
 
