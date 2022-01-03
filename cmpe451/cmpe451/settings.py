@@ -54,9 +54,11 @@ CORS_ALLOW_CREDENTIALS=True
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Protopost API',
-    'DESCRIPTION': 'Your project description',
+    'DESCRIPTION': 'Dynamic documentation for Protopost API',
     'VERSION': '1.0.0',
     'SCHEMA_PATH_PREFIX' : '/api/v[0-9]/protopost',
+    'COMPONENT_SPLIT_REQUEST': True,
+    'GENERIC_ADDITIONAL_PROPERTIES':None
 }
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -142,6 +144,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = "protopost.User" 
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -162,7 +165,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 

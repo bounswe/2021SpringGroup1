@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 import json
 # Create your models here.
@@ -8,8 +9,45 @@ DATA_TYPES = (
         ('image', 'Image'),
         ('location', 'Location'),
         ('date', 'Date'),
-        ('number','Number')
+        ('number','Number'),
+        ('selection','Selection'),
+        ('video','Video')
     )
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, username, password, **other_fields):
+        if not email: raise ValueError('You must provide an email address in order to register.')
+        if not username: raise ValueError('You must provide a username in order to register.')
+
+        email = self.normalize_email(email) 
+        user = self.model(email=email, username=username, **other_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin):
+
+    username = models.CharField(max_length=50, unique=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    registered_time = models.DateTimeField(auto_now_add=True)
+    profile_picture = models.ImageField(upload_to="images/",blank=True,null=True)
+    email = models.EmailField(unique=True)
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    def __str__(self):
+        return {
+            "username": self.username,
+            "email" : self.email,
+            "profile_picture": self.profile_picture, 
+            "first_name" : self.first_name,
+            "last_name" : self.last_name,
+            "registered_time": self.registered_time,
+        }
+
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50,unique=True)
@@ -93,6 +131,7 @@ class DataField(models.Model):
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type',choices=DATA_TYPES)
     content=models.JSONField(max_length=max, verbose_name='Data')
+    image=models.ImageField(upload_to="images/",blank=True,null=True)
     def __str__(self) -> str:
         data = {
             "id": self.id,
@@ -107,7 +146,7 @@ class DataFieldTemp(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
     type=models.CharField(max_length=50, verbose_name='Type',choices=DATA_TYPES)
-    form_content=models.JSONField(max_length=max, verbose_name='Data', blank=True, null=True)
+    options=models.JSONField(max_length=max, verbose_name='Data', blank=True, null=True)
     post_template=models.ForeignKey(PostTemplate, on_delete=models.CASCADE, related_name='data_field_templates', blank=True, null=True)
     def __str__(self) -> str:
         data = {
@@ -125,6 +164,17 @@ class DataFieldTemp(models.Model):
             )
         ]
 
+class Comment(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='Id')
+    commenter = models.ForeignKey(User,on_delete=models.CASCADE,related_name='comments', blank=True, null=True)
+    post=models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
+    replied_comment=models.ForeignKey("self", on_delete=models.CASCADE, related_name='replies', blank=True, null=True)
+    body=models.CharField(max_length=1000)
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name="Created Date")
+'''
+class Image(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name='Id')
+    data_field=models.ForeignKey(DataField,related_name="image",on_delete=models.CASCADE)
+    image_file=models.ImageField(upload_to="images/")
 
-
-
+'''

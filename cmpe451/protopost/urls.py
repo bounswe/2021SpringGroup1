@@ -11,7 +11,7 @@ urlpatterns = [
 	path("register", views.Register.as_view(), name= "register"),
 	path("logout", views.Logout.as_view(), name= "logout"),
 	
-	path("get_user_profile/<int:user_id>", views.GetUserProfile.as_view(), name= "user_profile"),
+	path("get_user_profile", views.GetUserProfile.as_view(), name= "user_profile"),
 	path("get_user_home_feed",views.GetUserHomeFeed.as_view(),name="get_user_home_feed"),
 	path("get_user_created_posts",views.GetUserCreatedPosts.as_view(),name="get_user_created_posts"),
 	
@@ -22,8 +22,13 @@ urlpatterns = [
 	path("communities/<int:community_id>/filter_posts",views.FilterPosts.as_view(),name="filter_posts"),
 	path("communities/<int:community_id>/create_post",views.CreatePost.as_view(),name="create_post"),
 	path("communities/delete_post",views.DeletePost.as_view(),name="delete_post"),
+	path("communities/update_post",views.UpdatePost.as_view(),name="update_post"),
 	path("communities/<int:community_id>/create_post_template",views.CreatePostTemplate.as_view(),name="create_post_template"),
 	path("communities/<int:community_id>/get_community_data",views.GetCommunityData.as_view(),name="get_community_data"),
+	
+	path("communities/create_comment",views.CreateComment.as_view(),name="create_comment"),
+	path("communities/delete_comment",views.DeleteComment.as_view(),name="delete_comment"),
+	path("communities/get_post_data",views.GetPostData().as_view(),name="get_post_data"),
 	
 	path("communities/<int:community_id>/list_post_templates",views.ListPostTemplates.as_view(),name="list_post_templates"),
 	path("communities/<int:community_id>/list_community_posts",views.ListCommunityPosts.as_view(),name="list_community_post"),
