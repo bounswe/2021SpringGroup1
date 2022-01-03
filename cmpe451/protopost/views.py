@@ -16,6 +16,8 @@ from rest_framework.response import Response
 
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
+from math import radians, cos, sin, asin, sqrt
+
 
 class Login(ObtainAuthToken):
     @extend_schema(description= "The user logs in. As a response, the Success field and token are returned.",
@@ -378,9 +380,17 @@ class QueryFunctions:
         coord2=arr[0:2]
         coord1=[content["marker"]["lat"],content["marker"]["lng"]]
         dist=float(arr[2])
-        xdist=float(coord1[0])-float(coord2[0])
-        ydist=float(coord1[1])-float(coord2[1])
-        return ((xdist*xdist+ydist*ydist)<(dist*dist))
+        point_dist=QueryFunctions.distance_haversine(list(map(float,coord1)),list(map(float,coord2)))
+        return (point_dist<dist)
+    def distance_haversine(point1,point2):
+        radian1=list(map(radians,point1))
+        radian2=list(map(radians,point2))
+        latdiff=radian1[0]-radian2[0]
+        lngdiff=radian1[1]-radian2[1]
+        R=6371
+        d=2*R*asin(sqrt(sin(latdiff/2)**2+cos(radian1[0])*cos(radian2[0])*sin(lngdiff/2)**2))
+        return d
+        
     def selection(content,val,check):
         tests=val.split(',')
         for test in tests:
@@ -406,7 +416,8 @@ class QueryFunctions:
         "endsWith": lambda content,val:content["value"].lower().endswith(val.lower())
     }
     location_queries={
-        "near": lambda content,val:QueryFunctions.is_near_location(content,val)
+        "near": lambda content,val:QueryFunctions.is_near_location(content,val),
+        "eq": lambda content,val:QueryFunctions.is_near_location(content,val+",0.2")
     }
     date_queries={
         "before": lambda content,val:QueryFunctions.toDate(content["value"])<QueryFunctions.toDate(val),
