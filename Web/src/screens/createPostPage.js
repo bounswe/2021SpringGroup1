@@ -14,6 +14,9 @@ import SideCard from 'components/card/SideCard';
 import MapGoogle from 'components/googleMaps';
 import { FormControlLabel, Checkbox } from '@mui/material';
 
+let location;
+let address;
+
 function CreatePostPage(props) {
     const history = useHistory();
     let listOfPath = props?.location?.pathname?.split('/');
@@ -40,13 +43,12 @@ function CreatePostPage(props) {
 
     const handleInputChange = (e, index) => {
         // console.log(e.target.checked);
-
+        console.log(e.target.name);
         if (e.target.type == "checkbox") {
             dataFields[index]["content"][e.target.name] = e.target.checked;
         }
         else {
             dataFields[index][e.target.name] = e.target.value;
-
         }
         console.log("dataFields:", dataFields);
     };
@@ -62,8 +64,9 @@ function CreatePostPage(props) {
             // history.push('/landingPage')
         }
     }, [])
-    const [location, setLocation] = useState({});
-    const [address, setAddress] = useState("");
+    // const [location, setLocation] = useState({});
+    // const [address, setAddress] = useState("");
+
     const createPostCall = async (e) => {
         e.preventDefault();
         // if(isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
@@ -80,12 +83,16 @@ function CreatePostPage(props) {
             else if (dataFields[i].type == "number") {
                 item = { name: dataFields[i].name, type: dataFields[i].type, content: { value: parseInt(dataFields[i].content) } };
             }
+            else if (dataFields[i].type == "video" || dataFields[i].type == "image") {
+                item = { name: dataFields[i].name, type: dataFields[i].type, content: { url: dataFields[i].content } };
+            }
             else {
                 item = { name: dataFields[i].name, type: dataFields[i].type, content: { value: dataFields[i].content } };
             }
 
             values.push(item);
         }
+        console.log("dataFields:", dataFields);
         console.log("values:", values);
         var sendData = { "title": title, "post_template": index, "data_fields": values };
         console.log("sendData:", sendData);
@@ -109,47 +116,15 @@ function CreatePostPage(props) {
     }
 
     function getLocationData(loc, add) {
-        console.log("location: ", location);
-        console.log("address: ", address);
-        setLocation(loc);
-        setAddress(add);
+        // console.log("location_eski: ", location);
+        // console.log("address_eski: ", address);
+        // setLocation(loc);
+        // setAddress(add);
+        location=loc;
+        address=add;
+        console.log("location_yeni: ", location);
+        console.log("address_yeni: ", address);
     }
-
-    const deneme = [
-        {
-            "type": "text",
-            "name": "yenivideo"
-        },
-        {
-            "type": "video",
-            "name": "urlvideo"
-        },
-        {
-            "type": "date",
-            "name": "çıkıştarihi"
-        }
-    ];
-
-    const deneme2 = [
-        {
-            "name": "Name",
-            "type": "text",
-            "options": []
-        },
-        {
-            "name": "Age",
-            "type": "number",
-            "options": []
-        },
-        {
-            "name": "Gender",
-            "type": "selection",
-            "options": [
-                "Male",
-                "Female"
-            ]
-        }
-    ];
 
     return (
         <>
@@ -184,7 +159,6 @@ function CreatePostPage(props) {
                         template["id"] == index
                         &&
                         template["data_field_templates"].map((field, idx) => (
-                        //deneme2.map((field, idx) => (
                             <>
                                 {field["type"] === "selection" ? dataFields.push({ name: field["name"], type: field["type"], content: {} })
                                     : dataFields.push({ name: field["name"], type: field["type"], content: "" })}
@@ -222,18 +196,18 @@ function CreatePostPage(props) {
                                             <FormGroup>
                                                 {field["options"].map((opt, i) => (
                                                     <>
-                                                    {dataFields[idx]["content"][opt] = false}
-                                                    <FormControlLabel
-                                                        control={
-                                                            <Checkbox
-                                                                onChange={e => handleInputChange(e, idx)}
-                                                                name={opt}
-                                                            />
-                                                        }
-                                                        label={opt}
-                                                    />
+                                                        {dataFields[idx]["content"][opt] = false}
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Checkbox
+                                                                    onChange={e => handleInputChange(e, idx)}
+                                                                    name={opt}
+                                                                />
+                                                            }
+                                                            label={opt}
+                                                        />
                                                     </>
-                                                    
+
                                                 ))}
                                             </FormGroup>
                                         }

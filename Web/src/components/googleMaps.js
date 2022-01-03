@@ -46,10 +46,11 @@ function MapGoogle(props) {
             .then(data => {
                 console.log(data);
                 address = data.results[0].formatted_address;
-                console.log("address: ", address);
+                console.log("address_mapsss: ", address);
+                props.getLocationData(markers[0], address);
+
             })
     }, []);
-    props.getLocationData(markers[0],address);
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
         mapRef.current = map;
