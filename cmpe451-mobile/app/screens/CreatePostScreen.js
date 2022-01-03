@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {TextInput, RefreshControl, View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import SelectDropdown from 'react-native-select-dropdown'
-import DateField from 'react-native-datefield';
 import DatePicker from 'react-native-datepicker';
 
 function CreatePostScreen({route, navigation}) {
@@ -112,7 +111,7 @@ function CreatePostScreen({route, navigation}) {
         let videoTemplateFields = [];
         for(let i = 0; i<currentTemplate.length; i++){
           if (currentTemplate[i]["type"] === "image"){
-            imageTemplateFields.push({ key: i, type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], url: '' });
+            imageTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], url: '' });
           }
           else if(currentTemplate[i]["type"] === "text"){
             textTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], value: '' });
@@ -294,7 +293,7 @@ async function createPost(textFields, numberFields, imageFields, dateFields,vide
   }
   for(let i = 0; i<imageFields.length; i++){
     let data = {name: imageFields[i]["name"], type: "image", content: {
-      url: imageFields[i]["value"]
+      url: imageFields[i]["url"]
       }
     };
     postDataFields.push(data);
