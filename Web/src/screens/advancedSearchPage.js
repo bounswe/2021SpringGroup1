@@ -12,45 +12,20 @@ import { isEmpty } from 'utils/methods';
 import { createPost } from 'store/actions/communityAction';
 import SideCard from 'components/card/SideCard';
 import MapGoogle from 'components/googleMaps';
+import PostCard from 'components/card/MaterialUICard';
 
 
 function AdvancedSearchPage(props) {
     const history = useHistory();
     let listOfPath = props?.location?.pathname?.split('/');
     let id = listOfPath[listOfPath?.length - 1];
-    const [templateName, setTemplateName] = useState("");
     const [dataFields, setDataFields] = useState([]);
-    const { communityData, postTemplates } = useSelector(state => state.community)
+    const { filterData, communityData, postTemplates } = useSelector(state => state.community)
     const [selectedPostTemplate, setSelectedPostTemplate] = useState('');
-    const [location, setLocation] = useState({});
-    const [address, setAddress] = useState("");
-
-    // const [postTemplateNames, setPostTemplateNames] = useState([]);
-    // console.log('communityData: ', communityData?.Community);
-    // console.log('postTemplates: ', postTemplates);
-    // console.log('postTemplateNames: ', postTemplateNames);
-    // postTemplates?.Post_templates?.map(e => console.log('e?.Post_templates: ' , e?.name))
-
-    useEffect(()=>{
-        console.log('dataFields: ' , dataFields);
-    },[dataFields])
+    const [isFiltered, setIsFiltered] = useState(false);
     useEffect(() => {
-        dispatch(getCommunityData(id));
         dispatch(listPostTemplates(id));
     }, [])
-
-    // useEffect(()=>{
-    //     if(!postTemplates) return;
-    //     let names = [];
-    //     postTemplates?.Post_templates?.map(e => names.push(e?.name))
-    //     setPostTemplateNames(names)
-    // },[postTemplates])
-
-    const [title, setTitle] = useState('');
-
-    const [isCreated, setIsCreated] = useState(false);
-    const [isSuccessful, setIsSuccessful] = useState(false);
-    const [alertMessage, setAlertMessage] = useState('');
 
     const handleCommunityData = () => {
         dispatch(getCommunityData(id));
@@ -58,37 +33,12 @@ function AdvancedSearchPage(props) {
 
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (false) {
-            dispatch({
-                type: '',
-            })
-            // history.push('/landingPage')
-        }
-    }, [])
-
-    
-
-
-    const returnAlert = (variant, message) => {
-        if (isCreated) {
-            return (
-                <Alert variant={variant} >
-                    <Alert.Heading>{isSuccessful ? "Success!" : "Error!"}</Alert.Heading>
-                    <p>{message}</p>
-                </Alert>
-            );
-        }
-    }
-
     function getLocationData(loc, add, index) {
         let locationTmp = {lat: loc?.lat, lng: loc.lng};
         const list = [...dataFields];
         list[index]['value'] = locationTmp;
         if(dataFields[index]['value']?.lat !== locationTmp?.lat && dataFields[index]['value']?.lng !== locationTmp?.lng)
             setDataFields(list);
-        setLocation(loc);
-        setAddress(add);
     }
 
         // handle input change
@@ -128,11 +78,11 @@ function AdvancedSearchPage(props) {
             setDataFields([...dataFields, { name: "", value: "", type: "", condition: "", range: "", number2: ""}]);
         };
 
-        const filterPosts = (e) => {
+        const filterPosts = async (e) => {
 
             e.preventDefault();
             let communityId = id;
-            let params = {}
+            let params = {post_template_id: selectedPostTemplate?.id}
             dataFields?.map(field => {
                 if(field?.type === 'location') {
                     params[field?.name + '_' + field?.condition] = `${field?.value?.lat},${field?.value?.lng},${field?.condition === 'eq' ? 0 : field?.range}`; 
@@ -150,7 +100,8 @@ function AdvancedSearchPage(props) {
             dispatch(
                 filterPostsRedux(communityId, params)
             )
-
+            setIsFiltered(true);
+            // history.push('/community/' + id)
         }
 
     // const [selectionFields, setSelectionFields] = useState([]);
@@ -302,10 +253,27 @@ function AdvancedSearchPage(props) {
                         </Button>
                     </FormGroup>
 
-                    {isCreated && returnAlert(isSuccessful ? "success" : "danger", alertMessage)}
-
                 </Form>
             </Container>
+                <div style={{marginTop: '40px'}}>
+                    {
+                        filterData?.Success && isFiltered ? 
+                    (
+                    filterData["Posts"].map((posts) => (
+                    <PostCard posts={posts} />
+                    ))
+                    ) : null
+                    }
+                </div>
+
+            {isEmpty(filterData?.Posts) && isFiltered && 
+                <div style={{marginTop: '40px', maxWidth: '800px', margin: 'auto', justifyContent: 'center', alignItems: 'center', minWidth: '500px'}}>
+                <Alert variant={'danger'}>
+                <Alert.Heading>{"Not Found!"}</Alert.Heading>
+                <p>{"No results Found !"}</p>
+                </Alert>
+                </div>
+            }
 
             <SideCard props={props} communityData={communityData} handleCommunityData={handleCommunityData} />
         </>

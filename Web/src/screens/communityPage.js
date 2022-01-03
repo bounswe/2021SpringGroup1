@@ -4,12 +4,13 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel } from 'react-bootstrap';
+import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel, Alert } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 import PostCard from 'components/card/MaterialUICard';
 import SideCard from 'components/card/SideCard';
+import { isEmpty } from 'utils/methods';
 
 const CommunityPage = (props) => {
   let listOfPath = props?.location?.pathname?.split('/');
@@ -19,6 +20,7 @@ const CommunityPage = (props) => {
 
   const dispatch = useDispatch();
   const { communityData, communityPosts } = useSelector(state => state.community)
+  
   console.log('communityData: ', communityData?.Community);
   console.log('communityPosts: ', communityPosts);
   useEffect(() => {
@@ -36,7 +38,7 @@ const CommunityPage = (props) => {
     dispatch(getCommunityData(id));
 }
   console.log('communityData: ', communityData);
-
+  
   return (
     <>
       <div>
@@ -77,10 +79,25 @@ const CommunityPage = (props) => {
           </Card>
         ))} */}
 
-        <div>
-          {communityData?.Success && communityData["Posts"].map((posts) => (
-            <PostCard posts={posts} />
-          ))}
+
+      <div>
+
+      {/* filterData?.Success ? 
+(
+  filterData["Posts"].map((posts) => (
+  <PostCard posts={posts} />
+  ))
+) : */}
+
+{
+
+
+(
+  communityData?.Success ? communityData["Posts"].map((posts) => (
+    <PostCard posts={posts} />
+  )) : null
+)
+        }
         </div>
 
 

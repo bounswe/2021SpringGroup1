@@ -15,9 +15,8 @@ export const GET_COMMUNITY_DATA = "GET_COMMUNITY_DATA";
 export const LIST_COMMUNITY_POSTS = "LIST_COMMUNITY_POSTS";
 export const MY_POSTS = "MY_POSTS";
 export const LIST_POST_TEMPLATES = "LIST_POST_TEMPLATES";
+export const FILTER_RESULT = "FILTER_RESULT";
 
-
-let token = '641895a64fcaf3dad5773d36725e0a9c722adc88';
 
 
 export const createCommunity = data => {
@@ -196,10 +195,12 @@ export const filterPostsRedux = (communityId, params) => {
             });
             const responseData = response.data;
             dispatch({
-                type: GET_COMMUNITY_DATA,
+                type: FILTER_RESULT,
                 data: responseData
             });
+            return true;
         } catch (error) {
+            return false;
             // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
             // throw error.response.data;
         }
