@@ -19,6 +19,7 @@ import createCommunity from 'screens/createCommunity';
 import { isEmpty } from 'utils/methods';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN } from 'store/actions/authAction';
+import EditPostPage from 'screens/editPostPage';
 
 
 function withProps(Component, props) {
@@ -57,6 +58,8 @@ const Navigation = (props) => {
     <Route key={idd++} exact path={urls.myCommunities} component={MyCommunitiesPage} />
     <Route key={idd++} exact path={urls.allCommunities} component={AllCommunitiesPage} />
     <Route key={idd++} exact path={urls.community} component={CommunityPage} />
+    <Route key={idd++} exact path={urls.editPost} component={EditPostPage} />
+
 
     <Route key={idd++} exact path='/' component={home} />
   </Switch>

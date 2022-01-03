@@ -15,6 +15,7 @@ export const urls = {
     'allCommunities':"/allCommunities",
     'myCommunities':"/myCommunities",
     'community':"/community/:id",
+    'editPost':"/editPost/:id",
     //SPRINGBOOT
     'registration': URL + "/registration",
     'login': URL + "/login",

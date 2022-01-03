@@ -15,11 +15,19 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import myDate from 'utils/methods'
 import { Carousel, Image, Row, Col, Button } from 'react-bootstrap';
 import { Grid, Paper } from "@material-ui/core";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import Modal from 'react-bootstrap/Modal'
+import { deletePost } from 'store/actions/communityAction';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from "react-router-dom";
+import {confirm} from "react-confirm-box";
+ 
+
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -33,17 +41,19 @@ const ExpandMore = styled((props) => {
 }));
 
 
-export default function PostCard({ posts }) {
+export default function PostCard({ posts,canDelete,handleParentData }) {
+    const history = useHistory();
+    const dispatch=useDispatch();
     const [expanded, setExpanded] = React.useState(false);
     const [isAnyImage, setIsAnyImage] = React.useState(false)
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-    {
+    
         posts["data_fields"].map((field) => (field["type"] === "image" && !isAnyImage &&
             setIsAnyImage(true)
-        ))
-    }
+        ));
+    
 
     // const comments = [{ username: "gktpgktp", text: "hoşgeldin deneme", date: new Date() }];
 
@@ -55,6 +65,24 @@ export default function PostCard({ posts }) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    console.log(posts)
+
+
+    const handleDeleteClick = async (postId) => {
+        const result = await confirm("Are you sure?");
+        if (result) {
+            dispatch(deletePost({ post_id: postId }));
+            handleParentData();
+            return;
+        }
+        console.log("You click No!");
+
+      };
+    const handleEditClick = (postId,post) => {
+        console.log("poster",postId);
+        history.push("/editPost/"+postId, {post:post});
+        
+    };
 
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
@@ -65,9 +93,25 @@ export default function PostCard({ posts }) {
                     </Avatar>
                 }
                 action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
+                    <div>
+                    {canDelete && <IconButton onClick={() => {
+                            handleEditClick(posts["id"],posts);
+                        }} aria-label="settings">
+                        <EditIcon />
+
+                        
+
+                    </IconButton>}
+                    {canDelete && <IconButton onClick={() => {
+                            handleDeleteClick(posts["id"]);
+                        }} aria-label="settings">
+                        <DeleteIcon />
+
+                        
+
+                    </IconButton>}
+                    
+                    </div>
                 }
                 title={posts["community_name"]}
                 // title={myDate(posts["created_date"])}

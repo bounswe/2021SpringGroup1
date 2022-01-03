@@ -7,6 +7,7 @@ import SideBar from 'components/navbar/SideBar';
 import { Button, Card, ListGroup, ListGroupItem, Row, Col, Container, FormLabel } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getHomeFeed } from 'store/actions/homeAction';
+import { getMyPosts } from 'store/actions/communityAction';
 import MaterialUICard from 'components/card/MaterialUICard'
 import PostCard from 'components/card/MaterialUICard';
 
@@ -14,11 +15,25 @@ import PostCard from 'components/card/MaterialUICard';
 const LandingPage = (props) => {
     const dispatch = useDispatch();
     const { homeFeed } = useSelector(state => state.home)
+    const { myPosts } = useSelector(state => state.community)
+    console.log('myPosts: ', myPosts);
+    console.log('homefeed:',homeFeed);
     useEffect(() => {
-        dispatch(getHomeFeed());
+        async function fetchMyAPI() {
+            let response = await dispatch(getMyPosts());
+            dispatch(getHomeFeed());
+          }
+      
+          fetchMyAPI()
     }, [])
-    console.log('homeFeed: ', homeFeed);
+    let result = myPosts.map(a => a.id);
 
+    console.log('homeFeed: ', homeFeed);
+    console.log("result:",result);
+
+    const handleFeedData = () => {
+        dispatch(getHomeFeed());
+    }
     return (
         <>
             <div>
@@ -57,7 +72,7 @@ const LandingPage = (props) => {
             </div> */}
             <div>
                 {homeFeed && homeFeed?.map((posts) => (
-                    <PostCard posts={posts} />
+                    <PostCard posts={posts} canDelete={result.includes(posts.id)? true:false} handleParentData={handleFeedData}/>
                 ))}
             </div>
         </>

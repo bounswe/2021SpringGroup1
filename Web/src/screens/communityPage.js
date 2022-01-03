@@ -79,7 +79,7 @@ const CommunityPage = (props) => {
 
         <div>
           {communityData?.Success && communityData["Posts"].map((posts) => (
-            <PostCard posts={posts} />
+            <PostCard posts={posts} handleParentData={handleCommunityData} />
           ))}
         </div>
 
