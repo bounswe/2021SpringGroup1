@@ -391,7 +391,7 @@ class QueryFunctions:
             return False
         return True
     def toDate(val):
-        return datetime.datetime(*(val.split('-')))
+        return datetime.datetime(*([int(d) for d in val.split('-')]))
     
     def date_between(content,val):
         str_val=content["value"]
