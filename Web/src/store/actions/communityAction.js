@@ -218,7 +218,7 @@ export const listCommunityPosts = (id) => {
             const response = await axios({
                 method: 'GET',
                 url: ROOT_URL + '/communities/' + id + '/list_community_posts',//PRE_LOGIN_EMAIL_REQUEST,
-                // headers: API_HEADERS_UNAUTHORIZED,
+                headers: API_HEADERS_BEARER_TOKEN(token),
                 params: { community_id: id },
                 //   withCredentials: true,
             });
@@ -392,6 +392,28 @@ export const listPostTemplates = (id) => {
                 type: LIST_POST_TEMPLATES,
                 data: responseData
             });
+        } catch (error) {
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
+
+export const deletePost = (id) => {
+    return async (dispatch, getState) => {
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        console.log('data: token, ', id, token);
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'POST',
+                url: ROOT_URL + '/communities/delete_post',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: id,
+                withCredentials: true,
+            });
+            const responseData = response.data;
         } catch (error) {
             // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
             // throw error.response.data;
