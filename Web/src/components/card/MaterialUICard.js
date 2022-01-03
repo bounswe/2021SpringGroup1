@@ -17,6 +17,8 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { format } from "date-fns";
+
 
 import myDate from 'utils/methods'
 import { Carousel, Image, Row, Col, Button } from 'react-bootstrap';
@@ -214,7 +216,7 @@ export default function PostCard({ posts ,canDelete,handleParentData}) {
                                     </Col>
                                     <Col>
                                         <Typography paragraph>
-                                            {new Date(field["content"][Object.keys(field["content"])[0]]).toLocaleString('tr-TR').substring(0, 10)}
+                                            {format(new Date(field["content"][Object.keys(field["content"])[0]]),"d MMMM yyyy, EEEE")}
                                         </Typography>
                                     </Col>
                                 </Row>
