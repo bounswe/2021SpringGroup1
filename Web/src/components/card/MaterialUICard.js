@@ -65,13 +65,10 @@ const deneme = [
 
 export default function PostCard({ posts }) {
     const history = useHistory();
-    const [expanded, setExpanded] = React.useState(false);
     const [isAnyImage, setIsAnyImage] = React.useState(false)
-    const handleExpandClick = () => {
-        setExpanded(!expanded);
-    };
+
     {
-        posts["data_fields"].map((field) => (field["type"] === "image" && !isAnyImage &&
+        posts?.["data_fields"]?.map((field) => (field?.["type"] === "image" && !isAnyImage &&
             setIsAnyImage(true)
         ))
     }
@@ -85,39 +82,12 @@ export default function PostCard({ posts }) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const deneme_select = [
-        {
-            "name": "Name",
-            "type": "text",
-            "content": {
-                "value": "Muhammed"
-            }
-        },
-        {
-            "name": "Age",
-            "type": "number",
-            "content": {
-                "value": 23
-            }
-        },
-        {
-            "name": "Gender",
-            "type": "selection",
-            "content": {
-                "value": {
-                    "Male": true,
-                    "Female": false
-                }
-            }
-        }
-    ];
-
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
             <CardHeader
                 avatar={
                     <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                        {posts["poster_name"].substring(0, 1).toUpperCase()}
+                        {posts?.["poster_name"].substring(0, 1).toUpperCase()}
                     </Avatar>
                 }
                 action={
@@ -126,13 +96,9 @@ export default function PostCard({ posts }) {
                     </IconButton>
                 }
                 title={
-                    posts["community_name"]
-                    // <MUIButton variant="text" size="small" onClick={() => history.push('/community/' + posts["community"])}>
-                    //     {posts["community_name"]}
-                    // </MUIButton>
+                    posts?.["community_name"]
                 }
-                // title={myDate(posts["created_date"])}
-                subheader={posts["poster_name"]}
+                subheader={posts?.["poster_name"]}
             />
             <CardContent>
                 <Row>
@@ -143,7 +109,7 @@ export default function PostCard({ posts }) {
                     </Col>
                     <Col>
                         <Typography variant="body2" color="text.first">
-                            {posts["title"]}
+                            {posts?.["title"]}
                         </Typography>
                     </Col>
                 </Row>
@@ -154,11 +120,11 @@ export default function PostCard({ posts }) {
                 <CardMedia>
                     <Carousel prevLabel="" nextLabel="" slide={false} interval={5000000}>
                         {
-                            posts["data_fields"].map((field) => (field["type"] === "image" &&
+                            posts?.["data_fields"].map((field) => (field?.["type"] === "image" &&
                                 <Carousel.Item >
                                     <Image style={{ height: "480px" }}
                                         className="d-block w-100"
-                                        src={field["content"][Object.keys(field["content"])[0]]}
+                                        src={field?.["content"][Object.keys(field?.["content"])[0]]}
                                     />
                                 </Carousel.Item>
                             ))
@@ -169,49 +135,46 @@ export default function PostCard({ posts }) {
 
             <CardContent>
                 {
-                    posts["data_fields"].map((field) => (
-                        //deneme_select.map((field) => (
+                    posts?.["data_fields"].map((field) => (
                         <div>
-                            {(field["type"] === "text" || field["type"] === "number")
+                            {(field?.["type"] === "text" || field?.["type"] === "number")
                                 &&
                                 <Row>
                                     <Col sm={2}>
-                                        {field["name"] + ":"}
+                                        {field?.["name"] + ":"}
                                     </Col>
                                     <Col>
                                         <Typography paragraph>
-                                            {field["content"][Object.keys(field["content"])[0]]}
+                                            {field?.["content"][Object.keys(field?.["content"])[0]]}
                                         </Typography>
                                     </Col>
                                 </Row>
                             }
-                            {field["type"] === "date"
+                            {field?.["type"] === "date"
                                 &&
                                 <Row>
                                     <Col sm={2}>
-                                        {field["name"] + ":"}
+                                        {field?.["name"] + ":"}
                                     </Col>
                                     <Col>
                                         <Typography paragraph>
-                                            {new Date(field["content"][Object.keys(field["content"])[0]]).toLocaleString('tr-TR').substring(0, 10)}
+                                            {new Date(field?.["content"][Object.keys(field?.["content"])[0]]).toLocaleString('tr-TR').substring(0, 10)}
                                         </Typography>
                                     </Col>
                                 </Row>
                             }
-                            {field["type"] === "selection"
+                            {field?.["type"] === "selection"
                                 &&
                                 <Row>
                                     <Col sm={2}>
-                                        {field["name"] + ":"}
+                                        {field?.["name"] + ":"}
                                     </Col>
                                     <>
-                                        {Object.keys(field["content"]["value"]).map((key, index) => (
+                                        {Object.keys(field?.["content"]["value"]).map((key, index) => (
                                             <Col>
                                                 <Typography paragraph>
-                                                    {field["content"]["value"][key] === true &&
+                                                    {field?.["content"]["value"][key] === true &&
                                                         <FormControlLabel disabled control={<Checkbox defaultChecked />} label={key} />
-                                                        // :
-                                                        // <FormControlLabel disabled control={<Checkbox />} label={key} />
                                                     }
                                                 </Typography>
                                             </Col>
@@ -219,31 +182,31 @@ export default function PostCard({ posts }) {
                                     </>
                                 </Row>
                             }
-                            {field["type"] === "video"
+                            {field?.["type"] === "video"
                                 &&
                                 <Row>
                                     <Col sm={2}>
-                                        {field["name"] + ":"}
+                                        {field?.["name"] + ":"}
                                     </Col>
                                     <Col>
                                         <ReactPlayer
                                             controls
-                                            url={field["content"][Object.keys(field["content"])[0]]}
+                                            url={field?.["content"][Object.keys(field?.["content"])[0]]}
                                         />
                                     </Col>
                                 </Row>
                             }
-                            {field["type"] === "location"
+                            {field?.["type"] === "location"
                                 &&
-                                (Object.keys(field["content"]).length > 1
+                                (Object.keys(field?.["content"]).length > 1
                                     ?
                                     <Row>
                                         <Col sm={2}>
-                                            {field["name"] + ":"}
+                                            {field?.["name"] + ":"}
                                         </Col>
                                         <Col>
                                             <Typography paragraph>
-                                                {field["content"]["adrs"]}
+                                                {field?.["content"]["adrs"]}
                                             </Typography>
                                         </Col>
                                         <Col>
@@ -263,15 +226,15 @@ export default function PostCard({ posts }) {
                                                                 mapContainerStyle={{ height: "400px" }}
                                                                 zoom={8}
                                                                 center={{
-                                                                    lat: field["content"]["marker"].lat,
-                                                                    lng: field["content"]["marker"].lng
+                                                                    lat: field?.["content"]["marker"].lat,
+                                                                    lng: field?.["content"]["marker"].lng
                                                                 }}
                                                                 onLoad={onMapLoad}
                                                             >
                                                                 <Marker
                                                                     position={{
-                                                                        lat: field["content"]["marker"].lat,
-                                                                        lng: field["content"]["marker"].lng
+                                                                        lat: field?.["content"]["marker"].lat,
+                                                                        lng: field?.["content"]["marker"].lng
                                                                     }}
                                                                 />
                                                             </GoogleMap>
@@ -289,11 +252,11 @@ export default function PostCard({ posts }) {
                                     :
                                     <Row>
                                         <Col sm={2}>
-                                            {field["name"] + ":"}
+                                            {field?.["name"] + ":"}
                                         </Col>
                                         <Col>
                                             <Typography paragraph>
-                                                {field["content"][Object.keys(field["content"])[0]]}
+                                                {field?.["content"][Object.keys(field["content"])[0]]}
                                             </Typography>
                                         </Col>
                                     </Row>
@@ -310,67 +273,10 @@ export default function PostCard({ posts }) {
                     <ShareIcon />
                 </IconButton>
                 <MUIButton variant="outlined" size="small" onClick={() => history.push({
-                    pathname: '/community/' + posts["community"] + "/post/" + posts["id"],
+                    pathname: '/community/' + posts?.["community"] + "/post/" + posts?.["id"],
                     state: { post: posts }
                 })}>Comments</MUIButton>
-                {/* <ExpandMore
-                    expand={expanded}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="show more"
-                >
-                    <ExpandMoreIcon />
-                </ExpandMore> */}
             </CardActions>
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
-                {/* <CardContent>
-                     <h1>Comments</h1>
-                    <div>
-
-                         {showAddComment()}  
-                        {comments.map((item, index) => {
-                            if (item) {
-                                return (
-                                    <Paper 
-                                        key={index}
-                                    style={{ backgroundColor: 'Lavender',}}
-                                    >
-                                        <CardHeader
-                                            avatar={
-                                                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                                                    {posts["poster_name"].substring(0, 1).toUpperCase()}
-                                                </Avatar>
-                                            }
-                                            action={
-                                                <IconButton aria-label="settings">
-                                                    <MoreVertIcon />
-                                                </IconButton>
-                                            }
-                                            title={posts["community_name"]}
-                                            // title={myDate(posts["created_date"])}
-                                            subheader={posts["poster_name"]}
-                                        />
-                                        <Grid container wrap="nowrap" spacing={2}>
-                                            <Grid item>
-                                                <Avatar alt={item.username} src="" />
-                                            </Grid>
-                                            <Grid justifyContent="left" item xs zeroMinWidth>
-                                                <h4 style={{ margin: 0, textAlign: "left" }}>
-                                                    {item.username}
-                                                </h4>
-                                                <p style={{ textAlign: "left" }}>{item.text}</p>
-                                                <p style={{ textAlign: "left", color: "gray" }}>
-                                                    {new Date(item.date).toLocaleString('tr-TR')}
-                                                </p>
-                                            </Grid>
-                                        </Grid>
-                                    </Paper>
-                                );
-                            }
-                        })}
-                    </div>
-                </CardContent> */}
-            </Collapse>
         </MaterialCard >
     );
 }
