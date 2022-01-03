@@ -24,9 +24,18 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
+    def to_representation(self, instance):
+        representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "Person"
+        }
+        representation.update(super().to_representation(instance))
+        return representation
+
     def get_serializer(self, *args, **kwargs):
         kwargs['partial'] = True
         return super(User, self).get_serializer(*args, **kwargs)
+
 
 class CommunitySerializer(serializers.ModelSerializer):
     isJoined=serializers.SerializerMethodField()
@@ -150,6 +159,14 @@ class PostTemplateSerializer(serializers.ModelSerializer):
                 raise e
         return post_template
 
+    def to_representation(self, instance):
+        representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "Post_Template",
+        }
+        representation.update(super().to_representation(instance))
+        return representation
+
 class PostSerializer(serializers.ModelSerializer):
     data_fields=DataFieldSerializer(many=True)
 
@@ -160,6 +177,8 @@ class PostSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = {
+            '@context' : "http://schema.org/",
+            '@type' : "SocialMediaPosting",
             "poster_name": instance.poster.username,
             "community_name" : instance.community.name
         }
