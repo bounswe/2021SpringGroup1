@@ -390,11 +390,13 @@ class QueryFunctions:
             return False
         return True
     def toDate(val):
-        return datetime.datetime(val)
+        return datetime.datetime(*(val.split('-')))
     
     def date_between(content,val):
-        value=datetime.datetime(content["value"])
-        dates=[datetime.datetime(d) for d in val.split(',')]
+        str_val=content["value"]
+        str_dates=val.split(',')
+        value=datetime.datetime(*(str_val.split('-')))
+        dates=[datetime.datetime(*(d.split('-'))) for d in str_dates]
         return dates[0]<value and value<dates[1]
     text_queries={
         "equal": lambda content,val:content["value"]==val,
@@ -408,7 +410,8 @@ class QueryFunctions:
     date_queries={
         "before": lambda content,val:toDate(content["value"])<toDate(val),
         "after": lambda content,val:toDate(content["value"])>toDate(val),
-        "btwn": lambda content,val:date_between(content,val)
+        "equal":lambda content,val:toDate(content["value"])==toDate(val),
+        "between": lambda content,val:date_between(content,val)
     }
     number_queries={
         "gt": lambda content,val:int(content["value"])>int(val),
