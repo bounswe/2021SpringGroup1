@@ -5,7 +5,8 @@ import urllib.parse
 from django.core.checks.messages import Error
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from .models import User
 from django.db.models import fields
 from rest_framework.fields import ImageField
 from .models import Community, DataField, DataFieldTemp, Post, PostTemplate,Comment
@@ -18,9 +19,14 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=["username","email","password"]
+        fields=["username","email","password","first_name","last_name","profile_picture"]
+    
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs['partial'] = True
+        return super(User, self).get_serializer(*args, **kwargs)
 
 class CommunitySerializer(serializers.ModelSerializer):
     isJoined=serializers.SerializerMethodField()
