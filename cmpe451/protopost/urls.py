@@ -12,6 +12,7 @@ urlpatterns = [
 	path("logout", views.Logout.as_view(), name= "logout"),
 	
 	path("get_user_profile/<int:user_id>", views.GetUserProfile.as_view(), name= "user_profile"),
+	path("update_user_profile",views.UpdateUserProfile.as_view(), name="update_user_profile"),
 	path("get_user_home_feed",views.GetUserHomeFeed.as_view(),name="get_user_home_feed"),
 	path("get_user_created_posts",views.GetUserCreatedPosts.as_view(),name="get_user_created_posts"),
 	

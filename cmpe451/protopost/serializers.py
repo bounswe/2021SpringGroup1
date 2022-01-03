@@ -19,14 +19,17 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model=User
-        fields=["username","email","password","first_name","last_name","profile_picture"]
+        fields=["username","email","password"]
     
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
-    def get_serializer(self, *args, **kwargs):
-        kwargs['partial'] = True
-        return super(User, self).get_serializer(*args, **kwargs)
+class UserProfileSerializer(serializers.ModelSerializer):
+    user=UserSerializer()
+    class Meta:
+        model=UserProfile
+        fields=["first_name","last_name","profile_picture","registered_time"]
+        read_only_field=["registered_time"]
 
 class CommunitySerializer(serializers.ModelSerializer):
     isJoined=serializers.SerializerMethodField()
