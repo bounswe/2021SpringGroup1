@@ -374,7 +374,7 @@ class GetUserCreatedPosts(GenericAPIView):
 
 class QueryFunctions:
     def is_near_location(content,val):
-        arr=val.split(',')
+        arr=str(val).split(',')
         coord2=arr[0:2]
         coord1=[content["marker"]["lat"],content["marker"]["lng"]]
         dist=float(arr[2])
@@ -391,7 +391,7 @@ class QueryFunctions:
             return False
         return True
     def toDate(val):
-        return datetime.datetime(*([int(d) for d in val.split('-')]))
+        return datetime.datetime(*([int(d) for d in str(val).split('-')]))
     
     def date_between(content,val):
         str_val=content["value"]
