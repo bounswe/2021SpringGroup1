@@ -46,8 +46,6 @@ const CommunityPage = (props) => {
   }
   let result = myPosts.map(a => a.id);
 
-  console.log('communityData: ', communityData);
-  
   return (
     <>
       <div>

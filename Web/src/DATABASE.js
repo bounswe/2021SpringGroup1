@@ -7,7 +7,7 @@ export const urls = {
     'auth': "/auth",
     'home': "/",
     'bootstrap': "/bootstrap",
-    'profile': "/profile",
+    'profile': "/profile/:id",
     'landingPage': "/landingPage",
     'createPostTemplate': "/community/createPostTemplate/:id",
     'createPostPage': "/community/createPostPage/:id",

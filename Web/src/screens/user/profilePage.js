@@ -6,7 +6,7 @@ import React, {useState,useEffect,} from 'react';
 import { Alert, Col, Container, Image, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { getMe } from 'store/actions/profileAction';
+import { getProfile } from 'store/actions/profileAction';
 import MaterialCard from '@mui/material/Card';
 import faker from 'faker/locale/tr';
 import { red } from '@mui/material/colors';
@@ -30,11 +30,13 @@ const ProfilePage = (props) => {
   const history = useHistory();
   const { profileInfo } = useSelector(state => state.profile)
   const dispatch = useDispatch();
+  let listOfPath = props?.location?.pathname?.split('/');
+  let id = listOfPath[listOfPath?.length - 1];
   console.log('profileInfo: ' , profileInfo);
 
 
   useEffect(() => {
-      dispatch(getMe());
+      dispatch(getProfile(id));
   }, [])
 
 

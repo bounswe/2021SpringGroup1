@@ -7,18 +7,18 @@ import { isEmpty } from 'utils/methods';
 export const GET_ME = "GET_ME";
 
 
-export const getMe = (id = "") => {
+export const getProfile = (id = "") => {
     return async (dispatch,getState) => {
       let {token} = getState().auth;
       if(isEmpty(token)) return;
       // const formData = FORM_DATA_TEXT(data);
-      let userId = isEmpty(id) ? '' : '/' + id;
+      let userId = isEmpty(id) ? '' : {user_id: id};
       try {
         const response = await axios({
           method: 'GET',
-          url: ROOT_URL + '/get_user_profile' + userId,//PRE_LOGIN_EMAIL_REQUEST,
+          url: ROOT_URL + '/get_user_profile',//PRE_LOGIN_EMAIL_REQUEST,
           headers: API_HEADERS_BEARER_TOKEN(token),
-          // data: formData,
+          params: userId,
         //   withCredentials: true,
         });
         const responseData = response.data;

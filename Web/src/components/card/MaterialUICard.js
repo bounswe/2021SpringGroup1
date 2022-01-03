@@ -133,7 +133,7 @@ export default function PostCard({ posts ,canDelete,handleParentData}) {
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
             <CardHeader
                 avatar={
-                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                    <Avatar onClick={()=>history.push('/profile/'+posts?.poster)} sx={{ bgcolor: red[500], cursor: 'pointer' }} aria-label="recipe">
                         {posts["poster_name"].substring(0, 1).toUpperCase()}
                     </Avatar>
                 }
