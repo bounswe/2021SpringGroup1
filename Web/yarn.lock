@@ -9762,6 +9762,16 @@ react-bootstrap@^1.6.0:
     uncontrollable "^7.2.1"
     warning "^4.0.3"
 
+react-confirm-alert@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/react-confirm-alert/-/react-confirm-alert-2.7.0.tgz#7cdbf2e052e03554ac6a7d8956c9c227010c8a53"
+  integrity sha512-21NWtGK/e85+ZX3TLRpMc3IsU5Kj6Z9ElCOrkTIlwMzV9EancyXNlkqHGbtKP63a2iS6g5hOxROokmJOqKQiXA==
+
+react-confirm-box@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-confirm-box/-/react-confirm-box-1.2.0.tgz#20d036257869d7cff4f96e6121ee3b6d5e5d8089"
+  integrity sha512-emltOsrQcJ9yFJIfgCEnAn8Srv9T6fJSjdAqf6zHXfO2k7AgM6xEO9dDZkybb8GWTm0Zq/nh2fAGJQN3jpkvKw==
+
 react-dev-utils@^11.0.3:
   version "11.0.4"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-11.0.4.tgz#a7ccb60257a1ca2e0efe7a83e38e6700d17aa37a"

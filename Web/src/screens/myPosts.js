@@ -20,6 +20,9 @@ const MyPosts = (props) => {
     useEffect(() => {
         dispatch(getMyPosts());
     }, [])
+    const handleMyPostsData = () => {
+        dispatch(getMyPosts());
+    }
     console.log('myPosts: ', myPosts);
     return (
         <>
@@ -29,7 +32,7 @@ const MyPosts = (props) => {
             <div>
                 <div>
                     {myPosts?.length > 0 && myPosts?.map((posts) => (
-                        <PostCard posts={posts} />
+                        <PostCard posts={posts}  canDelete={true} handleParentData= {handleMyPostsData}/>
                     ))}
                 </div>
             </div>

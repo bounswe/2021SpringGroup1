@@ -7,7 +7,7 @@ import SideBar from 'components/navbar/SideBar';
 import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
+import { getCommunityData, getMyPosts, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 import PostCard from 'components/card/MaterialUICard';
 import SideCard from 'components/card/SideCard';
 
@@ -18,12 +18,16 @@ const CommunityPage = (props) => {
   console.log('props: ', props?.location?.pathname?.split('/'));
 
   const dispatch = useDispatch();
-  const { communityData, communityPosts } = useSelector(state => state.community)
+  const [deletedPosts,setDeletedPosts]= useState(0);
+  const { communityData, communityPosts,myPosts } = useSelector(state => state.community)
   console.log('communityData: ', communityData?.Community);
   console.log('communityPosts: ', communityPosts);
   useEffect(() => {
     dispatch(getCommunityData(id));
     dispatch(listCommunityPosts(id));
+    dispatch(getMyPosts());
+
+
   }, [])
 
   const subscribeCall = (e, id, isJoined) => {
@@ -35,6 +39,12 @@ const CommunityPage = (props) => {
   const handleCommunityData = () => {
     dispatch(getCommunityData(id));
 }
+  const handleCommunityPostsData = async () => {
+    let result= await dispatch(listCommunityPosts(id));
+    setDeletedPosts(deletedPosts+1);
+  }
+  let result = myPosts.map(a => a.id);
+
   console.log('communityData: ', communityData);
 
   return (
@@ -78,8 +88,8 @@ const CommunityPage = (props) => {
         ))} */}
 
         <div>
-          {communityData?.Success && communityData["Posts"].map((posts) => (
-            <PostCard posts={posts} />
+          {communityPosts?.length > 0 && communityPosts.map((posts) => (
+            <PostCard posts={posts} canDelete={result.includes(posts.id)? true:false} handleParentData={handleCommunityPostsData}/>
           ))}
         </div>
 
