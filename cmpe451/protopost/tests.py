@@ -1,15 +1,8 @@
-from django.test import TestCase,Client, client
-from rest_framework import response
+from django.test import TestCase
 from protopost.models import *
 from protopost.serializers import *
-from protopost.home import *
 from protopost.register import *
 from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
-from django.test import TransactionTestCase
-from collections import OrderedDict
-
-# Create your tests here.
 import json
 
 class CommunityTestCase(TestCase):
@@ -254,39 +247,3 @@ class GetUserHomeFeed(TestCase):
                         ]
 
         self.assertEqual(actual_result, response_dic)
-
-
-
-
-
-#class PostTestCase(TestCase):
-
-# # class CommunityTestCase(TestCase):
-# #     def setUp(self) :
-# #         self.client=Client()
-    
-# #     def test_community_creation(self):
-# #         response = self.client.post("/create_community",
-# #             {"name":"test_grubu",
-# #             "description":"Test grub description.",
-# #             "is_private":False
-# #             })
-# #         self.assertEqual(response.json()["Success"],True)
-
-# #     def test_search_community(self):
-# #         community_test_number = 2
-# #         for i in range(1,community_test_number+1):
-# #             self.client.post("/create_community", {"name":f"test_grubu_{i}","description":f"Test grub {i} description.","is_private":False})
-        
-# #         response = self.client.get("/search_communities", {"name":"test_grubu"})
-# #         self.assertEqual(response.json()["Success"],True)
-# #         self.assertEqual(len(response.json()["Communities"]), community_test_number)
-
-# #     def test_getting_community_data(self):
-# #         self.client.post("/create_community", {"name":"test_grubu_1","description":"Test grub 1 description.","is_private":False})
-# #         response = self.client.get("/communities/get_community_data", {"group_name":"test_grubu_1"})
-
-# #         self.assertEqual(response.json()["Success"],True)
-# #         self.assertEqual(response.json()["Community"][0]["name"], "test_grubu_1")
-# #         self.assertEqual(response.json()["Community"][0]["description"], "Test grub 1 description.")
-# #         self.assertEqual(response.json()["Community"][0]["is_private"], False)

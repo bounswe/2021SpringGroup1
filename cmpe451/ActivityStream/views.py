@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from .serializers import ActivityStreamSerializer
 
 def saveActivity(summary=None,type=None,actor=None,object=None, success=None, *args, **kwargs):

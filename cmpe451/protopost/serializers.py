@@ -1,19 +1,9 @@
-from functools import partial
-import re
 import urllib.parse
-#from django.conf import _DjangoConfLazyObject
 from django.core.checks.messages import Error
 from django.core.exceptions import ValidationError
-from django.db import models
-#from django.contrib.auth.models import User
 from .models import User
-from django.db.models import fields
-from rest_framework.fields import ImageField
 from .models import Community, DataField, DataFieldTemp, Post, PostTemplate,Comment
-from rest_framework import serializers, validators
-from rest_framework.validators import UniqueTogetherValidator
-from drf_spectacular.utils import extend_schema_serializer
-
+from rest_framework import serializers
 from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,12 +22,12 @@ class UserSerializer(serializers.ModelSerializer):
         representation.update(super().to_representation(instance))
         return representation
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model=UserProfile
         fields=["first_name","last_name","profile_picture","registered_time"]
         read_only_field=["registered_time"]
-
 
 
 class CommunitySerializer(serializers.ModelSerializer):
@@ -56,7 +46,6 @@ class CommunitySerializer(serializers.ModelSerializer):
         except:
             return False
 
-       
     def to_representation(self, instance):
         representation = {
             '@context' : "http://schema.org/",
@@ -124,7 +113,6 @@ class DataFieldSerializer(serializers.ModelSerializer):
             return urllib.parse.quote(obj.name)
         except:
             return ""
-
 
 
 class DataFieldTempSerializer(serializers.ModelSerializer):
@@ -251,12 +239,14 @@ class RecursiveField(serializers.Serializer):
         serializer=self.parent.parent.__class__(instance,context=self.context)
         return serializer.data  
 
+
 class CommentThreadSerializer(serializers.ModelSerializer):
     replies=RecursiveField(many=True,required=False)
     class Meta:
         model=Comment
         fields = ['id','post','replied_comment','commenter','body','created_date','replies']
         read_only_fields=['id','commenter','created_date','replies']
+
 
 class CommentFlatSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -267,6 +257,3 @@ class CommentFlatSerializer(serializers.ModelSerializer):
         model=Comment
         fields = ['id','post','replied_comment','commenter','body','created_date']
         read_only_fields=['id','commenter','created_date']
-       
-    
-

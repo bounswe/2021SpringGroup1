@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-import json
-# Create your models here.
 DATA_TYPES = (
         ('text', 'Text'),
         ('image', 'Image'),
@@ -42,9 +40,6 @@ class Community(models.Model):
         }
         return data
 
-    # def get_all_fields_names(self):
-    #     return [f.name for f in Community._meta.get_fields()]
-
 class PostTemplate(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     name=models.CharField(max_length=50, verbose_name='Name')
@@ -74,6 +69,7 @@ class PostTemplate(models.Model):
                 name="Unique Post Template"
             )
         ]
+        
 class Post(models.Model):
     id = models.AutoField(primary_key=True, verbose_name='Id')
     poster = models.ForeignKey(User,on_delete=models.CASCADE,related_name='posts', blank=True, null=True)
