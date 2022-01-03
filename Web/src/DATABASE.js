@@ -4,9 +4,10 @@ const URL = "http://localhost:" + PORT;
 export const urls = {
 
     //REACT
+    'auth': "/auth",
     'home': "/",
     'bootstrap': "/bootstrap",
-    'profile': "/profile",
+    'profile': "/profile/:id",
     'landingPage': "/landingPage",
     'createPostTemplate': "/community/createPostTemplate/:id",
     'createPostPage': "/community/createPostPage/:id",

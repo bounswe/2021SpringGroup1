@@ -4,12 +4,13 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel } from 'react-bootstrap';
+import { Card, Container, ListGroup, ListGroupItem, Button, Row, Col, FormLabel, Alert } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getCommunityData, getMyPosts, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
 import PostCard from 'components/card/MaterialUICard';
 import SideCard from 'components/card/SideCard';
+import { isEmpty } from 'utils/methods';
 
 const CommunityPage = (props) => {
   let listOfPath = props?.location?.pathname?.split('/');
@@ -44,8 +45,6 @@ const CommunityPage = (props) => {
     setDeletedPosts(deletedPosts+1);
   }
   let result = myPosts.map(a => a.id);
-
-  console.log('communityData: ', communityData);
 
   return (
     <>

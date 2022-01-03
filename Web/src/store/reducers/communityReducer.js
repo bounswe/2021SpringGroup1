@@ -8,7 +8,8 @@ import {
     GET_COMMUNITY_DATA,
     LIST_COMMUNITY_POSTS,
     MY_POSTS,
-    LIST_POST_TEMPLATES
+    LIST_POST_TEMPLATES,
+    FILTER_RESULT
 } from "../actions/communityAction";
 
 
@@ -18,7 +19,8 @@ const initialState = {
     communityData: [],
     communityPosts: [],
     myPosts: [],
-    postTemplates: []
+    postTemplates: [],
+    filterData: []
 };
 
 export default (state = initialState, action) => {
@@ -41,10 +43,15 @@ export default (state = initialState, action) => {
                 ...state,
                 communities: action.accessToken
             }
+        case FILTER_RESULT:
+            return {
+                ...state,
+                filterData: action.data,
+            }
         case GET_COMMUNITY_DATA:
             return {
                 ...state,
-                communityData: action.data
+                communityData: action.data,
             }
         case LIST_COMMUNITY_POSTS:
             return {
