@@ -400,19 +400,19 @@ class QueryFunctions:
         dates=[datetime.datetime(*(d.split('-'))) for d in str_dates]
         return dates[0]<value and value<dates[1]
     text_queries={
-        "equal": lambda content,val:content["value"]==val,
-        "contains": lambda content,val: val in content["value"],
-        "startsWith": lambda content,val:content["value"].startswith(val),
-        "endsWith": lambda content,val:content["value"].endswith(val)
+        "equal": lambda content,val:content["value"].lower()==val.lower(),
+        "contains": lambda content,val: val.lower() in content["value"].lower(),
+        "startsWith": lambda content,val:content["value"].lower().startswith(val.lower()),
+        "endsWith": lambda content,val:content["value"].lower().endswith(val.lower())
     }
     location_queries={
-        "near": lambda content,val:is_near_location(content,val)
+        "near": lambda content,val:QueryFunctions.is_near_location(content,val)
     }
     date_queries={
-        "before": lambda content,val:toDate(content["value"])<toDate(val),
-        "after": lambda content,val:toDate(content["value"])>toDate(val),
-        "equal":lambda content,val:toDate(content["value"])==toDate(val),
-        "between": lambda content,val:date_between(content,val)
+        "before": lambda content,val:QueryFunctions.toDate(content["value"])<QueryFunctions.toDate(val),
+        "after": lambda content,val:QueryFunctions.toDate(content["value"])>QueryFunctions.toDate(val),
+        "equal":lambda content,val:QueryFunctions.toDate(content["value"])==QueryFunctions.toDate(val),
+        "between": lambda content,val:QueryFunctions.date_between(content,val)
     }
     number_queries={
         "gt": lambda content,val:int(content["value"])>int(val),
@@ -420,8 +420,8 @@ class QueryFunctions:
         "lt": lambda content,val:int(content["value"])<int(val)
         }
     selection_queries={
-        "slctd": lambda content,val:selection(content,val,True),
-        "ntslctd": lambda content,val:selection(content,val,False)
+        "slctd": lambda content,val:QueryFunctions.selection(content,val,True),
+        "ntslctd": lambda content,val:QueryFunctions.selection(content,val,False)
     }
     queries={"location":location_queries,"date":date_queries,"number":number_queries,"selection":selection_queries,"text":text_queries}
 class FilterPosts(GenericAPIView):
