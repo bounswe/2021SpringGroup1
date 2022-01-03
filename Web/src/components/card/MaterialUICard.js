@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useHistory } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import MaterialCard from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -21,7 +22,8 @@ import { Grid, Paper } from "@material-ui/core";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import Modal from 'react-bootstrap/Modal'
 import ReactPlayer from 'react-player'
-import { FormControlLabel, Checkbox } from '@mui/material';
+import { FormControlLabel, Checkbox, Link } from '@mui/material';
+import MUIButton from '@mui/material/Button';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -62,6 +64,7 @@ const deneme = [
 ];
 
 export default function PostCard({ posts }) {
+    const history = useHistory();
     const [expanded, setExpanded] = React.useState(false);
     const [isAnyImage, setIsAnyImage] = React.useState(false)
     const handleExpandClick = () => {
@@ -72,8 +75,6 @@ export default function PostCard({ posts }) {
             setIsAnyImage(true)
         ))
     }
-
-    const comments = [{ username: "gktpgktp", text: "hoşgeldin deneme", date: new Date() }];
 
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
@@ -124,7 +125,12 @@ export default function PostCard({ posts }) {
                         <MoreVertIcon />
                     </IconButton>
                 }
-                title={posts["community_name"]}
+                title={
+                    posts["community_name"]
+                    // <MUIButton variant="text" size="small" onClick={() => history.push('/community/' + posts["community"])}>
+                    //     {posts["community_name"]}
+                    // </MUIButton>
+                }
                 // title={myDate(posts["created_date"])}
                 subheader={posts["poster_name"]}
             />
@@ -187,7 +193,7 @@ export default function PostCard({ posts }) {
                                     </Col>
                                     <Col>
                                         <Typography paragraph>
-                                            {new Date(field["content"][Object.keys(field["content"])[0]]).toLocaleString('tr-TR').substring(0,10)}
+                                            {new Date(field["content"][Object.keys(field["content"])[0]]).toLocaleString('tr-TR').substring(0, 10)}
                                         </Typography>
                                     </Col>
                                 </Row>
@@ -303,14 +309,18 @@ export default function PostCard({ posts }) {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
-                <ExpandMore
+                <MUIButton variant="outlined" size="small" onClick={() => history.push({
+                    pathname: '/community/' + posts["community"] + "/post/" + posts["id"],
+                    state: { post: posts }
+                })}>Comments</MUIButton>
+                {/* <ExpandMore
                     expand={expanded}
                     onClick={handleExpandClick}
                     aria-expanded={expanded}
                     aria-label="show more"
                 >
                     <ExpandMoreIcon />
-                </ExpandMore>
+                </ExpandMore> */}
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 {/* <CardContent>

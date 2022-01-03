@@ -45,8 +45,11 @@ function CreatePostTemplate(props) {
             let item = {};
             let opts = [];
             if (dataFields[i].type == "selection") {
-                var trimmed = dataFields[i].options.replace(/\s+/g, '');
-                opts = trimmed.split(",");
+                //var trimmed = dataFields[i].options.replace(/\s+/g, '');
+                opts = dataFields[i].options.split(",");
+                for(let j =0; j < opts.length; j++){
+                    opts[j] = opts[j].trim();
+                }
                 console.log(opts)
             }
             item = { name: dataFields[i].name, type: dataFields[i].type, options: opts };
