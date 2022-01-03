@@ -12,7 +12,10 @@ import { isEmpty } from 'utils/methods';
 import { createPost } from 'store/actions/communityAction';
 import SideCard from 'components/card/SideCard';
 import MapGoogle from 'components/googleMaps';
+import { FormControlLabel, Checkbox } from '@mui/material';
 
+let location;
+let address;
 
 function CreatePostPage(props) {
     const history = useHistory();
@@ -39,7 +42,14 @@ function CreatePostPage(props) {
     }
 
     const handleInputChange = (e, index) => {
-        dataFields[index][e.target.name] = e.target.value;
+        // console.log(e.target.checked);
+        console.log(e.target.name);
+        if (e.target.type == "checkbox") {
+            dataFields[index]["content"][e.target.name] = e.target.checked;
+        }
+        else {
+            dataFields[index][e.target.name] = e.target.value;
+        }
         console.log("dataFields:", dataFields);
     };
 
@@ -54,8 +64,9 @@ function CreatePostPage(props) {
             // history.push('/landingPage')
         }
     }, [])
-    const [location, setLocation] = useState({});
-    const [address, setAddress] = useState("");
+    // const [location, setLocation] = useState({});
+    // const [address, setAddress] = useState("");
+
     const createPostCall = async (e) => {
         e.preventDefault();
         // if(isEmpty(community_image_url) || isEmpty(description) || isEmpty(name)) {
@@ -70,14 +81,18 @@ function CreatePostPage(props) {
                 item = { name: dataFields[i].name, type: dataFields[i].type, content: { marker: location, adrs: address } };
             }
             else if (dataFields[i].type == "number") {
-                item = { name: dataFields[i].name, type: dataFields[i].type, content: { prop1: parseInt(dataFields[i].content) } };
+                item = { name: dataFields[i].name, type: dataFields[i].type, content: { value: parseInt(dataFields[i].content) } };
+            }
+            else if (dataFields[i].type == "video" || dataFields[i].type == "image") {
+                item = { name: dataFields[i].name, type: dataFields[i].type, content: { url: dataFields[i].content } };
             }
             else {
-                item = { name: dataFields[i].name, type: dataFields[i].type, content: { prop1: dataFields[i].content } };
+                item = { name: dataFields[i].name, type: dataFields[i].type, content: { value: dataFields[i].content } };
             }
 
             values.push(item);
         }
+        console.log("dataFields:", dataFields);
         console.log("values:", values);
         var sendData = { "title": title, "post_template": index, "data_fields": values };
         console.log("sendData:", sendData);
@@ -101,32 +116,15 @@ function CreatePostPage(props) {
     }
 
     function getLocationData(loc, add) {
-        console.log("location: ", location);
-        console.log("address: ", address);
-        setLocation(loc);
-        setAddress(add);
+        // console.log("location_eski: ", location);
+        // console.log("address_eski: ", address);
+        // setLocation(loc);
+        // setAddress(add);
+        location=loc;
+        address=add;
+        console.log("location_yeni: ", location);
+        console.log("address_yeni: ", address);
     }
-
-    const deneme = [
-        {
-            "type": "text",
-            "name": "yenivideo"
-        },
-        {
-            "type": "video",
-            "name": "urlvideo"
-        },
-        {
-            "type": "date",
-            "name": "çıkıştarihi"
-        }
-    ];
-
-    // const [selectionFields, setSelectionFields] = useState([]);
-
-    // const handleAddClick = () => {
-    //     setSelectionFields([...selectionFields, { type: "", name: "" }]);
-    // };
 
     return (
         <>
@@ -161,8 +159,10 @@ function CreatePostPage(props) {
                         template["id"] == index
                         &&
                         template["data_field_templates"].map((field, idx) => (
-                            // deneme.map((field, idx) => (
-                            dataFields.push({ name: field["name"], type: field["type"], content: "" })
+                            <>
+                                {field["type"] === "selection" ? dataFields.push({ name: field["name"], type: field["type"], content: {} })
+                                    : dataFields.push({ name: field["name"], type: field["type"], content: "" })}
+                            </>
                             &&
                             <FormGroup className="mb-3" controlId="fields">
                                 <Row>
@@ -191,29 +191,26 @@ function CreatePostPage(props) {
                                             <FormControl name="content" placeholder="Enter a value" type="text" onChange={e => handleInputChange(e, idx)}>
                                             </FormControl>
                                         }
-                                        {/* {field["type"] === "selection" &&
-                                            <Button variant="warning" onClick={() => handleAddClick()}>
-                                                Add Selection Option
-                                            </Button>
+                                        {field["type"] === "selection"
                                             &&
-                                            selectionFields.length > 0
-                                            &&
-                                        {
-                                            selectionFields.map((field, i) => {
-                                                return (
-                                                    <div key={i}>
-                                                        <Row>
-                                                            <Col sm={4}>
-                                                                <FormControl name="content" placeholder="Enter text" type="text" onChange={e => handleInputChange(e, idx)}>
-                                                                </FormControl>
-                                                            </Col>
-                                                        </Row>
-                                                    </div>
-                                                );
-                                            })
-                                        }
+                                            <FormGroup>
+                                                {field["options"].map((opt, i) => (
+                                                    <>
+                                                        {dataFields[idx]["content"][opt] = false}
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Checkbox
+                                                                    onChange={e => handleInputChange(e, idx)}
+                                                                    name={opt}
+                                                                />
+                                                            }
+                                                            label={opt}
+                                                        />
+                                                    </>
 
-                                        } */}
+                                                ))}
+                                            </FormGroup>
+                                        }
                                         {field["type"] === "video" &&
                                             <FormControl name="content" placeholder="Enter Video URL" type="text" onChange={e => handleInputChange(e, idx)}>
                                             </FormControl>
@@ -223,7 +220,6 @@ function CreatePostPage(props) {
                             </FormGroup>
                         ))
                     ))}
-
                     <FormGroup>
                         <Button style={{ marginBottom: "20px" }} onClick={(e) => { createPostCall(e) }} variant="success">Create Post</Button>{' '}
                     </FormGroup>

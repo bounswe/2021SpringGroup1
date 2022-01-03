@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useHistory } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import MaterialCard from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -15,12 +16,18 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import myDate from 'utils/methods'
 import { Carousel, Image, Row, Col, Button } from 'react-bootstrap';
 import { Grid, Paper } from "@material-ui/core";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import Modal from 'react-bootstrap/Modal'
 import ReactPlayer from 'react-player'
+import { FormControlLabel, Checkbox, Link } from '@mui/material';
+import MUIButton from '@mui/material/Button';
+import { deletePost } from 'store/actions/communityAction';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -33,34 +40,36 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-// const deneme = [
-//     {
-//         "name": "yenivideo",
-//         "type": "text",
-//         "content": {
-//             "prop1": "deneme Video"
-//         },
-//         "reference_name": "Text%20Field"
-//     },
-//     {
-//         "name": "urlvideo",
-//         "type": "video",
-//         "content": {
-//             "prop1": "https://www.youtube.com/watch?v=ysz5S6PUM-U"
-//         },
-//         "reference_name": "Video%20Field"
-//     },
-//     {
-//         "name": "çıkıştarihi",
-//         "type": "date",
-//         "content": {
-//             "prop1": "2022-01-02"
-//         },
-//         "reference_name": "Date%20Field"
-//     }
-// ];
+const deneme = [
+    {
+        "name": "yenivideo",
+        "type": "text",
+        "content": {
+            "value": "deneme Video"
+        },
+        "reference_name": "Text%20Field"
+    },
+    {
+        "name": "urlvideo",
+        "type": "video",
+        "content": {
+            "value": "https://www.twitch.tv/videos/1247081176"
+        },
+        "reference_name": "Video%20Field"
+    },
+    {
+        "name": "çıkıştarihi",
+        "type": "date",
+        "content": {
+            "value": "2022-01-02"
+        },
+        "reference_name": "Date%20Field"
+    }
+];
 
-export default function PostCard({ posts }) {
+export default function PostCard({ posts ,canDelete,handleParentData}) {
+    const dispatch = useDispatch();
+    const history = useHistory();
     const [expanded, setExpanded] = React.useState(false);
     const [isAnyImage, setIsAnyImage] = React.useState(false)
     const handleExpandClick = () => {
@@ -72,8 +81,6 @@ export default function PostCard({ posts }) {
         ))
     }
 
-    const comments = [{ username: "gktpgktp", text: "hoşgeldin deneme", date: new Date() }];
-
     const mapRef = React.useRef();
     const onMapLoad = React.useCallback((map) => {
         mapRef.current = map;
@@ -83,6 +90,45 @@ export default function PostCard({ posts }) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const deneme_select = [
+        {
+            "name": "Name",
+            "type": "text",
+            "content": {
+                "value": "Muhammed"
+            }
+        },
+        {
+            "name": "Age",
+            "type": "number",
+            "content": {
+                "value": 23
+            }
+        },
+        {
+            "name": "Gender",
+            "type": "selection",
+            "content": {
+                "value": {
+                    "Male": true,
+                    "Female": false
+                }
+            }
+        }
+    ];
+    const handleDeleteClick = async (postId) => {
+
+        if (window.confirm('Are you sure you want to delete this post?')) {
+            let result = await dispatch(deletePost({ post_id: postId }));
+            handleParentData();
+            console.log('Post deleted successfully.');
+          } else {
+            // Do nothing!
+            console.log('Post not deleted.');
+          }
+
+      };
+
     return (
         <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender', marginBlockEnd: '20px' }}>
             <CardHeader
@@ -91,12 +137,21 @@ export default function PostCard({ posts }) {
                         {posts["poster_name"].substring(0, 1).toUpperCase()}
                     </Avatar>
                 }
-                action={
-                    <IconButton aria-label="settings">
-                        <MoreVertIcon />
-                    </IconButton>
+                action=
+                    {canDelete && <IconButton onClick={() => {
+                        handleDeleteClick(posts["id"]);
+                    }} aria-label="settings">
+                    <DeleteIcon />
+
+                    
+
+                </IconButton>}
+                title={
+                    posts["community_name"]
+                    // <MUIButton variant="text" size="small" onClick={() => history.push('/community/' + posts["community"])}>
+                    //     {posts["community_name"]}
+                    // </MUIButton>
                 }
-                title={posts["community_name"]}
                 // title={myDate(posts["created_date"])}
                 subheader={posts["poster_name"]}
             />
@@ -136,9 +191,9 @@ export default function PostCard({ posts }) {
             <CardContent>
                 {
                     posts["data_fields"].map((field) => (
-                        // deneme.map((field) => (
+                        //deneme_select.map((field) => (
                         <div>
-                            {(field["type"] === "text" || field["type"] === "date" || field["type"] === "number")
+                            {(field["type"] === "text" || field["type"] === "number")
                                 &&
                                 <Row>
                                     <Col sm={2}>
@@ -149,6 +204,40 @@ export default function PostCard({ posts }) {
                                             {field["content"][Object.keys(field["content"])[0]]}
                                         </Typography>
                                     </Col>
+                                </Row>
+                            }
+                            {field["type"] === "date"
+                                &&
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <Col>
+                                        <Typography paragraph>
+                                            {new Date(field["content"][Object.keys(field["content"])[0]]).toLocaleString('tr-TR').substring(0, 10)}
+                                        </Typography>
+                                    </Col>
+                                </Row>
+                            }
+                            {field["type"] === "selection"
+                                &&
+                                <Row>
+                                    <Col sm={2}>
+                                        {field["name"] + ":"}
+                                    </Col>
+                                    <>
+                                        {Object.keys(field["content"]["value"]).map((key, index) => (
+                                            <Col>
+                                                <Typography paragraph>
+                                                    {field["content"]["value"][key] === true &&
+                                                        <FormControlLabel disabled control={<Checkbox defaultChecked />} label={key} />
+                                                        // :
+                                                        // <FormControlLabel disabled control={<Checkbox />} label={key} />
+                                                    }
+                                                </Typography>
+                                            </Col>
+                                        ))}
+                                    </>
                                 </Row>
                             }
                             {field["type"] === "video"
@@ -241,14 +330,18 @@ export default function PostCard({ posts }) {
                 <IconButton aria-label="share">
                     <ShareIcon />
                 </IconButton>
-                <ExpandMore
+                <MUIButton variant="outlined" size="small" onClick={() => history.push({
+                    pathname: '/community/' + posts["community"] + "/post/" + posts["id"],
+                    state: { post: posts }
+                })}>Comments</MUIButton>
+                {/* <ExpandMore
                     expand={expanded}
                     onClick={handleExpandClick}
                     aria-expanded={expanded}
                     aria-label="show more"
                 >
                     <ExpandMoreIcon />
-                </ExpandMore>
+                </ExpandMore> */}
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
                 {/* <CardContent>
