@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['3.249.82.166','127.0.0.1','localhost']
 
 INSTALLED_APPS = [
     "protopost.apps.ProtopostConfig",
+    "ActivityStream.apps.ActivitystreamConfig",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -108,7 +109,7 @@ WSGI_APPLICATION = 'cmpe451.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 
-# DATABASES = {
+# DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': BASE_DIR / 'db.sqlite3',
