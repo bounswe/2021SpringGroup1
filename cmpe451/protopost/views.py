@@ -519,53 +519,52 @@ class FilterPosts(GenericAPIView):
 
 
 class GetUserProfile(GenericAPIView):
-	serializer_class=[UserSerializer,CommunitySerializer]
-	@extend_schema(description= "Returns the user information with his/her joined communities and posts.",
-	tags=["User"])
-	def get(self,req,user_id):
-		try:
-			Requested_User = User.objects.get(pk = user_id)
-		except:
-			return Response({"Success":False, "Error": "No such a User"})
+    serializer_class=[UserSerializer,CommunitySerializer]
+    @extend_schema(description= "Returns the user information with his/her joined communities and posts.",
+    parameters=[OpenApiParameter("user_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+    tags=["User"])
+    def get(self,req):
+        if "user_id" in req.GET:
+            try:
+                Requested_User = User.objects.get(pk = req.GET["user_id"])
+            except:
+                return Response({"Success":False, "Error": "No such a User"})
+        else:
+            Requested_User=req.user
+        user_seriliazed_data = UserSerializer(Requested_User).data
+        del user_seriliazed_data["password"]
+        communities=Requested_User.joined_communities.all()
+        communities=CommunitySerializer(communities,many=True,context={"request":req})
+        user_seriliazed_data["joined_communities"] = communities.data
+        posts=PostSerializer(Requested_User.posts.all(),many=True)
+        user_seriliazed_data["user_posts"] = posts.data
+        return Response({"User": user_seriliazed_data})
 
-		user_seriliazed_data = UserSerializer(Requested_User).data
-		del user_seriliazed_data["password"]
-
-		communities=Requested_User.joined_communities.all()
-		communities=CommunitySerializer(communities,many=True,context={"request":req})
-		user_seriliazed_data["joined_communities"] = communities.data
-
-		posts=PostSerializer(Requested_User.posts.all(),many=True)
-		user_seriliazed_data["user_posts"] = posts.data
-
-		return Response({"User": user_seriliazed_data})
-
-		#return Response({"Success" : False, "Error": "No authentication  or query parameter not  correctly."})
 
 class DeletePost(GenericAPIView):
-	@extend_schema(
-		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
-		request=None, tags=["Posts"],
-		description="If the user is the owner of the post or the moderator of the community, he/she deletes the post with the given post_id",
-	)
+    @extend_schema(
+        parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+        request=None, tags=["Posts"],
+        description="If the user is the owner of the post or the moderator of the community, he/she deletes the post with the given post_id",
+    )
 
-	def post(self, req):
-		if req.user.is_authenticated or "post_id" not in req.GET:
-			post = Post.objects.get(pk=req.GET["post_id"])
-			if req.user.id == post.poster_id or req.user.id == post.community.moderator_id:
-				post.delete()	
-				return Response({"Success" : True})
-			return Response({"Success" : False, "Error": "No Authentication to delete this post"})
+    def post(self, req):
+        if req.user.is_authenticated or "post_id" not in req.GET:
+            post = Post.objects.get(pk=req.GET["post_id"])
+            if req.user.id == post.poster_id or req.user.id == post.community.moderator_id:
+                post.delete()	
+                return Response({"Success" : True})
+            return Response({"Success" : False, "Error": "No Authentication to delete this post"})
 
-		return Response({"Success" : False, "Error" : "No Authentication or missing data"})
+        return Response({"Success" : False, "Error" : "No Authentication or missing data"})
 
 class UpdatePost(GenericAPIView):
     serializer_class=PostSerializer
     @extend_schema(
-		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
-		tags=["Posts"],
-		description="If the user is the owner of the post or the moderator of the community, he/she edits the post with the given post_id",
-	)
+        parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+        tags=["Posts"],
+        description="If the user is the owner of the post or the moderator of the community, he/she edits the post with the given post_id",
+    )
     def post(self,req):
         if req.user.is_authenticated and "post_id" in req.GET:
             try:
@@ -586,8 +585,8 @@ class CreateComment(GenericAPIView):
     serializer_class=CommentFlatSerializer
     @extend_schema(
         tags=["Comment"],
-		description="Endpoint for creating a comment. User must be subscribed to the community that the post belongs."
-	)
+        description="Endpoint for creating a comment. User must be subscribed to the community that the post belongs."
+    )
     def post(self,req):
         if req.user.is_authenticated:
             comment=CommentFlatSerializer(data=req.data)
@@ -608,10 +607,10 @@ class CreateComment(GenericAPIView):
 class DeleteComment(GenericAPIView):
     serializer_class=CommentFlatSerializer
     @extend_schema(
-		parameters=[OpenApiParameter("comment_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
-		request=None,responses=None, tags=["Comment"],
-		description="Endpoint for deleting a comment. Requested user must be the owner or the moderator of the group."
-	)
+        parameters=[OpenApiParameter("comment_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+        request=None,responses=None, tags=["Comment"],
+        description="Endpoint for deleting a comment. Requested user must be the owner or the moderator of the group."
+    )
     def post(self, req):
         if req.user.is_authenticated or "comment_id" not in req.GET:
             comment = Comment.objects.get(pk=req.GET["comment_id"])
@@ -625,11 +624,11 @@ class DeleteComment(GenericAPIView):
 class GetPostData(GenericAPIView):
     serializer_class=PostSerializer
     @extend_schema(
-		parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
-		tags=["Posts"],
+        parameters=[OpenApiParameter("post_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
+        tags=["Posts"],
         responses={"Success":inline_serializer("GetPostDataSuccess",{"Post": PostTemplateSerializer(many=True),"Comments":CommentFlatSerializer(many=True)})},
-		description="Endpoint for getting post data with comments.",
-	)
+        description="Endpoint for getting post data with comments.",
+    )
     def get(self,req):
         if req.user.is_authenticated and "post_id" in req.GET:
             try:
