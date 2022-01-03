@@ -43,6 +43,7 @@ class Register(GenericAPIView):
         if user_serializer.is_valid():
             user=user_serializer.save()
             Token.objects.create(user=user)
+            UserProfile.objects.create(user=user)
             return Response({"Success":True,"Message":"Successfully registered."})
         else:
             return Response({"Success":False,"Message":user_serializer.errors})
@@ -520,9 +521,26 @@ class FilterPosts(GenericAPIView):
             
             return Response({"Success":True,"Posts":posts_to_return})
 
+class UpdateUserProfile(GenericAPIView):
+    serializer_class=[UserProfileSerializer]
+    @extend_schema(description= "Endpoint for updating profile.",
+	tags=["User"])
+    def post(self,req):
+        if req.user.is_authenticated:
+            try:
+                profile=UserProfile.objects.get(pk=req.user)
+            except Exception as e:
+                return Response({"Success":False,"Error":e.__str__()})
+            new_profile=UserProfileSerializer(profile,data=req.data)
+            if new_profile.is_valid():
+                new_profile.save()
+            else:
+                return Response({"Success":False,"Error":new_profile.errors}) 
+        else:
+            return Response({"Success":False,"Error":"No authention"})
 
 class GetUserProfile(GenericAPIView):
-    serializer_class=[UserSerializer,CommunitySerializer]
+    serializer_class=UserProfileSerializer
     @extend_schema(description= "Returns the user information with his/her joined communities and posts.",
     parameters=[OpenApiParameter("user_id", OpenApiTypes.STR, OpenApiParameter.QUERY)],
     tags=["User"])
@@ -534,8 +552,9 @@ class GetUserProfile(GenericAPIView):
                 return Response({"Success":False, "Error": "No such a User"})
         else:
             Requested_User=req.user
-        user_seriliazed_data = UserSerializer(Requested_User).data
-        del user_seriliazed_data["password"]
+        user_seriliazed_data = UserProfileSerializer(Requested_User).data
+        user_seriliazed_data["email"]=req.user.email
+        user_seriliazed_data["username"]=req.user.username
         communities=Requested_User.joined_communities.all()
         communities=CommunitySerializer(communities,many=True,context={"request":req})
         user_seriliazed_data["joined_communities"] = communities.data
@@ -636,8 +655,8 @@ class GetPostData(GenericAPIView):
         if req.user.is_authenticated and "post_id" in req.GET:
             try:
                 post = Post.objects.get(pk=req.GET["post_id"])
-            except:
-                return Response({"Success" : False})
+            except Exception as e:
+                return Response({"Success" : False,"Error": e.__str__()})
             comments=CommentFlatSerializer(post.comments.all(),many=True)
             post=PostSerializer(post)
             return Response({"Post":post.data,"Comments":comments.data})
