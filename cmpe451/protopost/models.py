@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import User
+#from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 import json
 # Create your models here.
@@ -12,6 +13,41 @@ DATA_TYPES = (
         ('selection','Selection'),
         ('video','Video')
     )
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, username, password, **other_fields):
+        if not email: raise ValueError('You must provide an email address in order to register.')
+        if not username: raise ValueError('You must provide a username in order to register.')
+
+        email = self.normalize_email(email) 
+        user = self.model(email=email, username=username, **other_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin):
+
+    username = models.CharField(max_length=50, unique=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    registered_time = models.DateTimeField(auto_now_add=True)
+    profile_picture = models.ImageField(upload_to="images/",blank=True,null=True)
+    email = models.EmailField(unique=True)
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
+
+    def __str__(self):
+        return {
+            "username": self.username,
+            "email" : self.email,
+            "profile_picture": self.profile_picture, 
+            "first_name" : self.first_name,
+            "last_name" : self.last_name,
+            "registered_time": self.registered_time,
+        }
+
 class Community(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50,unique=True)
