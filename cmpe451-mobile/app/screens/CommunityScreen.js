@@ -64,7 +64,6 @@ function CommunityScreen({route, navigation}) {
             }
         })
     }
-
     
     //gives an error with code 403. could not get it to work.
     //presumably, to get it to work we need to pass a header called 'X-CSRFTOKEN'
@@ -104,8 +103,6 @@ function CommunityScreen({route, navigation}) {
         }
     }
 
-
-
     return (
 
         <View style={styles.background}>
@@ -139,7 +136,7 @@ function CommunityScreen({route, navigation}) {
                                 <Text>Create Post Template</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => navigation.navigate("CreatePost", { community: commData["id"] })}
+                                onPress={() => navigation.navigate("CreatePost", { communityData: communData })}
                                 style={styles.button}
                                 disabled={subscriptionStatus ? false : true}>
                                 <Text>Create Post</Text>
@@ -157,8 +154,12 @@ function CommunityScreen({route, navigation}) {
                 </View>
                 <View style={styles.searchContainer}>
                         <TextInput style={styles.textInput}
-                        placeholder="Search Posts in Community by Title"
+                        placeholder="Search Posts"
                         onChangeText={keyword=>filterPosts(keyword,changePosts, commData["id"])}></TextInput>
+                            <TouchableOpacity style={styles.advanced}
+                            onPress={()=>navigation.navigate("AdvancedSearch", {communityData: communData})}>
+                                <Text>Advanced Search</Text>
+                            </TouchableOpacity>
                 </View>
             </View>
             <View style={styles.listContainer}>
@@ -214,9 +215,14 @@ const styles = StyleSheet.create({
         width:"90%",
         alignItems:"center"
     },
-
+    advanced:{
+        backgroundColor: "lightblue",
+        alignItems: "center",
+        justifyContent: "center",
+        padding:15
+    },
     textInput: {
-        width:"100%",
+        width:"50%",
         fontSize: 20,
         borderWidth: 0.7,
         padding: 10,

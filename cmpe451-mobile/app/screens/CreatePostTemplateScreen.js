@@ -13,6 +13,8 @@ function CreatePostTemplateScreen({ route, navigation }) {
   const dateFieldKey = 'date';
   const locationFieldKey = 'location';
   const imageFieldKey = 'image';
+  const numberFieldKey = 'number';
+  const videoFieldKey = 'video';
 
   const addField = fieldType => {
     const _dataFields = [...dataFields];
@@ -32,39 +34,6 @@ function CreatePostTemplateScreen({ route, navigation }) {
     _dataFields[key].key = key;
     setDataFields(_dataFields);
   };
-
-  // api call
-  // const createPostTemplate = async () => {
-
-  //   let values = [];
-  //   for(let i = 0; i<dataFields.length; i++){
-  //     let item = {name: dataFields[i].name, type: dataFields[i].type};
-  //     values.push(item);
-  //   }
-
-  //   console.log(values);
-
-  //   var sendData = { "name": name, "data_field_templates": values };
-  //   var url = "communities/" + String(community) + "/create_post_template";
-  //   const response = await createTemplate(url, sendData);
-
-  //   console.log("aaaaa");
-  //   // success
-  //   if(response["Success"]){
-  //     Alert.alert("Sucess","Template created sucessfully.");
-  //   }
-  //   else{
-  //     console.log(response);
-  //     console.log("xx");
-  //     console.log(response.Error.name);
-  //     console.log("x");
-  //     Alert.alert("Failure",response.Error.name);
-
-  //   }
-  //   console.log("bbbbbbbbbb")
-  //   console.log(response);
-  //   return response;
-  // };
 
   return (
     <View style={styles.background}
@@ -90,13 +59,19 @@ function CreatePostTemplateScreen({ route, navigation }) {
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(textFieldKey)}>
-              <Text style={styles.addFieldText}>Add Text Field</Text>
+              <Text style={styles.addFieldText}>Text Field</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(dateFieldKey)}>
-              <Text style={styles.addFieldText}>Add Date Field</Text>
+              <Text style={styles.addFieldText}>Date Field</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(numberFieldKey)}>
+              <Text style={styles.addFieldText}>Number Field</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -104,13 +79,19 @@ function CreatePostTemplateScreen({ route, navigation }) {
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(locationFieldKey)}>
-              <Text style={styles.addFieldText}>Add Location Field</Text>
+              <Text style={styles.addFieldText}>Location Field</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(imageFieldKey)}>
-              <Text style={styles.addFieldText}>Add Image Field</Text>
+              <Text style={styles.addFieldText}>Image Field</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.addField}
+            onPress={() => addField(videoFieldKey)}>
+              <Text style={styles.addFieldText}>Video Field</Text>
             </TouchableOpacity>
           </View>
         </View>

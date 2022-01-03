@@ -15,21 +15,21 @@ function PostScreen({route, navigation}) {
             {postData["data_fields"].filter(item=>item.type==="text").map((input) => (
                 <View style={styles.textContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Text style={styles.contentText}>{input.content.prop1}</Text>
+                    <Text style={styles.contentText}>{input.content.value}</Text>
                 </View>
             ))}
 
             {postData["data_fields"].filter(item=>item.type==="number").map((input) => (
                 <View style={styles.textContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Text style={styles.contentText}>{input.content.prop1}</Text>
+                    <Text style={styles.contentText}>{input.content.value}</Text>
                 </View>
             ))}
 
             {postData["data_fields"].filter(item=>item.type==="image").map((input) => (
                 <View style={styles.imageContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Image style={styles.contentImage} source={{uri:input.content.prop1}}/>
+                    <Image style={styles.contentImage} source={{uri:input.content.url}}/>
                 </View>
             ))}
 
@@ -51,7 +51,7 @@ function PostScreen({route, navigation}) {
             {postData["data_fields"].filter(item=>item.type==="date").map((input) => (
                 <View style={styles.dateContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
-                    <Text style={styles.contentText}>{isoDateConvert(input.content.prop1)}</Text>
+                    <Text style={styles.contentText}>{isoDateConvert(input.content.value)}</Text>
                 </View>
             ))}
             
@@ -96,6 +96,8 @@ function PostScreen({route, navigation}) {
 
 function isoDateConvert(input){
     const time = new Date(input);
+    console.log(time);
+    console.log("xxxx");
     return time.toDateString();
 }
 
