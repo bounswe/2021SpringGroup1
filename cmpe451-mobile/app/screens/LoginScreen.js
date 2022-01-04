@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, TextInput, Button, Alert} from 'react-native';
-import {axiosInstance} from "../service/axios_client_service";
+import {View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
+import {axiosInstance, set_user_name, set_user_id} from "../service/axios_client_service";
 
 function LoginScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -8,6 +8,9 @@ function LoginScreen({navigation}) {
 
     return (
         <View style={styles.background}>
+            <Text
+                style={styles.titleStyle}
+            >Log in</Text>
             <TextInput
                 autoCapitalize="none"
                 style={styles.textInput}
@@ -22,10 +25,13 @@ function LoginScreen({navigation}) {
                 onChangeText={pass => setPass(pass)}
             />
             <View style={{paddingBottom: 20}}/>
-            <View style={styles.buttonView}>
-                <Button title="Log in"
-                        color="dodgerblue"
-                        onPress={() => checkCredential(name, pass, navigation)}/>
+            <View style={styles.buttonContainer}>
+            <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={() => checkCredential(name, pass, navigation)}
+                >
+                    <Text style={styles.loginText}>LOG IN</Text>
+                </TouchableOpacity>
             </View>
             <View style={{paddingBottom: 200}}/>
         </View>
@@ -41,9 +47,12 @@ async function checkCredential(username, password, navigation) {
     const response = await loginCall(username, password);
     console.log(response);
     if (response["Success"]) {
+        set_user_name(username);
+        set_user_id(5);
+        ///TODO: fix user id
         navigation.navigate("Home");
     } else {
-        Alert.alert("Can not log in.", "Please check your username or password.");
+        Alert.alert("Can not log in.", "Please check your username and password.");
     }
     return true
 }
@@ -74,10 +83,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    title: {
-        fontSize: 20,
-        color: "white"
-    },
+    titleStyle: {
+        fontSize: 30,
+        paddingBottom:30
+    }, 
     textInput: {
         width: "80%",
         height: 50,
@@ -88,11 +97,21 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderColor: "gray"
     },
-    buttonView: {
+    buttonContainer: {
         backgroundColor: "rgb(77, 160, 240)",
         width: '50%',
+        height: 70,
         padding: 10,
     },
+    loginButton: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    loginText: {
+        color: "white",
+        fontSize: 20
+    }
 })
 
 export default LoginScreen;

@@ -1,12 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList, StyleSheet, Button, Image, TextInput} from 'react-native';
+import {Text, View, FlatList, StyleSheet, Button, Image, TextInput, TouchableOpacity,RefreshControl} from 'react-native';
 import {axiosInstance} from "../service/axios_client_service";
 
 function AllCommunitiesScreen({navigation}) {
 
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+      setRefreshing(true);
+      getUserCommunities();
+      setTimeout(() => { setRefreshing(false) }, 2000);
+    }, []);
+
+
+
     console.log("c");
     const [allCommunities, changeCommunities] = useState([]);
-    const [keyword, setKeyword] = React.useState('');
 
     useEffect(() => {
             getUserCommunities();
@@ -32,26 +41,35 @@ function AllCommunitiesScreen({navigation}) {
         <View style={styles.background}>
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Communities</Text>
-                <View>
-                    <TextInput style={styles.textInput}
-                    placeholder="Search Community"
-                    onChangeText={keyword=>setKeyword(keyword)}></TextInput>
-                    <Button
-                    title="Search"
-                    onPress={() => filterComms(keyword,changeCommunities)}/>
+                <View style={styles.searchContainer}>
+                        <TextInput style={styles.textInput}
+                        placeholder="Search Community"
+                        onChangeText={keyword=>filterComms(keyword,changeCommunities)}></TextInput>
                 </View>
-
             </View>
             <View style={styles.listContainer}>
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     data={allCommunities}
+                    style={styles.flatList}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />
+                      }
                     renderItem={({item}) => (
-                        <View style={styles.comms}>
-                            <Image source={{uri: item["community_image_url"]}} style={styles.tinyLogo}/>
-                            <Button title={item["name"]}
-                                    style={styles.item}
-                                    onPress={() => navigation.navigate("Community", {communData: item})}/>
+                        <View style={styles.itemContainer}>
+                            <TouchableOpacity
+                                style={styles.itemButton}
+                                onPress={() => navigation.navigate("Community", {communData: item})}>
+                                <View style={styles.imageContainer}>
+                                    <Image source={{uri: item["community_image_url"]}} style={styles.itemImage}/>
+                                </View>
+                                <View style={styles.textContainer}>
+                                    <Text style={styles.itemText}>{item["name"]}</Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
                     )}
                 />
@@ -83,49 +101,76 @@ async function filterComms(word, changeCommunities) {
 
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: "dodgerblue",
+        backgroundColor: "white",
         flex: 1,
         alignItems: "center"
     },
     titleContainer: {
-        top: 40,
-        alignItems:"center"
+        alignItems:"center",
+        paddingBottom:10,
+        width: "90%"
     },
     title: {
-        fontSize: 20,
-        color: "white"
+        fontSize: 30,
+        color: "black"
     },
-    listContainer: {
-        top: 50,
-        alignItems: "center",
-        backgroundColor: "white",
-        width: "80%",
-        height: "65%"
+    searchContainer:{
+        flexDirection: "row",
+        width:"100%",
+        alignItems:"center"
+    },
 
-    },
-    item: {
-        fontSize: 20,
-        padding: 5
-    },
-    tinyLogo: {
-        width: 35,
-        height: 35,
-    },
-    comms: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 5
-    },
     textInput: {
-        width: 200,
-        height: 50,
-        margin: 10,
+        width:"100%",
         fontSize: 20,
         borderWidth: 0.7,
         padding: 10,
+        marginBottom: 10,
+        marginTop: 10,
         backgroundColor: "white",
-        borderColor: "gray"
-    }
+        borderColor: "gray",
+    },
+
+    listContainer: {
+        alignContent: "center",
+        backgroundColor: "rgb(39, 84, 125)",
+        flex: 1,
+        width:"90%"
+    },
+    itemText: {
+        fontSize:25,
+        color: "white",
+    },
+    itemImage: {
+        width:"100%",
+        height:"100%"
+    },
+    itemButton: {
+        width: "100%",
+        flexDirection: "row"
+    },
+
+    itemContainer: {
+        alignSelf: "center",
+        alignItems:"center",
+        padding: 5,
+        margin: 10,
+        flex:1,
+        width: "90%",
+    },
+    flatList: {
+        width: "100%",    
+    },
+    imageContainer: {
+        flex:3,
+        paddingRight:5
+    },
+    textContainer: {
+        flex:7,
+        alignItems: "flex-start",
+        paddingLeft: 5
+    },
+
 })
 
 export default AllCommunitiesScreen;
