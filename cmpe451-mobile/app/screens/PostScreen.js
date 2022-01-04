@@ -1,12 +1,15 @@
 import React from 'react';
-import {View, Text, StyleSheet,ScrollView, Image} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, Image, Alert} from 'react-native';
 import MapView from 'react-native-maps'
 import { Marker } from 'react-native-maps';
 import { Video, AVPlaybackStatus } from 'expo-av';
 import { WebView } from 'react-native-webview';
+import {IconButton} from "react-native-paper";
+import {axiosInstance} from "../service/axios_client_service";
 
 function PostScreen({route, navigation}) {
     const {postData} = route.params;
+
     const getSelection = (arr) => {
         for (const team in arr) {
             if(arr[team]){
@@ -14,9 +17,34 @@ function PostScreen({route, navigation}) {
             }
         }
     }
+
+
+    const onPressDeletePost = () => {
+        console.log(1)
+        console.log(postData.id)
+        let uri = 'communities/delete_post?post_id=' + postData.id;
+      axiosInstance.post(uri,{}).then(async response => {
+          console.log(2)
+          if (response.status === 200) {
+              if(response.data["Success"]){
+                  Alert.alert("Success!", "Your post is successfully deleted.");
+                  navigation.goBack();
+              }
+          }
+      });
+    };
+
     return (
         <ScrollView style={styles.background}>
+            <View style={{flexDirection: "row"}}>
             <Text style={styles.postTitle}>{postData["title"]}</Text>
+                <IconButton
+                    icon="delete"
+                    size={30}
+                    onPress={onPressDeletePost}
+                />
+            </View>
+
             {postData["data_fields"].filter(item=>item.type==="text").map((input) => (
                 <View style={styles.textContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
