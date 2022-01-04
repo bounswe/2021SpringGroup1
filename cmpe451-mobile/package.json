@@ -33,7 +33,8 @@
     "react-native-select-dropdown": "^1.5.0",
     "react-native-web": "0.17.1",
     "react-native-webview": "11.13.0",
-    "rn-date-picker": "^0.1.0"
+    "rn-date-picker": "^0.1.0",
+    "expo-location": "~13.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

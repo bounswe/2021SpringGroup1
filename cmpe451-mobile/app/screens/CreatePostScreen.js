@@ -1,18 +1,26 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {TextInput, RefreshControl, View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import SelectDropdown from 'react-native-select-dropdown'
 import DatePicker from 'react-native-datepicker';
+import * as Location from 'expo-location';
+import MapView, {
+    Marker
+} from 'react-native-maps';
+import {IconButton} from "react-native-paper";
+
 
 function CreatePostScreen({route, navigation}) {
     const [date, setDate] = useState('2022/01/01');
     const {communityData} = route.params;
-    console.log("communtyData: ",communityData);
     const [title, setTitle] = React.useState("");
     const [templates, setTemplates] = React.useState([]);
     const [templateNames, setTemplateNames] = React.useState([]);
     const [currentTemplate, setCurrentTemplate] = React.useState([]);
     const [currentName, setCurrentName] = React.useState("");
+    const [location, setLocation] = useState({"coords": {"latitude":41.0857609,"longitude":29.0427245}});
+    const [markerLocation, setMarkerLocation] = useState({"coords": {"latitude":41.0857609,"longitude":29.0427245}});
+    const [address, setAddress] = useState("");
 
     const [textDataFields, setTextDataFields] = useState([]);
     const [numberDataFields, setNumberDataFields] = useState([]);
@@ -52,7 +60,6 @@ function CreatePostScreen({route, navigation}) {
         dateText = dateText.replace("/","-");
         dateText = dateText.replace("/","-");
         dateText = dateText + "T00:00:00.000Z";
-        console.log(dateText);
         const _dataFields = [...dateDataFields];
         // _dataFields[key].name = text;
         // _dataFields[key].type = fieldType;
@@ -81,7 +88,9 @@ function CreatePostScreen({route, navigation}) {
           // _dataFields[key].name = text;
           // _dataFields[key].type = fieldType;
           // _dataFields[key].key = key;
-          _dataFields[key].value = value;
+          _dataFields[key].marker = value.marker;
+          _dataFields[key].address = value.address;
+          console.log(_dataFields[key])
           setLocationDataFields(_dataFields);
       }
 
@@ -92,11 +101,23 @@ function CreatePostScreen({route, navigation}) {
     }, []
     );
 
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert("Post Create", "Post Creation Failed");
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        })();
+    }, []);
+
     const getCommunityTemplates = () => {
         let uri = 'communities/' + communityData["id"] + '/list_post_templates';
         axiosInstance.get(uri, {}).then(async response => {
             if (response.status === 200) {
-                //console.log("getting comm posts success!");
                 const template_array = response.data.Post_templates;
                 let temp_names = [];
                 for(let i = 0; i<template_array.length; i++){
@@ -108,6 +129,20 @@ function CreatePostScreen({route, navigation}) {
             }
         })
     };
+
+    const onMapPressed = (e) =>{
+        let loc = {"coords" : {"latitude":41.0857609,"longitude":29.0427245}}
+        loc.coords = e.nativeEvent.coordinate
+        setMarkerLocation(loc)
+        Location.reverseGeocodeAsync(loc.coords).then(res => {
+            let adr = ""
+            res = res[0]
+            console.log(res)
+            adr += res.district + ", " + res.name + ", " + res.postalCode + " " + res.subregion + "/" + res.region + ", " + res.country
+            setAddress(adr)
+            console.log(adr)
+        })
+    }
 
     const getTemplateFields = (fieldName) => {
 
@@ -149,7 +184,7 @@ function CreatePostScreen({route, navigation}) {
               selectionTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], options: currentTemplate[i]["options"] });
           }
           else if (currentTemplate[i]["type"] === "location"){
-              locationTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], url: '' });
+              locationTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"] });
           }
         }
         setTextDataFields(textTemplateFields);
@@ -269,7 +304,6 @@ function CreatePostScreen({route, navigation}) {
                           }}
                           onDateChange={(date) => {
                             setDate(date);
-                            console.log("DATE:", date)
                             updateField(input.type, date, key);
                           }}
                         />
@@ -297,6 +331,58 @@ function CreatePostScreen({route, navigation}) {
                         />
                     </View>
                 ))}
+                {locationDataFields.map((input, key) => (
+                    <View style={styles.textContainer}>
+                        <Text style={styles.contentTitle}>{input.name}</Text>
+                        <View style={{flexDirection: "row"}}>
+                            <TextInput
+                            style={styles.fieldTextInput}
+                            placeholder={'Search for a location'}
+                            onChangeText={text => {
+                                setAddress(text);
+                                //setLocation(Location.geocodeAsync(address))
+                            }}
+                        />
+                            <IconButton
+                                icon="magnify"
+                                size={20}
+                                onPress={() => {
+                                    Location.geocodeAsync(address).then(async loc => {
+                                        console.log(JSON.stringify(loc))
+                                        //setLocation(loc)
+                                    });
+                                }}
+                            />
+                        </View>
+                        <View style={{flexDirection: "row"}}>
+                        <View style={styles.mapStyle}>
+                            <MapView style={styles.map}
+                                     region={{
+                                         latitude:location.coords.latitude,
+                                         longitude:location.coords.longitude,
+                                         latitudeDelta: 0.03,
+                                         longitudeDelta: 0.1}}
+                            onPress={onMapPressed}
+                            >
+                                <Marker coordinate={{
+                                    latitude:markerLocation.coords.latitude,
+                                    longitude:markerLocation.coords.longitude,
+                                    latitudeDelta: 0.01,
+                                    longitudeDelta: 0.1}} title='Marker'/>
+                            </MapView>
+                        </View>
+                            <IconButton
+                                icon="check"
+                                size={20}
+                                onPress={() => {
+                                    let val = {marker: {lat: markerLocation.coords.latitude, lng: markerLocation.coords.longitude}, address: address}
+                                    updateField(input.type, val, key)
+                                }}
+                            />
+                        </View>
+                    </View>
+                ))}
+
 
             </ScrollView>
             <View style= {styles.buttonContainer}>
@@ -310,11 +396,7 @@ function CreatePostScreen({route, navigation}) {
 }
 
 async function createPost(textFields, numberFields, imageFields, dateFields,videoFields,selectionFields, locationFields, postTitle, templateName, commData, templateInfo){
-  // console.log(dataFields);
-  console.log(postTitle);
-  console.log(templateName);
-  console.log(commData);
-  console.log(templateInfo);
+
 
   let id = 0;
   for(let i = 0; i<templateInfo.length; i++){
@@ -323,8 +405,6 @@ async function createPost(textFields, numberFields, imageFields, dateFields,vide
         break;
     }
   }
-  console.log(id);
-  console.log(textFields);
   let postDataFields = [];
   for(let i = 0; i<textFields.length; i++){
     let data = {name: textFields[i]["name"], type: "text", content: {
@@ -363,7 +443,6 @@ async function createPost(textFields, numberFields, imageFields, dateFields,vide
     };
     postDataFields.push(data);
   }
-  ///TODO: add selection and location data here
     for(let i = 0; i<selectionFields.length; i++){
         let data = {name: selectionFields[i]["name"], type: "selection", content: {
                 value: selectionFields[i]["value"]
@@ -373,7 +452,7 @@ async function createPost(textFields, numberFields, imageFields, dateFields,vide
     }
     for(let i = 0; i<locationFields.length; i++){
         let data = {name: locationFields[i]["name"], type: "location", content: {
-                value: locationFields[i]["value"]
+                marker: locationFields[i]["marker"], adrs: locationFields[i]["address"]
             }
         };
         postDataFields.push(data);
@@ -454,6 +533,18 @@ const styles = StyleSheet.create({
     height: 70,
     padding: 10,
   },
+    mapStyle: {
+        width:"90%",
+        height:250
+    },
+    map: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+
 })
 
 export default CreatePostScreen;
