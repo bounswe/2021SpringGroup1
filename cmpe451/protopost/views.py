@@ -423,8 +423,8 @@ class QueryFunctions:
     def selection(content,val,check):
         tests=val.split(',')
         for test in tests:
-            value=content.get(test,None)
-            if value:
+            value=content.get(test,"notexist")
+            if not value=="notexist":
                 if value==check:
                     continue
             return False
@@ -435,8 +435,8 @@ class QueryFunctions:
     def date_between(content,val):
         str_val=content["value"]
         str_dates=val.split(',')
-        value=datetime.datetime(*(str_val.split('-')))
-        dates=[datetime.datetime(*(d.split('-'))) for d in str_dates]
+        value=QueryFunctions.toDate(str_val)
+        dates=list(map(QueryFunctions.toDate,str_dates))
         return dates[0]<value and value<dates[1]
     text_queries={
         "equal": lambda content,val:content["value"].lower()==val.lower(),
