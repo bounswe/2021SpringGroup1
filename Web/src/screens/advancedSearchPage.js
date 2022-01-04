@@ -159,7 +159,7 @@ function AdvancedSearchPage(props) {
                                                 <>
                                                 <Form.Control  as="select" value={field.condition} name="condition" aria-label="Default select example" onChange={e => handleTypeInputChange(e, i)}>
                                                     <option value="0">Select Field Condition</option>
-                                                    <option value={'lg'} >gt</option>
+                                                    <option value={'gt'} >gt</option>
                                                     <option value={'eq'} >eq</option>
                                                     <option value={'lt'} >lt</option>
                                                     <option value={'between'} >between</option>

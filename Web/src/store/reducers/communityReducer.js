@@ -10,7 +10,7 @@ import {
     MY_POSTS,
     LIST_POST_TEMPLATES,
     POST_COMMENT,
-    CREATE_COMMENT
+    CREATE_COMMENT,
     FILTER_RESULT
 } from "../actions/communityAction";
 
@@ -22,7 +22,7 @@ const initialState = {
     communityPosts: [],
     myPosts: [],
     postTemplates: [],
-    postComments: []
+    postComments: [],
     filterData: []
 };
 
