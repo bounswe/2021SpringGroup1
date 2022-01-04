@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {View, Text, Button, StyleSheet,TextInput,ScrollView, Alert, TouchableOpacity} from "react-native";
 import { axiosInstance } from "../service/axios_client_service";
+import {IconButton} from "react-native-paper";
 
 function CreatePostTemplateScreen({ route, navigation }) {
   const { community } = route.params;
@@ -15,6 +16,7 @@ function CreatePostTemplateScreen({ route, navigation }) {
   const imageFieldKey = 'image';
   const numberFieldKey = 'number';
   const videoFieldKey = 'video';
+  const selectionFieldKey = 'selection';
 
   const addField = fieldType => {
     const _dataFields = [...dataFields];
@@ -59,19 +61,19 @@ function CreatePostTemplateScreen({ route, navigation }) {
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(textFieldKey)}>
-              <Text style={styles.addFieldText}>Text Field</Text>
+              <Text style={styles.addFieldText}>Text</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(dateFieldKey)}>
-              <Text style={styles.addFieldText}>Date Field</Text>
+              <Text style={styles.addFieldText}>Date</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(numberFieldKey)}>
-              <Text style={styles.addFieldText}>Number Field</Text>
+              <Text style={styles.addFieldText}>Number</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -79,19 +81,25 @@ function CreatePostTemplateScreen({ route, navigation }) {
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(locationFieldKey)}>
-              <Text style={styles.addFieldText}>Location Field</Text>
+              <Text style={styles.addFieldText}>Location</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(imageFieldKey)}>
-              <Text style={styles.addFieldText}>Image Field</Text>
+              <Text style={styles.addFieldText}>Image</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.buttonView}>
             <TouchableOpacity style={styles.addField}
             onPress={() => addField(videoFieldKey)}>
-              <Text style={styles.addFieldText}>Video Field</Text>
+              <Text style={styles.addFieldText}>Video</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonView}>
+            <TouchableOpacity style={styles.addField}
+                              onPress={() => addField(selectionFieldKey)}>
+              <Text style={styles.addFieldText}>Selection</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -112,9 +120,12 @@ function CreatePostTemplateScreen({ route, navigation }) {
             />
             <TouchableOpacity style={styles.deleteButton}
             onPress={() => deleteField(key)}>
-              <Text style={styles.deleteText}>Click to remove this {input.type} field</Text>
+              <IconButton
+                  icon="close"
+                  size={20}
+                  onPress={() => {deleteField(key)}}
+              />
             </TouchableOpacity>
-            ///TODO: add selection items here
 
           </View>
         ))}
@@ -191,7 +202,8 @@ const styles = StyleSheet.create({
   },
   nameFieldContainer: {
     margin: 3,
-    alignItems: "center"
+    alignItems: "center",
+    flexDirection: "row"
   },
   fieldTextInput: {
     width: "90%",

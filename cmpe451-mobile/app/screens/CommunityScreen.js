@@ -67,7 +67,6 @@ function CommunityScreen({route, navigation}) {
             if (response.status === 200) {
                 //console.log("getting comm posts success!");
                 changePosts(response.data);
-                console.log(communData["community_image_url"]);
             }
         })
     
@@ -241,7 +240,7 @@ function CommunityScreen({route, navigation}) {
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     style={styles.flatList}
-                    data={posts}
+                    data={[...posts].reverse()}
                     ListEmptyComponent={<View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>Looks like this community doesn't have any post.</Text>
                     </View>}
@@ -254,8 +253,8 @@ function CommunityScreen({route, navigation}) {
                     renderItem={({item}) => (
                         <TouchableOpacity style={styles.postContainer}
                                           onPress={() => navigation.navigate("Post", {postData: item})}>
-                            <Text style={styles.postTitle}>Post Title: {item.title}</Text>
-                            <Text style={styles.postInfo}>Posted by: {item.poster_name}</Text>
+                            <Text style={styles.postTitle}>{item.title}</Text>
+                            <Text style={styles.postInfo}>Posted by {item.poster_name}</Text>
                             <Text style={styles.postInfo}>{isoDateConvert(item.created_date)}</Text>
                         </TouchableOpacity>
                     )}
