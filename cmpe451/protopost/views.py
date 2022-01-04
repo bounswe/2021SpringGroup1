@@ -460,8 +460,8 @@ class QueryFunctions:
         "lt": lambda content,val:int(content["value"])<int(val)
         }
     selection_queries={
-        "slctd": lambda content,val:QueryFunctions.selection(content,val,True),
-        "ntslctd": lambda content,val:QueryFunctions.selection(content,val,False)
+        "selected": lambda content,val:QueryFunctions.selection(content,val,True),
+        "notselected": lambda content,val:QueryFunctions.selection(content,val,False)
     }
     queries={"location":location_queries,"date":date_queries,"number":number_queries,"selection":selection_queries,"text":text_queries}
 class FilterPosts(GenericAPIView):
@@ -499,22 +499,23 @@ class FilterPosts(GenericAPIView):
                 </li>\
                 <li>Text\
                     <ul>\
-                        <li>```<name>_en=<str>``` → Returns true for strings ending with ```<str>```.</li>\
-                        <li>```<name>_st=<str>``` → Returns true for strings starting with ```<str>```.</li>\
-                        <li>```<name>_eq=<str>``` → Returns true for strings equal to ```<str>```.</li>\
+                        <li>```<name>_equal=<str>``` → Returns true for strings ending with ```<str>```.</li>\
+                        <li>```<name>_startsWith=<str>``` → Returns true for strings starting with ```<str>```.</li>\
+                        <li>```<name>_endsWith=<str>``` → Returns true for strings equal to ```<str>```.</li>\
+                        <li>```<name>_contains=<str>``` → Returns true for strings containing ```<str>```.</li>\
                     </ul>\
                 </li>\
                 <li>Selection\
                     <ul>\
-                        <li>```<name>_slctd=<s1>,<s2>...``` → Returns true if ```<s1>,<s2>...``` is selected.</li>\
-                        <li>```<name>_ntslctd=<s1>,<s2>...``` → Returns true if ```<s1>,<s2>...``` is not selected.</li>\
+                        <li>```<name>_selected=<s1>,<s2>...``` → Returns true if ```<s1>,<s2>...``` is selected.</li>\
+                        <li>```<name>_notselected=<s1>,<s2>...``` → Returns true if ```<s1>,<s2>...``` is not selected.</li>\
                     </ul>\
                 </li>\
                 <li>Date\
                     <ul>\
                         <li>```<name>_before=<date>``` → Returns true if date is before ```<date>```.</li>\
                         <li>```<name>_after=<date>``` → Returns true if date is after ```<date>```.</li>\
-                        <li>```<name>_btwn=<date1>,<date2>``` → Returns true if date is between ```<date1>,<date2>```.</li>\
+                        <li>```<name>_between=<date1>,<date2>``` → Returns true if date is between ```<date1>,<date2>```.</li>\
                     </ul>\
                 </li>\
             </ul>",
