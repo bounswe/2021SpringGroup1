@@ -598,8 +598,8 @@ class GetUserProfile(GenericAPIView):
         else:
             Requested_User=req.user
         user_seriliazed_data = UserProfileSerializer(Requested_User).data
-        user_seriliazed_data["email"]=req.user.email
-        user_seriliazed_data["username"]=req.user.username
+        user_seriliazed_data["email"]=Requested_User.email
+        user_seriliazed_data["username"]=Requested_User.username
         communities=Requested_User.joined_communities.all()
         communities=CommunitySerializer(communities,many=True,context={"request":req})
         user_seriliazed_data["joined_communities"] = communities.data
