@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, TextInput, Button, Alert, TouchableOpacity} from 'react-native';
-import {axiosInstance} from "../service/axios_client_service";
+import {axiosInstance, set_user_name, set_user_id} from "../service/axios_client_service";
 
 function LoginScreen({navigation}) {
     const [name, setName] = React.useState('');
@@ -47,6 +47,9 @@ async function checkCredential(username, password, navigation) {
     const response = await loginCall(username, password);
     console.log(response);
     if (response["Success"]) {
+        set_user_name(username);
+        set_user_id(5);
+        ///TODO: fix user id
         navigation.navigate("Home");
     } else {
         Alert.alert("Can not log in.", "Please check your username and password.");
