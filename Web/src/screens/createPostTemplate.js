@@ -4,7 +4,7 @@ import { Link, Redirect } from 'react-router-dom';
 import { urls } from 'DATABASE';
 import 'assets/css/home.css';
 import SideBar from 'components/navbar/SideBar';
-import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl,Alert } from 'react-bootstrap';
+import { Card, Col, Container, Form, FormGroup, FormLabel, ListGroup, ListGroupItem, Row, Button, FormControl, Alert } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { createTemplate, getCommunityData, listCommunityPosts, subscribeCommunity } from 'store/actions/communityAction';
@@ -24,9 +24,9 @@ function CreatePostTemplate(props) {
     const { communityData } = useSelector(state => state.community)
     // console.log('communityData: ', communityData?.Community);
 
-    const [isCreated,setIsCreated]= useState(false);
-    const [isSuccessful,setIsSuccessful]= useState(false);
-    const [alertMessage,setAlertMessage]= useState('');
+    const [isCreated, setIsCreated] = useState(false);
+    const [isSuccessful, setIsSuccessful] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
 
 
     const handleCommunityData = () => {
@@ -42,16 +42,26 @@ function CreatePostTemplate(props) {
         e.preventDefault();
         let values = [];
         for (let i = 0; i < dataFields.length; i++) {
-            let item = { name: dataFields[i].name, type: dataFields[i].type };
+            let item = {};
+            let opts = [];
+            if (dataFields[i].type == "selection") {
+                //var trimmed = dataFields[i].options.replace(/\s+/g, '');
+                opts = dataFields[i].options.split(",");
+                for(let j =0; j < opts.length; j++){
+                    opts[j] = opts[j].trim();
+                }
+                console.log(opts)
+            }
+            item = { name: dataFields[i].name, type: dataFields[i].type, options: opts };
             values.push(item);
         }
         console.log("values:", values);
         var sendData = { "name": templateName, "data_field_templates": values };
         console.log("sendData:", sendData);
-        const response = await dispatch(createTemplate(sendData,id));
+        const response = await dispatch(createTemplate(sendData, id));
         setIsSuccessful(response.Success);
-        setAlertMessage(response.Success? "Post template created successfully.":response.Error.name);
-        setIsCreated(true); 
+        setAlertMessage(response.Success ? "Post template created successfully." : response.Error.name);
+        setIsCreated(true);
         console.log(response);
     }
 
@@ -61,6 +71,7 @@ function CreatePostTemplate(props) {
         const list = [...dataFields];
         list[index][name] = value;
         setDataFields(list);
+        console.log(dataFields);
     };
     // handle click event of the Remove button
     const handleRemoveClick = (index) => {
@@ -71,20 +82,21 @@ function CreatePostTemplate(props) {
 
     // handle click event of the Add button
     const handleAddClick = () => {
-        setDataFields([...dataFields, { type: "", name: "" }]);
+        setDataFields([...dataFields, { type: "", name: "", options: "" }]);
     };
 
-    const returnAlert = (variant,message) => {
+    const returnAlert = (variant, message) => {
         if (isCreated) {
-        return(
-          <Alert variant={variant}>
-            <Alert.Heading>{isSuccessful? "Success!":"Error!"}</Alert.Heading>
-            <p>{message}</p>
-          </Alert>
-    
-        );
+            return (
+                <Alert variant={variant}>
+                    <Alert.Heading>{isSuccessful ? "Success!" : "Error!"}</Alert.Heading>
+                    <p>{message}</p>
+                </Alert>
+
+            );
         }
-      }
+    }
+
     return (
         <>
             <div>
@@ -116,19 +128,29 @@ function CreatePostTemplate(props) {
                         return (
                             <div key={i}>
                                 <Row>
-                                    <Col>
+                                    <Col sm={3}>
                                         <Form.Control style={{ margin: "10px" }} as="select" value={field.type} name="type" aria-label="Default select example" onChange={e => handleInputChange(e, i)}>
                                             <option value="0">Select Field Type</option>
                                             <option value="text">Text</option>
                                             <option value="image">Image</option>
                                             <option value="location">Location</option>
                                             <option value="date">Date</option>
+                                            <option value="number">Number</option>
+                                            <option value="selection">Selection</option>
+                                            <option value="video">Video</option>
                                         </Form.Control>
                                     </Col>
-                                    <Col style={{ margin: "10px" }}>
+                                    <Col sm={3} style={{ margin: "10px" }}>
                                         <FormControl placeholder="Enter Field Name" value={field.name} type="text" name="name" onChange={e => handleInputChange(e, i)} >
                                         </FormControl>
                                     </Col>
+                                    {field.type == "selection"
+                                        &&
+                                        <Col sm={6} style={{ margin: "10px" }}>
+                                            <FormControl placeholder="Please enter the options separated by commas." value={field.options} type="text" name="options" onChange={e => handleInputChange(e, i)} >
+                                            </FormControl>
+                                        </Col>
+                                    }
                                     <Col style={{ margin: "10px" }}>
                                         {dataFields.length !== 1 && <Button variant="danger" onClick={() => handleRemoveClick(i)}>Remove</Button>}
                                     </Col>
@@ -146,12 +168,12 @@ function CreatePostTemplate(props) {
                         </Button>
                     </FormGroup>
 
-                    {isCreated && returnAlert(isSuccessful? "success":"danger",alertMessage)} 
+                    {isCreated && returnAlert(isSuccessful ? "success" : "danger", alertMessage)}
 
                 </Form>
             </Container>
 
-            <SideCard props={props} communityData={communityData} handleCommunityData={handleCommunityData}/>
+            <SideCard props={props} communityData={communityData} handleCommunityData={handleCommunityData} />
 
         </>
     );

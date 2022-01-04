@@ -16,6 +16,9 @@ import MyCommunitiesPage from 'screens/myCommunitiesPage';
 import AllCommunitiesPage from 'screens/allCommunitiesPage';
 import CommunityPage from 'screens/communityPage';
 import createCommunity from 'screens/createCommunity';
+import AdvancedSearchPage from 'screens/advancedSearchPage';
+import ProfilePage from 'screens/user/profilePage';
+import CommentPage from 'screens/commentPage';
 import { isEmpty } from 'utils/methods';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGIN } from 'store/actions/authAction';
@@ -47,7 +50,10 @@ const Navigation = (props) => {
   }
 
   var ROUTES = <Switch>
-    <Route key={idd++} exact path={urls.home} component={home} />
+    <Route key={idd++} exact path={urls.profile} component={ProfilePage} />
+    {/* <Route key={idd++} exact path={urls.auth} component={home} /> */}
+    <Route key={idd++} exact path={urls.advancedSearchPage} component={AdvancedSearchPage} />
+    <Route key={idd++} exact path={urls.commentPage} component={CommentPage} />
     <Route key={idd++} exact path={urls.bootstrap} component={bootstrap} />
     <Route key={idd++} exact path={urls.landingPage} component={landingPage} />
     <Route key={idd++} exact path={urls.createPostTemplate} component={CreatePostTemplate} />
@@ -57,8 +63,8 @@ const Navigation = (props) => {
     <Route key={idd++} exact path={urls.myCommunities} component={MyCommunitiesPage} />
     <Route key={idd++} exact path={urls.allCommunities} component={AllCommunitiesPage} />
     <Route key={idd++} exact path={urls.community} component={CommunityPage} />
+    <Route key={idd++} exact path={urls.home} component={home} />
 
-    <Route key={idd++} exact path='/' component={home} />
   </Switch>
 
   return (

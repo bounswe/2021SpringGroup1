@@ -4,9 +4,10 @@ const URL = "http://localhost:" + PORT;
 export const urls = {
 
     //REACT
+    'auth': "/auth",
     'home': "/",
     'bootstrap': "/bootstrap",
-    'profile': "/profile",
+    'profile': "/profile/:id",
     'landingPage': "/landingPage",
     'createPostTemplate': "/community/createPostTemplate/:id",
     'createPostPage': "/community/createPostPage/:id",
@@ -14,7 +15,8 @@ export const urls = {
     'myPosts': "/myPosts",
     'allCommunities':"/allCommunities",
     'myCommunities':"/myCommunities",
-    'community':"/community/:id",
+    'advancedSearchPage':"/community/advancedSearchPage/:id",
+    'commentPage':"/community/:idd/post/:id",
     //SPRINGBOOT
     'registration': URL + "/registration",
     'login': URL + "/login",

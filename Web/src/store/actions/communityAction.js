@@ -15,9 +15,9 @@ export const GET_COMMUNITY_DATA = "GET_COMMUNITY_DATA";
 export const LIST_COMMUNITY_POSTS = "LIST_COMMUNITY_POSTS";
 export const MY_POSTS = "MY_POSTS";
 export const LIST_POST_TEMPLATES = "LIST_POST_TEMPLATES";
-
-
-let token = '641895a64fcaf3dad5773d36725e0a9c722adc88';
+export const POST_COMMENT = "POST_COMMENT";
+export const CREATE_COMMENT = "CREATE_COMMENT";
+export const FILTER_RESULT = "FILTER_RESULT";
 
 
 export const createCommunity = data => {
@@ -61,7 +61,7 @@ export const joinCommunity = data => {
                 //   withCredentials: true,
             });
             const responseData = response.data;
-            
+
             dispatch({
                 type: JOIN_COMMUNITY,
                 data: responseData
@@ -145,7 +145,7 @@ export const getMyCommunities = (data) => {
             const responseData = response.data;
             dispatch({
                 type: GET_MY_COMMUNITIES,
-                data: {"Communities":responseData}
+                data: { "Communities": responseData }
             });
         } catch (error) {
             // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
@@ -169,7 +169,6 @@ export const getCommunityData = (id) => {
                 //   withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: GET_COMMUNITY_DATA,
                 data: responseData
@@ -182,6 +181,36 @@ export const getCommunityData = (id) => {
 };
 
 //TODO getCommunityData
+export const filterPostsRedux = (communityId, params) => {
+    return async (dispatch, getState) => {
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'GET',
+                url: ROOT_URL + '/communities/' + communityId + '/filter_posts',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: params,
+                //   withCredentials: true,
+            });
+            const responseData = response.data;
+            dispatch({
+                type: FILTER_RESULT,
+                data: responseData
+            });
+            return true;
+        } catch (error) {
+            return false;
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
+
+
+
+//TODO getCommunityData
 export const listCommunityPosts = (id) => {
     return async (dispatch, getState) => {
         let { token } = getState().auth;
@@ -191,12 +220,11 @@ export const listCommunityPosts = (id) => {
             const response = await axios({
                 method: 'GET',
                 url: ROOT_URL + '/communities/' + id + '/list_community_posts',//PRE_LOGIN_EMAIL_REQUEST,
-                // headers: API_HEADERS_UNAUTHORIZED,
+                headers: API_HEADERS_BEARER_TOKEN(token),
                 params: { community_id: id },
                 //   withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: LIST_COMMUNITY_POSTS,
                 data: responseData
@@ -252,7 +280,6 @@ export const getMyPosts = () => {
                 withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: MY_POSTS,
                 data: responseData
@@ -279,7 +306,6 @@ export const checkSubscribeCommunity = (id) => {
                 // withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: MY_POSTS,
                 data: responseData
@@ -311,7 +337,6 @@ export const subscribeCommunity = (id, isJoined) => {
                 // withCredentials: true,
             });
             const responseData = response.data;
-            console.log('getCommunityData: responseData: ', responseData);
             dispatch({
                 type: MY_POSTS,
                 data: responseData
@@ -375,3 +400,86 @@ export const listPostTemplates = (id) => {
         }
     }
 };
+
+//TODO getCommunityData
+export const getPostComments = (id) => {
+    return async (dispatch, getState) => {
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'GET',
+                url: ROOT_URL + '/communities/get_post_data',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: { post_id: id },
+                // data: formData,
+                withCredentials: true,
+            });
+            const responseData = response.data;
+            console.log('get_post_data: responseData: ', responseData);
+            dispatch({
+                type: POST_COMMENT,
+                data: responseData
+            });
+        } catch (error) {
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
+
+
+//TODO getCommunityData
+export const sendCommentBackend = (data) => {
+
+    return async (dispatch, getState) => {
+        console.log("req: ", data);
+
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'POST',
+                url: ROOT_URL + '/communities/create_comment',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+               // params: data,
+                data: formData,
+                //withCredentials: true,
+            });
+            const responseData = response.data;
+            console.log('create_post: responseData: ', responseData);
+            dispatch({
+                type: CREATE_COMMENT,
+                data: responseData
+            });
+        }
+        catch (error) {
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
+export const deletePost = (id) => {
+    return async (dispatch, getState) => {
+        let { token } = getState().auth;
+        if (isEmpty(token)) return;
+        console.log('data: token, ', id, token);
+        // const formData = FORM_DATA_TEXT(data);
+        try {
+            const response = await axios({
+                method: 'POST',
+                url: ROOT_URL + '/communities/delete_post',//PRE_LOGIN_EMAIL_REQUEST,
+                headers: API_HEADERS_BEARER_TOKEN(token),
+                params: id,
+                withCredentials: true,
+            });
+            const responseData = response.data;
+        } catch (error) {
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
+

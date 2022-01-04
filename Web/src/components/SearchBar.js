@@ -22,6 +22,7 @@ export default function SearchBar({setFunction}) {
   return (
     <SearchField  placeholder="Search..."
     onSearchClick={onSearchClick}
+    onEnter={onSearchClick}
     classNames="test-class">
    
   </SearchField>

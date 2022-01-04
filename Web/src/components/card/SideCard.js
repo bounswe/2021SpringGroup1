@@ -6,7 +6,7 @@ import 'assets/css/home.css';
 import { Card, ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import { useHistory } from "react-router-dom";
 import { useDispatch } from 'react-redux';
-import { subscribeCommunity } from 'store/actions/communityAction';
+import { FILTER_RESULT, subscribeCommunity } from 'store/actions/communityAction';
 
 export default function SideCard({ props, communityData,handleCommunityData }) {
     const history = useHistory();
@@ -40,6 +40,15 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         alignItems: 'center',
                         justifyContent: 'center',
                         backgroundColor:"cornsilk"
+
+                    }}>
+                        <Button onClick={() => history.push('/community/advancedSearchPage/' + communityData?.Community?.id)} variant="success">Advanced Search</Button>{' '}
+                    </ListGroupItem>
+                    <ListGroupItem style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor:"cornsilk"
                     }}>
                         <Button onClick={e => subscribeCall(e, communityData?.Community?.id, communityData?.Community?.isJoined)}
                             variant={communityData?.Community?.isJoined ? 'danger' : 'success'}>
@@ -53,7 +62,9 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         backgroundColor:"cornsilk"
 
                     }}>
-                        <Button onClick={() => history.push('/community/' + props.match.params.id)} variant="success">Feed Page</Button>{' '}
+                        <Button onClick={() => {
+                            history.push('/community/' + communityData?.Community?.id)
+                            }} variant="success">Feed Page</Button>{' '}
                     </ListGroupItem>
                     {communityData?.Community?.isJoined &&
                     <ListGroupItem style={{
@@ -63,7 +74,7 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         backgroundColor:"cornsilk"
 
                     }}>
-                        <Button onClick={() => history.push('/community/createPostPage/' + props.match.params.id)} variant="success">Create Post</Button>{' '}
+                        <Button onClick={() => history.push('/community/createPostPage/' + communityData?.Community?.id)} variant="success">Create Post</Button>{' '}
                     </ListGroupItem>}
                     {!communityData?.Community?.isJoined &&
                     <ListGroupItem style={{
@@ -72,7 +83,7 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         justifyContent: 'center',
                         backgroundColor:"cornsilk"
                     }}>
-                        <Button onClick={() => history.push('/community/createPostPage/' + props.match.params.id)} variant="secondary" disabled>Create Post</Button>{' '}
+                        <Button onClick={() => history.push('/community/createPostPage/' + communityData?.Community?.id)} variant="secondary" disabled>Create Post</Button>{' '}
                     </ListGroupItem>}
                     {communityData?.Community?.isJoined &&
                     <ListGroupItem style={{
@@ -81,7 +92,7 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         justifyContent: 'center',
                         backgroundColor:"cornsilk"
                     }}>
-                        <Button onClick={() => history.push('/community/createPostTemplate/' + props.match.params.id)} variant="success">Create Post Template</Button>{' '}
+                        <Button onClick={() => history.push('/community/createPostTemplate/' + communityData?.Community?.id)} variant="success">Create Post Template</Button>{' '}
                     </ListGroupItem>}
                     {!communityData?.Community?.isJoined &&
                     <ListGroupItem style={{
@@ -90,7 +101,7 @@ export default function SideCard({ props, communityData,handleCommunityData }) {
                         justifyContent: 'center',
                         backgroundColor:"cornsilk"
                     }}>
-                        <Button onClick={() => history.push('/community/createPostTemplate/' + props.match.params.id)} variant="secondary" disabled>Create Post Template</Button>{' '}
+                        <Button onClick={() => history.push('/community/createPostTemplate/' + communityData?.Community?.id)} variant="secondary" disabled>Create Post Template</Button>{' '}
                     </ListGroupItem>}
                 </ListGroup>
             </Card>
