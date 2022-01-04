@@ -62,6 +62,19 @@ class CommunityTestCase(TestCase):
         community_names=[c["name"] for c in response_dict["Communities"]]
         self.assertListEqual(["JohnCom","JackCom"],community_names)
     
+    def test_get_community_data(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/communities/1/get_community_data")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["Community"]["id"], 1)
+
+    def test_search_communities(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/search_communities?text=com")
+
+        self.assertEqual(response.status_code, 200)
+
 class PostTemplateTestCase(TestCase):
     fixtures = ['test_db.json']
     def setUp(self):
@@ -105,7 +118,7 @@ class PostTemplateTestCase(TestCase):
         "name": "JackTemplate",
         "data_field_templates": [{"name": "JackText","type": "text"}
         ]})
-        response=self.client.get(f"/api/v1/protopost/communities/2/list_post_templates")
+        response=self.client.get("/api/v1/protopost/communities/2/list_post_templates")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict["Post_templates"][0]["name"],"JackTemp")
 
@@ -160,9 +173,24 @@ class PostTestCase(TestCase):
     
     def test_list_community_posts(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
-        response=self.client.get(f"/api/v1/protopost/communities/2/list_community_posts")
+        response=self.client.get("/api/v1/protopost/communities/2/list_community_posts")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict[0]["title"],"JackPost")
+
+    def test_get_post_data(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.get("/api/v1/protopost/communities/get_post_data?post_id=1")
+        self.assertEqual(1,response.data["Post"]["id"])
+
+    def test_user_delete_post(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.post("/api/v1/protopost/communities/delete_post?post_id=1")
+        self.assertEqual(response.status_code, 200)
+
+    def test_search_posts_in_community(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.get("/api/v1/protopost/communities/1/search_posts_in_community?community_id=1&text=a")
+        self.assertEqual(response.status_code, 200)
 
 class FilterTestCase(TestCase):
     fixtures = ['test_db.json']
@@ -180,110 +208,55 @@ class FilterTestCase(TestCase):
         }).content)["Token"]
     def test_filter_by_text(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
-        response=self.client.get(f"/api/v1/protopost/communities/2/filter_posts?post_template_id=3&JackText_startsWith=str")
+        response=self.client.get("/api/v1/protopost/communities/2/filter_posts?post_template_id=3&JackText_startsWith=str")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict["Posts"][0]["title"],"JackPost")
-        response=self.client.get(f"/api/v1/protopost/communities/2/filter_posts?post_template_id=3&JackText_contains=tra")
+        response=self.client.get("/api/v1/protopost/communities/2/filter_posts?post_template_id=3&JackText_contains=tra")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict["Posts"][0]["title"],"JackPost")
     def test_filter_by_number(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
-        response=self.client.get(f"/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_lt=6")
+        response=self.client.get("/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_lt=6")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict["Posts"][0]["title"],"Below number")
-        response=self.client.get(f"/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_eq=6")
+        response=self.client.get("/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_eq=6")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict["Posts"][0]["title"],"Equal number")
-        response=self.client.get(f"/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_gt=6")
+        response=self.client.get("/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_gt=6")
         response_dict = json.loads(json.dumps(response.data))
         self.assertEqual(response_dict["Posts"][0]["title"],"Above number")
         
-class GetUserHomeFeed(TestCase):
+class UserTestCase(TestCase):
+    fixtures = ['test_db.json']
     def setUp(self):
-        self.client=APIClient()
-        self.client.post("/api/v1/protopost/register",
-        {"username": "John", "email": "john@gmail.com", "password": "123abc"})
-        
+        self.client=APIClient()    
         self.john_token=json.loads(self.client.post("/api/v1/protopost/login",
-        {"username": "John", "password": "123abc"}).content)["Token"]
-        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        { "username": "John", "password": "123abc" }).content)["Token"]
 
-        response=self.client.post("/api/v1/protopost/create_community",
-        {"name": "John's Community", "description": "Some description.","community_image_url": "string"})
-        self.john_comm=response.data["Community"]["id"]
-        
-
-        request_body=json.dumps({
-            "name": "JohnTemplate",
-            "data_field_templates": [{"name": "JohnText","type": "text"}]})
-        response = self.client.post(f"/api/v1/protopost/communities/{self.john_comm}/create_post_template",data=request_body,content_type='application/json')
-        self.john_post_template_id = response.data["PostTemplate"]["id"]
-
-        counter = 1
-        request_body=json.dumps({
-                "title": f"John's Post {counter}",
-                "post_template": self.john_post_template_id,
-                "data_fields": [
-                    {
-                    "name": "JohnText",
-                    "type": "text",
-                    "content": {
-                        "additionalProp1": "Hello Protopost !",
-                        "additionalProp2": "I am a new member of this app.",
-                    }
-                    }
-                ]
-                })
-        response = self.client.post(f"/api/v1/protopost/communities/{self.john_comm}/create_post", data=request_body,content_type='application/json')
-
-        counter += 1
-        response = self.client.post(f"/api/v1/protopost/communities/{self.john_comm}/create_post", data=request_body,content_type='application/json') 
-
-    def test_Get_Home_Feed(self):
+    def test_get_Home_Feed(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
         response=self.client.get("/api/v1/protopost/get_user_home_feed") 
-     
-        response_dic = json.loads(json.dumps(response.data))
-        for element in response_dic:
-            del element["created_date"]
 
-        actual_result = [
-                            {
-                                "poster_name" : "John",
-                                "id": 2,
-                                "poster": 1,
-                                "community": 1,
-                                "title": "John's Post 1",
-                                "post_template": 1,
-                                "data_fields": [
-                                    {
-                                        "name": "JohnText",
-                                        "type": "text",
-                                        "content": {
-                                            "additionalProp1": "Hello Protopost !",
-                                            "additionalProp2": "I am a new member of this app."
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "poster_name" : "John",
-                                "id": 1,
-                                "poster": 1,
-                                "community": 1,
-                                "title": "John's Post 1",
-                                "post_template": 1,
-                                "data_fields": [
-                                    {
-                                        "name": "JohnText",
-                                        "type": "text",
-                                        "content": {
-                                            "additionalProp1": "Hello Protopost !",
-                                            "additionalProp2": "I am a new member of this app."
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
+        self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(actual_result, response_dic)
+    def test_get_user_profile(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/get_user_profile?user_id=1") 
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["User"]["username"], "John")
+
+    def test_get_user_created_posts(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/get_user_created_posts") 
+        post_owners=[c["poster_name"] for c in response.data]
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertListEqual(["John","John","John","John"], post_owners)
+
+    def test_get_user_subscription(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/communities/1/user_subscription") 
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["Success"], True)
