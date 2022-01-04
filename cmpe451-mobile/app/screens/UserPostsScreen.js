@@ -43,7 +43,7 @@ function UserPostsScreen({navigation}) {
                 <FlatList
                     //keyExtractor={(item) => item.id}
                     style={styles.flatList}
-                    data={userPosts}
+                    data={[...userPosts].reverse()}
                     ListEmptyComponent={
                     <View style={styles.emptyContainer}>
                         <Text style={styles.emptyText}>Looks like you didn't post anything yet.</Text>
@@ -57,10 +57,10 @@ function UserPostsScreen({navigation}) {
                     renderItem={({item}) => (
                         <TouchableOpacity style={styles.postContainer}
                             onPress={() => navigation.navigate("Post",{postData: item})}>
-                            <Text style={styles.postTitle}>Post Title: {item.title}</Text>
-                            <Text style={styles.postComm}>Community: {item.community_name}</Text>
+                            <Text style={styles.postTitle}>{item.title}</Text>
+                            <Text style={styles.postComm}>Posted in {item.community_name}</Text>
 
-                            <Text style={styles.postInfo}>Posted by: {item.poster_name}</Text>
+                            <Text style={styles.postInfo}>Posted by {item.poster_name}</Text>
                             <Text style={styles.postInfo}>{isoDateConvert(item.created_date)}</Text>
                         </TouchableOpacity>
                     )}
