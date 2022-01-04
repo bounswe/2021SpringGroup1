@@ -14,6 +14,7 @@ import CreatePostScreen from './app/screens/CreatePostScreen';
 import AdvancedSearchScreen from './app/screens/AdvancedSearchScreen';
 import ProfileScreen from "./app/screens/ProfileScreen";
 import EditProfileScreen from "./app/screens/EditProfileScreen";
+import LocationPickerScreen from "./app/screens/LocationPickerScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -65,6 +66,10 @@ export default function App() {
         <Stack.Screen
             name="EditProfile"
             component={EditProfileScreen}
+        />
+        <Stack.Screen
+            name="LocationPicker"
+            component={LocationPickerScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
+import {Overlay} from 'react-native-elements';
 import {TextInput, RefreshControl, View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert} from "react-native";
 import {axiosInstance} from "../service/axios_client_service";
 import SelectDropdown from 'react-native-select-dropdown'
@@ -8,6 +9,7 @@ import MapView, {
     Marker
 } from 'react-native-maps';
 import {IconButton} from "react-native-paper";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 
 function CreatePostScreen({route, navigation}) {
@@ -21,6 +23,11 @@ function CreatePostScreen({route, navigation}) {
     const [location, setLocation] = useState({"coords": {"latitude":41.0857609,"longitude":29.0427245}});
     const [markerLocation, setMarkerLocation] = useState({"coords": {"latitude":41.0857609,"longitude":29.0427245}});
     const [address, setAddress] = useState("");
+    const [visible, setVisible] = useState(false);
+
+    const toggleOverlay = () => {
+        setVisible(!visible);
+    };
 
     const [textDataFields, setTextDataFields] = useState([]);
     const [numberDataFields, setNumberDataFields] = useState([]);
@@ -341,23 +348,23 @@ function CreatePostScreen({route, navigation}) {
                     <View style={styles.textContainer}>
                         <Text style={styles.contentTitle}>{input.name}</Text>
                         <View style={{flexDirection: "row"}}>
-                            <TextInput
-                            style={styles.fieldTextInput}
-                            placeholder={'Search for a location'}
-                            onChangeText={text => {
-                                setAddress(text);
-                                //setLocation(Location.geocodeAsync(address))
-                            }}
-                        />
+                            <Overlay isVisible={visible} onBackdropPress={toggleOverlay} style={styles.overlay}>
+                            <GooglePlacesAutocomplete
+                                placeholder='Search'
+                                onPress={(data, details = null) => {
+                                    // 'details' is provided when fetchDetails = true
+                                    console.log(data, details);
+                                }}
+                                query={{
+                                    key: 'AIzaSyCf_p-OgSi77VGJ4vZGd56vDp4ni3SNMLM',
+                                    language: 'en',
+                                }}
+                            />
+                            </Overlay>
                             <IconButton
                                 icon="magnify"
                                 size={20}
-                                onPress={() => {
-                                    Location.geocodeAsync(address).then(async loc => {
-                                        console.log(JSON.stringify(loc))
-                                        //setLocation(loc)
-                                    });
-                                }}
+                                onPress={toggleOverlay}
                             />
                         </View>
                         <View style={{flexDirection: "row"}}>
@@ -550,6 +557,10 @@ const styles = StyleSheet.create({
         right: 0,
         bottom: 0,
     },
+    overlay:{
+        width:200,
+        height:200
+    }
 
 })
 
