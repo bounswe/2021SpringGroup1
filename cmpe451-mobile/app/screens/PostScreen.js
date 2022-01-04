@@ -7,8 +7,13 @@ import { WebView } from 'react-native-webview';
 
 function PostScreen({route, navigation}) {
     const {postData} = route.params;
-    console.log("asdasdasdasdas");
-    console.log(postData);
+    const getSelection = (arr) => {
+        for (const team in arr) {
+            if(arr[team]){
+                return team
+            }
+        }
+    }
     return (
         <ScrollView style={styles.background}>
             <Text style={styles.postTitle}>{postData["title"]}</Text>
@@ -54,7 +59,13 @@ function PostScreen({route, navigation}) {
                     <Text style={styles.contentText}>{isoDateConvert(input.content.value)}</Text>
                 </View>
             ))}
-            
+            {postData["data_fields"].filter(item=>item.type==="selection").map((input) => (
+                <View style={styles.textContainer}>
+                    <Text style={styles.contentTitle}>{input.name}</Text>
+                    <Text style={styles.contentText}>{getSelection(input.content.value)}</Text>
+
+                </View>
+            ))}
             {postData["data_fields"].filter(item=>item.type==="location").map((input) => (
                 <View style={styles.dateContainer}>
                     <Text style={styles.contentTitle}>{input.name}</Text>
@@ -96,8 +107,6 @@ function PostScreen({route, navigation}) {
 
 function isoDateConvert(input){
     const time = new Date(input);
-    console.log(time);
-    console.log("xxxx");
     return time.toDateString();
 }
 

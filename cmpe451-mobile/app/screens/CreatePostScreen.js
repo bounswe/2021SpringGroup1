@@ -316,7 +316,13 @@ function CreatePostScreen({route, navigation}) {
                             style={styles.dropdown}
                             data={input.options}
                             onSelect={(selectedItem, index) => {
-                                updateField(input.type, selectedItem, key)
+                                let arr = {}
+                                for (var i = 0; i < input.options.length; i++) {
+                                    arr[input.options[i]] = false
+                                }
+                                arr[selectedItem] = true;
+                                console.log(arr)
+                                updateField(input.type, arr, key)
                             }}
                             buttonTextAfterSelection={(selectedItem, index) => {
                                 // text represented after item is selected

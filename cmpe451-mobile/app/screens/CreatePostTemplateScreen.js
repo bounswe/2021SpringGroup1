@@ -114,6 +114,7 @@ function CreatePostTemplateScreen({ route, navigation }) {
             onPress={() => deleteField(key)}>
               <Text style={styles.deleteText}>Click to remove this {input.type} field</Text>
             </TouchableOpacity>
+            ///TODO: add selection items here
 
           </View>
         ))}
