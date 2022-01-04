@@ -9,6 +9,8 @@ import {
     LIST_COMMUNITY_POSTS,
     MY_POSTS,
     LIST_POST_TEMPLATES,
+    POST_COMMENT,
+    CREATE_COMMENT
     FILTER_RESULT
 } from "../actions/communityAction";
 
@@ -20,6 +22,7 @@ const initialState = {
     communityPosts: [],
     myPosts: [],
     postTemplates: [],
+    postComments: []
     filterData: []
 };
 
@@ -82,6 +85,15 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 postTemplates: action.data
+            }
+        case POST_COMMENT:
+            return {
+                ...state,
+                postComments: action.data
+            }
+        case CREATE_COMMENT:
+            return {
+                ...state,
             }
         default:
             return state;

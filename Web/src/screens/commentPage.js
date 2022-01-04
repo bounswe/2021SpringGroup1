@@ -9,94 +9,102 @@ import MaterialCard from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Comment from 'components/comment';
 import CommentForm from 'components/commentForm';
+import { getPostComments, sendCommentBackend } from 'store/actions/communityAction';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Comments = (post) => {
-    // console.log(post);
+    const [isLoaded, setIsLoaded] = useState(false);
     var tek_post = post["location"]["state"]["post"];
     console.log(tek_post);
+    const dispatch = useDispatch();
+    const { postComments } = useSelector(state => state.community)
+    console.log('postComments: ', postComments);
 
-    var comments = [
-        { username: "gktpgktp", body: "hoşgeldin deneme", createdAt: new Date("01.01.2022 01:40:21").toLocaleString('tr-TR'), parentId: null, avatar: "", id: 0, userId: tek_post["poster"] },
-        { username: "gktpgktp", body: "hoşgeldin deneme", createdAt: new Date("01.01.2022 02:40:21").toLocaleString('tr-TR'), parentId: null, avatar: "", id: 1, userId: tek_post["poster"] },
-        { username: "gktpgktp", body: "hoşgeldin deneme", createdAt: new Date("02.01.2022 03:40:21").toLocaleString('tr-TR'), parentId: null, avatar: "", id: 2, userId: tek_post["poster"] },
-        { username: "gktpgktp", body: "hoşgeldin deneme", createdAt: new Date("02.01.2022 04:40:21").toLocaleString('tr-TR'), parentId: 0, avatar: "", id: 3, userId: tek_post["poster"] },
-        { username: "gktpgktp", body: "hoşgeldin deneme", createdAt: new Date("03.01.2022 04:40:21").toLocaleString('tr-TR'), parentId: null, avatar: "", id: 4, userId: tek_post["poster"] }];
+    useEffect(() => {
+        async function fetchMyAPI() {
+            let response = await dispatch(getPostComments(tek_post["id"]));
+            console.log("response", response);
+            setIsLoaded(true);
+        }
+        fetchMyAPI()
+    }, [])
 
-    const [allComments, setAllComments] = useState(comments);
+    console.log('postComments: ', postComments);
+    console.log("Comments", postComments?.["Comments"]);
+    console.log("Post", postComments?.["Post"]);
+
     const [activeComment, setActiveComment] = useState(null);
-    const rootComments = allComments.filter(
-        (singleComment) => singleComment.parentId === null
+    const rootComments = postComments?.["Comments"]?.filter(
+        (singleComment) => singleComment.replied_comment === null
     );
-    console.log(rootComments);
+    console.log("rootComments", rootComments);
     console.log(new Date());
     console.log(new Date().toLocaleString('tr-TR'));
 
-    const createComment = async (text, parentId = null) => {
+    function createComment(text, replied_comment = null) {
         let max_id = 0;
-        for (let i = 0; i < allComments.length; i++) {
-            if (allComments[i]["id"] > max_id) {
-                max_id = allComments[i]["id"];
+        for (let i = 0; i < postComments?.["Comments"].length; i++) {
+            if (postComments?.["Comments"][i]["id"] > max_id) {
+                max_id = postComments?.["Comments"][i]["id"];
             }
         }
+        if(replied_comment == null) {
+            return {
+                post: postComments?.["Post"]["id"],
+                body: text
+            }; 
+        }
         return {
-            username: tek_post["poster_name"],
-            body: text,
-            createdAt: new Date().toLocaleString('tr-TR'),
-            parentId,
-            avatar: "",
-            id: max_id + 1,
-            userId: tek_post["poster"]
+            post: postComments?.["Post"]["id"],
+            replied_comment,
+            body: text
         };
     };
     const getReplies = (commentId) =>
-        allComments
-            .filter((singleComment) => singleComment.parentId === commentId)
+        postComments?.["Comments"]
+            .filter((singleComment) => singleComment.replied_comment === commentId)
             .sort(
                 (a, b) =>
-                    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                    new Date(a.created_date).getTime() - new Date(b.created_date).getTime()
             );
-    const addComment = (text, parentId) => {
-        createComment(text, parentId).then((comment) => {
-            setAllComments([comment, ...allComments]);
-            setActiveComment(null);
-            // allComments
-            //     .filter((singleComment) => singleComment.parentId === null)
-            //     .sort(
-            //         (a, b) =>
-            //             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            //     );
-
-        });
-    };
-    console.log(allComments);
+    async function addCommentBackend(text, replied_comment) {
+        var comment = createComment(text, replied_comment);
+        console.log("comm:", comment);
+        await dispatch(sendCommentBackend(comment));
+        dispatch(getPostComments(tek_post["id"]));
+    }
 
     return (
-        <>
-            <div>
-                <SideBar />
-            </div>
+        isLoaded ?
+            <>
+                <div>
+                    <SideBar />
+                </div>
 
-            <PostCard posts={tek_post} />
+                <PostCard posts={postComments?.["Post"]} />
 
-            <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender' }}>
-                <CardContent>
-                    <h1>Comments</h1>
+                <MaterialCard sx={{ maxWidth: 900, margin: 'auto', backgroundColor: 'Lavender' }}>
+                    <CardContent>
+                        <h1>Comments</h1>
 
-                    <CommentForm handleSubmit={addComment} />
-                    {rootComments.map((rootComment) => (
-                        <Comment
-                            key={rootComment.id}
-                            comment={rootComment}
-                            replies={getReplies(rootComment.id)}
-                            addComment={addComment}
-                            activeComment={activeComment}
-                            setActiveComment={setActiveComment}
-                            currentUserId={tek_post["poster"]}
-                        />
-                    ))}
-                </CardContent>
-            </MaterialCard >
-        </>
+                        <CommentForm handleSubmit={addCommentBackend} />
+                        {rootComments?.map((rootComment) => (
+                            <Comment
+                                key={rootComment.id}
+                                comment={rootComment}
+                                replies={getReplies(rootComment.id)}
+                                addCommentBackend={addCommentBackend}
+                                activeComment={activeComment}
+                                setActiveComment={setActiveComment}
+                            />
+                        ))}
+                    </CardContent>
+                </MaterialCard >
+            </>
+            :
+            <>
+                <p>Comments are Loading!</p>
+            </>
     );
 };
 

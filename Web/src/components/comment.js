@@ -11,11 +11,11 @@ import { Grid, Paper } from "@material-ui/core";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import MUIButton from '@mui/material/Button';
 
-const Comment = ({ comment, replies, addComment, parentId = null, currentUserId, setActiveComment, activeComment }) => {
+const Comment = ({ comment, replies, addCommentBackend, replied_comment = null, setActiveComment, activeComment }) => {
 
-    const createdAt = new Date(comment.createdAt).toLocaleString('tr-TR');
-    const replyId = parentId ? parentId : comment.id;
-    const canReply = Boolean(currentUserId);
+    const created_date = new Date(comment.created_date).toLocaleString('tr-TR');
+    const replyId = replied_comment ? replied_comment : comment.id;
+    const canReply = true;
     const isReplying =
         activeComment &&
         activeComment.id === comment.id &&
@@ -29,7 +29,6 @@ const Comment = ({ comment, replies, addComment, parentId = null, currentUserId,
                 <CardHeader
                     avatar={
                         <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                            {comment.username.substring(0, 1).toUpperCase()}
                         </Avatar>
                     }
                     action={
@@ -37,8 +36,8 @@ const Comment = ({ comment, replies, addComment, parentId = null, currentUserId,
                             <MoreVertIcon />
                         </IconButton>
                     }
-                    title={comment.username}
-                    subheader={new Date(createdAt).toLocaleString('tr-TR').substring(0, 16)}
+                    title={comment.commenter_name}
+                    subheader={new Date(created_date).toLocaleString('tr-TR').substring(0, 16)}
                 />
                 <CardContent>
                     <Typography paragraph>
@@ -58,16 +57,9 @@ const Comment = ({ comment, replies, addComment, parentId = null, currentUserId,
                     )}
                     {isReplying && (
                         <CommentForm
-                            handleSubmit={(text) => addComment(text, replyId)}
+                            handleSubmit={(text) => addCommentBackend(text, replyId)}
                         />
                     )}
-                    {/* <MUIButton variant="outlined" size="small" onClick={() =>
-                        <CommentForm
-                            handleSubmit={(text) => addComment(text, replyId)}
-                        />
-                    }>
-                        Reply
-                    </MUIButton> */}
                 </CardActions>
             </Paper>
             {
@@ -77,10 +69,9 @@ const Comment = ({ comment, replies, addComment, parentId = null, currentUserId,
                             <Comment
                                 comment={reply}
                                 key={reply.id}
-                                addComment={addComment}
-                                parentId={comment.id}
+                                addCommentBackend={addCommentBackend}
+                                replied_comment={comment.id}
                                 replies={[]}
-                                currentUserId={currentUserId}
                             />
                         ))}
                     </div>
@@ -93,4 +84,3 @@ const Comment = ({ comment, replies, addComment, parentId = null, currentUserId,
 };
 
 export default Comment;
-
