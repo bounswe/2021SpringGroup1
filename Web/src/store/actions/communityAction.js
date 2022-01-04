@@ -454,7 +454,13 @@ export const sendCommentBackend = (data) => {
                 type: CREATE_COMMENT,
                 data: responseData
             });
-
+        }
+        catch (error) {
+            // dispatch({ type: SIGN_UP_CREATE_MESSAGE, messageCode: error?.response?.data?.code });
+            // throw error.response.data;
+        }
+    }
+};
 export const deletePost = (id) => {
     return async (dispatch, getState) => {
         let { token } = getState().auth;
