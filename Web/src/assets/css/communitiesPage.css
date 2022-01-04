@@ -1,0 +1,11 @@
+#linkid {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+#linkid:hover {
+  color: #fffacd;
+
+  cursor: pointer;
+  text-decoration: underline
+}
