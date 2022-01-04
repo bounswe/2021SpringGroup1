@@ -20,8 +20,6 @@ function PostScreen({route, navigation}) {
 
 
     const onPressDeletePost = () => {
-        console.log(1)
-        console.log(postData.id)
         let uri = 'communities/delete_post?post_id=' + postData.id;
       axiosInstance.post(uri,{}).then(async response => {
           console.log(2)
@@ -34,10 +32,11 @@ function PostScreen({route, navigation}) {
       });
     };
 
+
     return (
         <ScrollView style={styles.background}>
-            <View style={{flexDirection: "row"}}>
-            <Text style={styles.postTitle}>{postData["title"]}</Text>
+            <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+            <Text style={styles.postTitle}>     {postData["title"]}</Text>
                 <IconButton
                     icon="delete"
                     size={30}
@@ -140,7 +139,7 @@ function isoDateConvert(input){
 
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: "lightblue",
+        backgroundColor: "white",
         flex: 1,
         alignContent: "center"
     },
