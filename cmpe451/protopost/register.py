@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from django.http import HttpResponse
 from .models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
@@ -47,6 +45,5 @@ def try_logout(req):
 	logout(req)
 	return JsonResponse({"Message" : "Logged out successfully."})
 
-#TODO
 def try_change_password(req):
 	pass

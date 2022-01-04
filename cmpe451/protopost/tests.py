@@ -1,34 +1,14 @@
-from django.test import TestCase,Client, client
-from rest_framework import response
+from django.test import TestCase
 from protopost.models import *
 from protopost.serializers import *
-from protopost.home import *
 from protopost.register import *
 from rest_framework.test import APIClient
-from rest_framework.authtoken.models import Token
-from django.test import TransactionTestCase
-from collections import OrderedDict
-
-# Create your tests here.
 import json
 
 class CommunityTestCase(TestCase):
+    fixtures = ['test_db.json']
     def setUp(self):
         self.client=APIClient()
-        self.client.post("/api/v1/protopost/register",
-        {
-        "username": "John",
-        "email": "john@gmail.com",
-        "password": "123abc"
-        }
-        )
-        self.client.post("/api/v1/protopost/register",
-        {
-        "username": "Jack",
-        "email": "jack@gmail.com",
-        "password": "123abc"
-        }
-        )
         self.john_token=json.loads(self.client.post("/api/v1/protopost/login",
         {
         "username": "John",
@@ -51,24 +31,9 @@ class CommunityTestCase(TestCase):
         "community_image_url": "string"
         }
         )
-        
-        self.john_community_id=response.data["Community"]["id"]
-        self.john_moderator_id = response.data["Community"]["moderator"]
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertTrue(response_dict["Success"])
 
-        self.assertEqual(response.data,
-        {
-        "Success": True,
-        "Community": {
-            "@context": "http://schema.org/",
-            "@type": "Organization",
-            "id": self.john_community_id,
-            "name": "John's Community",
-            "description": "Some description.",
-            "community_image_url": "string",
-            "moderator": self.john_moderator_id,
-            "isJoined": False
-        }
-        })
 
     def test_create_community_same_name(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
@@ -90,73 +55,30 @@ class CommunityTestCase(TestCase):
 
     def test_list_communities(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
-        response=self.client.post("/api/v1/protopost/create_community",
-        {
-        "name": "John's Community",
-        "description": "Some description.",
-        "community_image_url": "string"
-        }
-        )
-        self.john_community_id, self.john_moderator_id = response.data["Community"]["id"], response.data["Community"]["moderator"]
-
-        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
-        response=self.client.post("/api/v1/protopost/create_community",
-        {
-        "name": "Jack's Community",
-        "description": "Some description.",
-        "community_image_url": "string"
-        }
-        )
-        self.jack_community_id, self.jack_moderator_id = response.data["Community"]["id"], response.data["Community"]["moderator"]
 
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
         response=self.client.get("/api/v1/protopost/list_communities?from=all")
-        
-
-        self.assertEqual(response.data,
-        {
-        "Communities": [
-            {
-            "@context": "http://schema.org/",
-            "@type": "Organization",
-            "id": self.john_community_id,
-            "name": "John's Community",
-            "description": "Some description.",
-            "community_image_url": "string",
-            "moderator": self.john_moderator_id,
-            "isJoined": False
-            },
-            {
-            "@context": "http://schema.org/",
-            "@type": "Organization",
-            "id": self.jack_community_id,
-            "name": "Jack's Community",
-            "description": "Some description.",
-            "community_image_url": "string",
-            "moderator": self.jack_moderator_id,
-            "isJoined": True
-            }
-        ]
-        }
-        )
+        response_dict = json.loads(json.dumps(response.data))
+        community_names=[c["name"] for c in response_dict["Communities"]]
+        self.assertListEqual(["JohnCom","JackCom"],community_names)
     
+    def test_get_community_data(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/communities/1/get_community_data")
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["Community"]["id"], 1)
+
+    def test_search_communities(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/search_communities?text=com")
+
+        self.assertEqual(response.status_code, 200)
+
 class PostTemplateTestCase(TestCase):
+    fixtures = ['test_db.json']
     def setUp(self):
         self.client=APIClient()
-        self.client.post("/api/v1/protopost/register",
-        {
-        "username": "John",
-        "email": "john@gmail.com",
-        "password": "123abc"
-        }
-        )
-        self.client.post("/api/v1/protopost/register",
-        {
-        "username": "Jack",
-        "email": "jack@gmail.com",
-        "password": "123abc"
-        }
-        )
         self.john_token=json.loads(self.client.post("/api/v1/protopost/login",
         {
         "username": "John",
@@ -169,26 +91,6 @@ class PostTemplateTestCase(TestCase):
         "password": "123abc"
         }
         ).content)["Token"]
-        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
-        response=self.client.post("/api/v1/protopost/create_community",
-        {
-        "name": "John's Community",
-        "description": "Some description.",
-        "community_image_url": "string"
-        }
-        )
-        self.john_community_id=response.data["Community"]["id"]
-
-        self.client.credentials()
-        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
-        response=self.client.post("/api/v1/protopost/create_community",
-        {
-        "name": "Jack's Community",
-        "description": "Some description.",
-        "community_image_url": "string"
-        }
-        )
-        self.jack_community_id=response.data["Community"]["id"]
 
     def test_create_post_template_in_community(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
@@ -196,24 +98,9 @@ class PostTemplateTestCase(TestCase):
             "name": "JackTemplate",
             "data_field_templates": [{"name": "JackText","type": "text"}]})
         response=self.client.post("/api/v1/protopost/communities/2/create_post_template",data=request_body,content_type='application/json')
-        self.jack_post_temp_id = response.data["PostTemplate"]["id"]
-
-        self.assertEqual(response.data,
-        {
-        "Success": True,
-        "PostTemplate": {
-            "id": self.jack_post_temp_id,
-            "community": self.jack_community_id,
-            "name": "JackTemplate",
-            "data_field_templates": [
-            {
-                "name": "JackText",
-                "type": "text"
-            }
-            ]
-        }
-        } 
-        )
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertTrue(response_dict["Success"])
+        self.assertEqual(response_dict["PostTemplate"]["name"],"JackTemplate")
 
     def test_create_post_template_out_community(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
@@ -222,166 +109,154 @@ class PostTemplateTestCase(TestCase):
             "data_field_templates": [{"name": "JackText","type": "text"}
             ]})
         response=self.client.post("/api/v1/protopost/communities/1/create_post_template",data=request_body,content_type='application/json')
-        self.assertEqual(response.data,
-            {
-            "Success": False,
-            "Error": "User is not subscribed to this community."
-            }
-        )
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertFalse(response_dict["Success"])
 
     def test_list_post_templates(self):
-            self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
-            request_body=json.dumps({
-            "name": "JackTemplate",
-            "data_field_templates": [{"name": "JackText","type": "text"}
-            ]})
-            response=self.client.post(f"/api/v1/protopost/communities/{self.jack_community_id}/create_post_template",data=request_body,content_type='application/json')
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        request_body=json.dumps({
+        "name": "JackTemplate",
+        "data_field_templates": [{"name": "JackText","type": "text"}
+        ]})
+        response=self.client.get("/api/v1/protopost/communities/2/list_post_templates")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict["Post_templates"][0]["name"],"JackTemp")
 
-            response=self.client.get(f"/api/v1/protopost/communities/{self.jack_community_id}/list_post_templates")
-            response_dic = json.loads(json.dumps(response.data))
-            pos_template_id = response_dic["Post_templates"][0]["id"]
-            
-            self.assertEqual(response_dic,
-            {
-            "Success": True,
-            "Post_templates": [
-                {
-                "id": pos_template_id,
-                "community": self.jack_community_id,
-                "name": "JackTemplate",
-                "data_field_templates": [
-                    {
-                    "name": "JackText",
-                    "type": "text"
-                    }
-                ]
-                }
-            ]
-            }
-            )
-
-class GetUserHomeFeed(TestCase):
+class PostTestCase(TestCase):
+    fixtures = ['test_db.json']
     def setUp(self):
-        self.client=APIClient()
-        self.client.post("/api/v1/protopost/register",
-        {"username": "John", "email": "john@gmail.com", "password": "123abc"})
-        
+        self.client=APIClient()    
         self.john_token=json.loads(self.client.post("/api/v1/protopost/login",
-        {"username": "John", "password": "123abc"}).content)["Token"]
+        {
+        "username": "John",
+        "password": "123abc"
+        }).content)["Token"]
+        self.jack_token=json.loads(self.client.post("/api/v1/protopost/login",
+        {
+        "username": "Jack",
+        "password": "123abc"
+        }).content)["Token"]
+
+    def test_create_post_valid(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        request_body=json.dumps({
+        "title": "JohnPost",
+        "post_template": 1,
+        "data_fields": [
+            {
+            "name": "JohnText",
+            "type": "text",
+            "content": {"value":"string"}
+            }
+        ]
+        })
+        response=self.client.post("/api/v1/protopost/communities/1/create_post",data=request_body,content_type='application/json')
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertTrue(response_dict["Success"])
+        self.assertEqual(response_dict["Post"]["title"],"JohnPost")
+    def test_create_post_invalid_field(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        request_body=json.dumps({
+        "title": "JohnPost",
+        "post_template": 1,
+        "data_fields": [
+            {
+            "name": "JohnText2",
+            "type": "text",
+            "content": {"value":"string"}
+            }
+        ]
+        })
+        response=self.client.post("/api/v1/protopost/communities/1/create_post",data=request_body,content_type='application/json')
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertFalse(response_dict["Success"])
+    
+    def test_list_community_posts(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.get("/api/v1/protopost/communities/2/list_community_posts")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict[0]["title"],"JackPost")
 
-        response=self.client.post("/api/v1/protopost/create_community",
-        {"name": "John's Community", "description": "Some description.","community_image_url": "string"})
-        self.john_comm=response.data["Community"]["id"]
+    def test_get_post_data(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.get("/api/v1/protopost/communities/get_post_data?post_id=1")
+        self.assertEqual(1,response.data["Post"]["id"])
+
+    def test_user_delete_post(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.post("/api/v1/protopost/communities/delete_post?post_id=1")
+        self.assertEqual(response.status_code, 200)
+
+    def test_search_posts_in_community(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.get("/api/v1/protopost/communities/1/search_posts_in_community?community_id=1&text=a")
+        self.assertEqual(response.status_code, 200)
+
+class FilterTestCase(TestCase):
+    fixtures = ['test_db.json']
+    def setUp(self):
+        self.client=APIClient()    
+        self.john_token=json.loads(self.client.post("/api/v1/protopost/login",
+        {
+        "username": "John",
+        "password": "123abc"
+        }).content)["Token"]
+        self.jack_token=json.loads(self.client.post("/api/v1/protopost/login",
+        {
+        "username": "Jack",
+        "password": "123abc"
+        }).content)["Token"]
+    def test_filter_by_text(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.jack_token)
+        response=self.client.get("/api/v1/protopost/communities/2/filter_posts?post_template_id=3&JackText_startsWith=str")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict["Posts"][0]["title"],"JackPost")
+        response=self.client.get("/api/v1/protopost/communities/2/filter_posts?post_template_id=3&JackText_contains=tra")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict["Posts"][0]["title"],"JackPost")
+    def test_filter_by_number(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_lt=6")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict["Posts"][0]["title"],"Below number")
+        response=self.client.get("/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_eq=6")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict["Posts"][0]["title"],"Equal number")
+        response=self.client.get("/api/v1/protopost/communities/1/filter_posts?post_template_id=2&num1_gt=6")
+        response_dict = json.loads(json.dumps(response.data))
+        self.assertEqual(response_dict["Posts"][0]["title"],"Above number")
         
+class UserTestCase(TestCase):
+    fixtures = ['test_db.json']
+    def setUp(self):
+        self.client=APIClient()    
+        self.john_token=json.loads(self.client.post("/api/v1/protopost/login",
+        { "username": "John", "password": "123abc" }).content)["Token"]
 
-        request_body=json.dumps({
-            "name": "JohnTemplate",
-            "data_field_templates": [{"name": "JohnText","type": "text"}]})
-        response = self.client.post(f"/api/v1/protopost/communities/{self.john_comm}/create_post_template",data=request_body,content_type='application/json')
-        self.john_post_template_id = response.data["PostTemplate"]["id"]
-
-        counter = 1
-        request_body=json.dumps({
-                "title": f"John's Post {counter}",
-                "post_template": self.john_post_template_id,
-                "data_fields": [
-                    {
-                    "name": "JohnText",
-                    "type": "text",
-                    "content": {
-                        "additionalProp1": "Hello Protopost !",
-                        "additionalProp2": "I am a new member of this app.",
-                    }
-                    }
-                ]
-                })
-        response = self.client.post(f"/api/v1/protopost/communities/{self.john_comm}/create_post", data=request_body,content_type='application/json')
-
-        counter += 1
-        response = self.client.post(f"/api/v1/protopost/communities/{self.john_comm}/create_post", data=request_body,content_type='application/json') 
-
-    def test_Get_Home_Feed(self):
+    def test_get_Home_Feed(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
         response=self.client.get("/api/v1/protopost/get_user_home_feed") 
-     
-        response_dic = json.loads(json.dumps(response.data))
-        for element in response_dic:
-            del element["created_date"]
 
-        actual_result = [
-                            {
-                                "poster_name" : "John",
-                                "id": 2,
-                                "poster": 1,
-                                "community": 1,
-                                "title": "John's Post 1",
-                                "post_template": 1,
-                                "data_fields": [
-                                    {
-                                        "name": "JohnText",
-                                        "type": "text",
-                                        "content": {
-                                            "additionalProp1": "Hello Protopost !",
-                                            "additionalProp2": "I am a new member of this app."
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                "poster_name" : "John",
-                                "id": 1,
-                                "poster": 1,
-                                "community": 1,
-                                "title": "John's Post 1",
-                                "post_template": 1,
-                                "data_fields": [
-                                    {
-                                        "name": "JohnText",
-                                        "type": "text",
-                                        "content": {
-                                            "additionalProp1": "Hello Protopost !",
-                                            "additionalProp2": "I am a new member of this app."
-                                        }
-                                    }
-                                ]
-                            }
-                        ]
+        self.assertEqual(response.status_code, 200)
 
-        self.assertEqual(actual_result, response_dic)
+    def test_get_user_profile(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/get_user_profile?user_id=1") 
 
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["User"]["username"], "John")
 
-
-
-
-#class PostTestCase(TestCase):
-
-# # class CommunityTestCase(TestCase):
-# #     def setUp(self) :
-# #         self.client=Client()
-    
-# #     def test_community_creation(self):
-# #         response = self.client.post("/create_community",
-# #             {"name":"test_grubu",
-# #             "description":"Test grub description.",
-# #             "is_private":False
-# #             })
-# #         self.assertEqual(response.json()["Success"],True)
-
-# #     def test_search_community(self):
-# #         community_test_number = 2
-# #         for i in range(1,community_test_number+1):
-# #             self.client.post("/create_community", {"name":f"test_grubu_{i}","description":f"Test grub {i} description.","is_private":False})
+    def test_get_user_created_posts(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/get_user_created_posts") 
+        post_owners=[c["poster_name"] for c in response.data]
         
-# #         response = self.client.get("/search_communities", {"name":"test_grubu"})
-# #         self.assertEqual(response.json()["Success"],True)
-# #         self.assertEqual(len(response.json()["Communities"]), community_test_number)
+        self.assertEqual(response.status_code, 200)
+        self.assertListEqual(["John","John","John","John"], post_owners)
 
-# #     def test_getting_community_data(self):
-# #         self.client.post("/create_community", {"name":"test_grubu_1","description":"Test grub 1 description.","is_private":False})
-# #         response = self.client.get("/communities/get_community_data", {"group_name":"test_grubu_1"})
-
-# #         self.assertEqual(response.json()["Success"],True)
-# #         self.assertEqual(response.json()["Community"][0]["name"], "test_grubu_1")
-# #         self.assertEqual(response.json()["Community"][0]["description"], "Test grub 1 description.")
-# #         self.assertEqual(response.json()["Community"][0]["is_private"], False)
+    def test_get_user_subscription(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token '+self.john_token)
+        response=self.client.get("/api/v1/protopost/communities/1/user_subscription") 
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["Success"], True)
