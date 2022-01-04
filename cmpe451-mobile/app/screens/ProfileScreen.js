@@ -15,7 +15,8 @@ function ProfileScreen({navigation}) {
     });
 
     function getProfileData() {
-        axiosInstance.get('get_user_profile', {params: {user_id: user_id}}).then(async response => {
+        axiosInstance.get('get_user_profile', {params: {Authorizaton: axiosInstance.defaults.headers.common['Authorization']}}).then(async response => {
+            console.log(response.data)
             if (response.status === 200) {
                 changeProfileData(response.data["User"]);
                 //console.log(profileData.profile_picture)
