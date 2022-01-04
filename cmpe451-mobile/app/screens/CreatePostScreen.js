@@ -5,9 +5,9 @@ import SelectDropdown from 'react-native-select-dropdown'
 import DatePicker from 'react-native-datepicker';
 
 function CreatePostScreen({route, navigation}) {
-    const [date, setDate] = useState('09-10-2021');
+    const [date, setDate] = useState('2022/01/01');
     const {communityData} = route.params;
-    console.log(communityData);
+    console.log("communtyData: ",communityData);
     const [title, setTitle] = React.useState("");
     const [templates, setTemplates] = React.useState([]);
     const [templateNames, setTemplateNames] = React.useState([]);
@@ -19,6 +19,8 @@ function CreatePostScreen({route, navigation}) {
     const [imageDataFields, setImageDataFields] = useState([]);
     const [dateDataFields, setDateDataFields] = useState([]);
     const [videoDataFields, setVideoDataFields] = useState([]);
+    const [selectionDataFields, setSelectionDataFields] = useState([]);
+    const [locationDataFields, setLocationDataFields] = useState([]);
 
     const updateField = (fieldType, value, key) => {
       if(fieldType === "text"){
@@ -66,6 +68,22 @@ function CreatePostScreen({route, navigation}) {
         _dataFields[key].url = value;
         setVideoDataFields(_dataFields);
       }
+      else if (fieldType === "selection"){
+          const _dataFields = [...selectionDataFields];
+          // _dataFields[key].name = text;
+          // _dataFields[key].type = fieldType;
+          // _dataFields[key].key = key;
+          _dataFields[key].value = value;
+          setSelectionDataFields(_dataFields);
+      }
+      else if (fieldType === "location"){
+          const _dataFields = [...locationDataFields];
+          // _dataFields[key].name = text;
+          // _dataFields[key].type = fieldType;
+          // _dataFields[key].key = key;
+          _dataFields[key].value = value;
+          setLocationDataFields(_dataFields);
+      }
 
     };
 
@@ -86,7 +104,7 @@ function CreatePostScreen({route, navigation}) {
                 }
                 setTemplates(template_array);
                 setTemplateNames(temp_names);
-                setFullTemplateInfo(response.data);
+                //setFullTemplateInfo(response.data);
             }
         })
     };
@@ -109,6 +127,8 @@ function CreatePostScreen({route, navigation}) {
         let imageTemplateFields = [];
         let dateTemplateFields = [];
         let videoTemplateFields = [];
+        let selectionTemplateFields = [];
+        let locationTemplateFields = [];
         for(let i = 0; i<currentTemplate.length; i++){
           if (currentTemplate[i]["type"] === "image"){
             imageTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], url: '' });
@@ -118,31 +138,38 @@ function CreatePostScreen({route, navigation}) {
           }
           else if (currentTemplate[i]["type"] === "number") {
             numberTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], value: '' });
-          }      
+          }
           else if (currentTemplate[i]["type"] === "date"){
             dateTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], value: '' });
-          }   
+          }
           else if (currentTemplate[i]["type"] === "video"){
             videoTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], url: '' });
-          }    
+          }
+          else if (currentTemplate[i]["type"] === "selection"){
+              selectionTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], options: currentTemplate[i]["options"] });
+          }
+          else if (currentTemplate[i]["type"] === "location"){
+              locationTemplateFields.push({ key: '', type: currentTemplate[i]["type"], name: currentTemplate[i]["name"], url: '' });
+          }
         }
         setTextDataFields(textTemplateFields);
         setNumberDataFields(numberTemplateFields);
         setImageDataFields(imageTemplateFields);
         setDateDataFields(dateTemplateFields);
         setVideoDataFields(videoTemplateFields);
-        
+        setSelectionDataFields(selectionTemplateFields);
+        setLocationDataFields(locationTemplateFields);
+
     };
 
     return (
-        <View style={styles.background}> 
+        <View style={styles.background}>
             <SelectDropdown
                 style={styles.dropdown}
                 data={templateNames}
                 onSelect={(selectedItem, index) => {
                     setCurrentName(selectedItem);
                     getTemplateFields(selectedItem);
-        
                 }}
                 buttonTextAfterSelection={(selectedItem, index) => {
                     // text represented after item is selected
@@ -242,8 +269,31 @@ function CreatePostScreen({route, navigation}) {
                           }}
                           onDateChange={(date) => {
                             setDate(date);
+                            console.log("DATE:", date)
                             updateField(input.type, date, key);
                           }}
+                        />
+                    </View>
+                ))}
+                {selectionDataFields.map((input, key) => (
+                    <View style={styles.textContainer}>
+                        <Text style={styles.contentTitle}>{input.name}</Text>
+                        <SelectDropdown
+                            style={styles.dropdown}
+                            data={input.options}
+                            onSelect={(selectedItem, index) => {
+                                updateField(input.type, selectedItem, key)
+                            }}
+                            buttonTextAfterSelection={(selectedItem, index) => {
+                                // text represented after item is selected
+                                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                                return selectedItem
+                            }}
+                            rowTextForSelection={(item, index) => {
+                                // text represented for each item in dropdown
+                                // if data array is an array of objects then return item.property to represent item in dropdown
+                                return item
+                            }}
                         />
                     </View>
                 ))}
@@ -251,7 +301,7 @@ function CreatePostScreen({route, navigation}) {
             </ScrollView>
             <View style= {styles.buttonContainer}>
               <TouchableOpacity style={styles.loginButton}
-              onPress={()=>createPost(textDataFields, numberDataFields, imageDataFields, dateDataFields,videoDataFields, title, currentName, communityData, templates)}>
+              onPress={()=>createPost(textDataFields, numberDataFields, imageDataFields, dateDataFields,videoDataFields, selectionDataFields, locationDataFields, title, currentName, communityData, templates)}>
                 <Text style={styles.loginText}>Create Post</Text>
               </TouchableOpacity>
             </View>
@@ -259,7 +309,7 @@ function CreatePostScreen({route, navigation}) {
     );
 }
 
-async function createPost(textFields, numberFields, imageFields, dateFields,videoFields, postTitle, templateName, commData, templateInfo){
+async function createPost(textFields, numberFields, imageFields, dateFields,videoFields,selectionFields, locationFields, postTitle, templateName, commData, templateInfo){
   // console.log(dataFields);
   console.log(postTitle);
   console.log(templateName);
@@ -313,6 +363,21 @@ async function createPost(textFields, numberFields, imageFields, dateFields,vide
     };
     postDataFields.push(data);
   }
+  ///TODO: add selection and location data here
+    for(let i = 0; i<selectionFields.length; i++){
+        let data = {name: selectionFields[i]["name"], type: "selection", content: {
+                value: selectionFields[i]["value"]
+            }
+        };
+        postDataFields.push(data);
+    }
+    for(let i = 0; i<locationFields.length; i++){
+        let data = {name: locationFields[i]["name"], type: "location", content: {
+                value: locationFields[i]["value"]
+            }
+        };
+        postDataFields.push(data);
+    }
 
   const postData = {title: postTitle, post_template: id, data_fields: postDataFields };
   let uri = 'communities/' + commData["id"] + '/create_post';
