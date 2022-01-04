@@ -36,10 +36,12 @@ const ProfilePage = (props) => {
 
 
   useEffect(() => {
-    if(id === 'profile')
+    if(id === 'profile' || id === 0 || id === '0') {
       dispatch(getProfile());
+      return;
+    }
     dispatch(getProfile(id));
-  }, [])
+  }, [id])
 
 
   return (
