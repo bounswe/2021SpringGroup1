@@ -12,6 +12,8 @@ import CommunityScreen from './app/screens/CommunityScreen';
 import CreatePostTemplateScreen from './app/screens/CreatePostTemplateScreen';
 import CreatePostScreen from './app/screens/CreatePostScreen';
 import AdvancedSearchScreen from './app/screens/AdvancedSearchScreen';
+import ProfileScreen from "./app/screens/ProfileScreen";
+import EditProfileScreen from "./app/screens/EditProfileScreen";
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -56,6 +58,14 @@ export default function App() {
             name="AdvancedSearch"
             component={AdvancedSearchScreen}
             />
+        <Stack.Screen
+            name="Profile"
+            component={ProfileScreen}
+        />
+        <Stack.Screen
+            name="EditProfile"
+            component={EditProfileScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
