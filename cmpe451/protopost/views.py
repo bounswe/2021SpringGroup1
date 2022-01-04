@@ -1,9 +1,3 @@
-from decimal import Context
-from django.db.models import query
-from django.shortcuts import render
-from django.http import HttpResponse
-from rest_framework import response
-
 from .register import *
 from .serializers import *
 from rest_framework.generics import GenericAPIView
@@ -17,11 +11,11 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema,OpenApiParameter, inline_serializer
 from drf_spectacular.types import OpenApiTypes
 from math import radians, cos, sin, asin, sqrt
-
+import re
 
 from ActivityStream.views import *
 
-def try_save(*kwargs): #(summary,type,actor,object,tosuccess):
+def try_save(*kwargs): #(summary,type,actor,object,success):
     try:
         saveActivity(*kwargs)
     except:
@@ -81,7 +75,6 @@ class Logout(GenericAPIView):
     def post(self,req,format=None):
         logout(req)
         return Response({"Message" : "Logged out successfully."})
-
 
 class CreateCommunity(GenericAPIView):
     serializer_class=CommunitySerializer
@@ -253,7 +246,6 @@ class UserSubscriptionStatus(GenericAPIView):
         responses={
             "Success": inline_serializer("UserSubscriptionSuccess2",{"Success" : serializers.BooleanField(initial=True), "IsJoined": serializers.BooleanField()}),
             "Error": inline_serializer("UserSubscriptionError2",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
-            
             },
         tags=["User"],
     )
@@ -293,7 +285,6 @@ class ListPostTemplates(GenericAPIView):
         responses={
             "Success": inline_serializer("ListTemplateSuccess",{"Success" : serializers.BooleanField(initial=True), "Post_templates": PostTemplateSerializer(many=True)}),
             "Error": inline_serializer("ListTemplateError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
-            
             },
         tags=["Posts"],
     )
@@ -315,7 +306,6 @@ class ListCommunityPosts(GenericAPIView):
         responses={
             "Success": inline_serializer("ListCommunityPostsSuccess",{"Success" : serializers.BooleanField(initial=True), "Post_templates": PostTemplateSerializer(many=True)}),
             "Error": inline_serializer("ListCommunityPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
-            
             },
         tags=["Posts"],
     )
@@ -366,8 +356,7 @@ class SearchPostsInCommunity(GenericAPIView):
         description="Method that returns posts that contain the given string in their title. Requires authentication.",
         responses={
             "Success": PostSerializer(many=True),
-            "Error": inline_serializer("SearchPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
-            
+            "Error": inline_serializer("SearchPostsError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})  
             },
         tags=["Search"],
     )

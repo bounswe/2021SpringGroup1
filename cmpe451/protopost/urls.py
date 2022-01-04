@@ -1,17 +1,11 @@
 from django.urls import path
-from django.conf.urls import url
-from django.urls.resolvers import URLPattern
 from . import views
-
-
-
 
 urlpatterns = [
 	path("login", views.Login.as_view(), name= "login" ),
 	path("register", views.Register.as_view(), name= "register"),
 	path("logout", views.Logout.as_view(), name= "logout"),
 	
-
 	path("update_user_profile",views.UpdateUserProfile.as_view(), name="update_user_profile"),
 	path("get_user_profile", views.GetUserProfile.as_view(), name= "user_profile"),
 
