@@ -69,7 +69,7 @@ After server is running, run the commands below to setup the database:
 - ```sudo docker-compose run backend python manage.py migrate```
 - ```sudo docker-compose run backend python manage.py loaddata demo_db.json```
 
-After these, enter to [http://<your-instance-ip>:8000/api/schema/swagger-ui/#/]() and check if your server is running correctly.
+After these, enter to [http://your-instance-ip:8000/api/schema/swagger-ui/#/]() and check if your server is running correctly.
 
 If you can see the Swagger page of the API, congratulations, you successfully deployed the API!
 
