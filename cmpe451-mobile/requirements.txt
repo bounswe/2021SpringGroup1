@@ -4,3 +4,12 @@ npm install @react-navigation/drawer
 npm install @react-navigation/bottom-tabs
 npm install axios
 npm install js-cookies
+npm install react-native-paper
+npm install react-native-maps
+npm install react-native-webview
+expo install expo-location
+npm install react-native-google-places-autocomplete
+expo install react-native-gesture-handler
+npm install react-native-elements
+npm install react-native-select-dropdown
+npm install react-native-datepicker

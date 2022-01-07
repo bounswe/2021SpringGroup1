@@ -1,0 +1,51 @@
+If you just want to use the application, then you can download apk from this link:
+https://drive.google.com/file/d/1taw44xj3x-L9-aU9SyFg8hGAmks1zM4t/view?usp=sharing
+
+System manual for protopost mobile application
+
+System requirements:
+Node.js (you can download it from https://nodejs.org/en/ (we recommend the stable version))
+git (You can download it from https://git-scm.com)
+watchman for MACos and Linux users (You can download it from https://facebook.github.io/watchman/docs/install#buildinstall)
+
+---
+
+Installation instructions to setup project on your computer:
+To download expo cli on your computer, execute this line on your command prompt:
+npm install --global expo-cli
+After downloading, go to the directory you wish to create project from your command prompt.
+You can traverse from command prompt but we recommend VS Code.
+Open your folder with VS Code then create a new terminal from VS Code.
+In your target folder type execute this line on your command prompt:
+expo init Protopost
+While configuring project, expo will ask you how it should be created.
+Pick "blank" option for project configuration.
+Delete assets folder from your empty project.
+
+    In our github repository, there is mobile branch (https://github.com/bounswe/2021SpringGroup1/tree/mobile)
+    Inside mobile branch, there is a folder names cmpe451-mobile. Copy that folder and paste it into your empty project.
+    There will be some conflicts. Replace old files with new ones for all of them.
+    Now, you need to download required npm packages to your modules. To do that, you can execute every line from
+    requirements.txt in mobile branch.
+    Now you can run this line whenever you want to start this project:
+    	npm start
+
+    Congratulations, you successfully created protopost in your computer!
+
+    But there is one more thing. You might want to see your changes immediately to make developing faster. you have 2 options:
+    	using expo application on your android device
+    	using an android emulator on your computer.
+    To use your own android device:
+    	Download expo go from google play store.
+    	Start protopost on you computer with "npm start".
+    	Scan the QR code to your phones/tablets camera.
+    	Click on the link and you will be able to open protopost on your device.
+
+    To use an android emulator:
+    	We recommend Android Studio for creating an Android Emulator.
+    	Download Android Studio (https://developer.android.com/studio)
+    	In Android Studio, click to the button called AVD Manager on top right of the screen.
+    	From AVD Manager, create an emulator as you desire.
+    	Start your emulator from AVD Manager.
+    	Start Protopost from terminal with "npm start".
+    	While in terminal, click "a" button from your keyboard and Protopost will start on your emulator.
