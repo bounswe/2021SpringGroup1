@@ -2,7 +2,7 @@
 
 ## Deployment Links
 - [Backend Documentation](http://3.249.82.166:8000/api/schema/swagger-ui/#/)
-- [Fronent-Web Deployment](http://52.209.232.175/)
+- [Frontend-Web Deployment](http://52.209.232.175/)
 
 ## 🎓 Course Definition
 Fundamentals of Software Engineering focuses on teaching tools, practices and issues concerned with software development while highly depending on teamwork. 
