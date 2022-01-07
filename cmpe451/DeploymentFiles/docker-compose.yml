@@ -1,0 +1,21 @@
+# I created this docker-compose file based on this article https://medium.com/@minghz42/docker-setup-for-django-on-mysql-1f063c9d16a0
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    ports:
+      - '3306:3306'
+    environment:
+       MYSQL_DATABASE: '<database-name>'
+       MYSQL_USER: '<user-name>'
+       MYSQL_PASSWORD: '<db-password>'
+       MYSQL_ROOT_PASSWORD: '<db-root-password>'
+  backend:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/protopost-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db

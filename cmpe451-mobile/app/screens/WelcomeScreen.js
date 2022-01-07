@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Image, ImageBackground, StyleSheet, Text, View} from 'react-native';
+import { Button, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 function WelcomeScreen({ navigation }) {
     const lightBlue = 'rgb(77, 160, 240)'
@@ -13,19 +13,21 @@ function WelcomeScreen({ navigation }) {
                 <Image style={styles.logo} source={{uri: "https://allisonpastordesigns.com/wp-content/uploads/2018/09/pp-logo-blue-03.png"}} />
                 <Text style={styles.title}>Protopost</Text>
             </View>
-            <View style={styles.loginButton}>
-                <Button
-                    title="Log in"
-                    color="dodgerblue"
-                    onPress={() => navigation.navigate('Login')}
-                />
+            <View style={styles.loginContainer}>
+                <TouchableOpacity
+                        style={styles.loginButton}
+                        onPress={() => navigation.navigate('Login')}
+                    >
+                        <Text style={styles.loginText}>LOG IN</Text>
+                    </TouchableOpacity>
             </View>
-            <View style={styles.registerButton}>
-                <Button
-                    title="Register"
-                    color="darkblue"
+            <View style={styles.registerContainer}>
+                <TouchableOpacity
+                    style={styles.registerButton}
                     onPress={() => navigation.navigate('Register')}
-                />
+                >
+                    <Text style={styles.registerText}>REGISTER</Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -39,17 +41,35 @@ const styles = StyleSheet.create({
         backgroundColor: "white"
         
     },
-    loginButton: {
+    loginContainer: {
         width: "100%",
         height: 70,
         backgroundColor: "rgb(77, 160, 240)",
         justifyContent: "center"
     },
-    registerButton: {
+    loginButton: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    loginText: {
+        color: "white",
+        fontSize: 20
+    },
+    registerContainer: {
         width: "100%",
         height: 70,
         backgroundColor: "rgb(39, 84, 125)",
         justifyContent: "center"
+    },
+    registerButton: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    registerText: {
+        color: "white",
+        fontSize: 20
     },
     logo: {
         width: 100,
