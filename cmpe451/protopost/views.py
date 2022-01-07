@@ -138,7 +138,7 @@ class CreatePost(GenericAPIView):
 class CreatePostTemplate(GenericAPIView):
     serializer_class=PostTemplateSerializer
     @extend_schema(
-        description="Method for creating Post Template objects. Requires authentication and the user requesting must be moderator of the community. Current accepted data types are 'text, image, date, location'.",
+        description="Method for creating Post Template objects. Requires authentication and the user requesting must be moderator of the community. <br> Current accepted data types are ```text, image, date, location, video, number, selection``` <br> Selection field also takes ```options``` field that can be an array of strings.",
         responses={
             "Success": inline_serializer("CreatePostTemplateSuccess",{"Success" : serializers.BooleanField(initial=True), "PostTemplate": PostTemplateSerializer()}),
             "Error": inline_serializer("CreatePostTemplateError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
