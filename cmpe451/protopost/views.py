@@ -99,7 +99,12 @@ class CreateCommunity(GenericAPIView):
 class CreatePost(GenericAPIView):
     serializer_class=PostSerializer
     @extend_schema(
-        description="Method for creating Post objects. Requires authentication. DataField objects must match the data fields of the Post Template object specified.",
+        description='Method for creating Post objects. Requires authentication. DataField objects must match the data fields of the Post Template object specified. (image field is optional)\
+            <br> Data field content field must be in format with respect to its type: <br> ```"location": {"adrs":str,"marker":{"lat":float,"lng":float}}```<br>\
+    ```"text":{"value":str}```<br>\
+    ```"number":{"value":int}```<br>\
+    ```"image":{"url":str}```<br>\
+    ```"date":{"value":"yyyy-mm-dd"}```',
         responses={
             "Success": inline_serializer("CreatePostSuccess",{"Success" : serializers.BooleanField(initial=True), "Post": PostSerializer()}),
             "Error": inline_serializer("CreatePostError",{"Success" : serializers.BooleanField(default=False), "Error": serializers.StringRelatedField()})
@@ -563,7 +568,7 @@ class FilterPosts(GenericAPIView):
             return Response({"Success":True,"Posts":posts_to_return})
 
 class UpdateUserProfile(GenericAPIView):
-    serializer_class=[UserProfileSerializer]
+    serializer_class=UserProfileSerializer
     @extend_schema(description= "Endpoint for updating profile.",
 	tags=["User"])
     def post(self,req):
