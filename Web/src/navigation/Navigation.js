@@ -51,6 +51,7 @@ const Navigation = (props) => {
 
   var ROUTES = <Switch>
     <Route key={idd++} exact path={urls.profile} component={ProfilePage} />
+    <Route key={idd++} exact path={urls.home} component={home} />
     {/* <Route key={idd++} exact path={urls.auth} component={home} /> */}
     <Route key={idd++} exact path={urls.advancedSearchPage} component={AdvancedSearchPage} />
     <Route key={idd++} exact path={urls.commentPage} component={CommentPage} />
@@ -63,7 +64,6 @@ const Navigation = (props) => {
     <Route key={idd++} exact path={urls.myCommunities} component={MyCommunitiesPage} />
     <Route key={idd++} exact path={urls.allCommunities} component={AllCommunitiesPage} />
     <Route key={idd++} exact path={urls.community} component={CommunityPage} />
-    <Route key={idd++} exact path={urls.home} component={home} />
 
   </Switch>
 
