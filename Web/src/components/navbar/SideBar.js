@@ -22,7 +22,7 @@ export const SideBar = props => {
                 <MenuItem onClick={() => history.push('/allCommunities')} icon={<FaGem />}>Communities</MenuItem>
                 <MenuItem onClick={() => history.push('/myCommunities')} icon={<FaGem />}>My Subscriptions</MenuItem>
                 <MenuItem onClick={() => history.push('/myPosts')} icon={<FaGem />}>My Posts</MenuItem>
-                <MenuItem onClick={() => history.push('/profile')} icon={<FaGem />}>Profile</MenuItem>
+                <MenuItem onClick={() => history.push('/profile/0')} icon={<FaGem />}>Profile</MenuItem>
                 <MenuItem onClick={() => {dispatch(logout());history.push('/')}} icon={<FaGem />}>Logout</MenuItem>
             </Menu>
         </ProSidebar>

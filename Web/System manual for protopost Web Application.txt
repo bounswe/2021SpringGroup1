@@ -1,0 +1,34 @@
+System manual for protopost Web Application
+
+System requirements:
+	Node.js v17.3.0 (you can download it from https://nodejs.org/en/ ) 
+	git (You can download it from https://git-scm.com)
+-----------------------------------------------------------------------------------------------------------------------------------
+Installation instructions to setup project on your computer:
+	After installing nodejs, many libraries comes with it. One of them is npm. In reactJS, we decided to use yarn to install packages because yarn is faster than npm. To install yarn,
+	Open terminal,
+	you should use: npm install --global yarn
+	For downloading reposity: git clone https://github.com/bounswe/2021SpringGroup1/tree/master
+	after cloning repository, go to downloaded folder with the command: cd 2021SpringGroup1
+	Our Web code is in "Web" folder. Therefore, go to that folder by typing: cd Web
+	To install necessary libraries just type: yarn install
+	After installing necessary libraries, the code is ready to serve but there are 2 type of serve, 1 for development, the other is for production.
+	For development two commands are enough: yarn install, yarn start 
+	For production three commands are needed: yarn install, yarn build, npx serve -s build -l 80
+
+Deployment to AWS EC2 Instance
+	the same prosedure can be applied here.
+	We should open an EC2 instance, open port of 80 in security group
+	Install Node.js v17.3.0 (you can download it from https://nodejs.org/en/ )  
+	Install git (You can download it from https://git-scm.com)
+	After installing nodejs, many libraries comes with it. One of them is npm. In reactJS, we decided to use yarn to install packages because yarn is faster than npm. To install yarn,
+	Open terminal,
+	you should use: npm install --global yarn
+	For downloading reposity: git clone https://github.com/bounswe/2021SpringGroup1/tree/master
+	after cloning repository, go to downloaded folder with the command: cd 2021SpringGroup1
+	Our Web code is in "Web" folder. Therefore, go to that folder by typing: cd Web
+	We are in a EC2 machine. Therefore, we should deploy our web application in production mode.
+	After installing necessary libraries, the code is ready to serve.
+	We can serve our Web application by these commands: yarn install, yarn build, npx serve -s build -l 80
+	The IP of machine can be obtained in EC2 dashboard.
+
