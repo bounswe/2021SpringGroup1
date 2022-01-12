@@ -13,7 +13,7 @@
 					"apikey": [
 						{
 							"key": "value",
-							"value": "Token b032ed6625f1653aba82a7c393a0cd4b9fce7885",
+							"value": "Token e1261ab26a688013019e1f4b0e3b3948681730cd",
 							"type": "string"
 						},
 						{
@@ -32,7 +32,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"Muhammed's Community\",\r\n  \"description\": \"Some description\",\r\n  \"community_image_url\": \"https://cdn.motor1.com/images/mgl/VA0z9/s3/tesla-roadster.jpg\"\r\n}",
+					"raw": "{\r\n  \"name\": \"Cat lovers\",\r\n  \"description\": \"Community created for cat lovers.\",\r\n  \"community_image_url\": \"https://ichef.bbci.co.uk/news/800/cpsprodpb/3738/production/_93263141_thinkstockphotos-489784110.jpg.webp\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -40,7 +40,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://3.249.82.166:8000/api/v1/protopost/create_post_template",
+					"raw": "http://3.249.82.166:8000/api/v1/protopost/create_community",
 					"protocol": "http",
 					"host": [
 						"3",
@@ -53,7 +53,7 @@
 						"api",
 						"v1",
 						"protopost",
-						"create_post_template"
+						"create_community"
 					]
 				}
 			},
@@ -65,7 +65,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Muhammed's Community\",\r\n  \"description\": \"Some description\",\r\n  \"community_image_url\": \"https://cdn.motor1.com/images/mgl/VA0z9/s3/tesla-roadster.jpg\"\r\n}",
+							"raw": "{\r\n  \"name\": \"Cat lovers\",\r\n  \"description\": \"Community created for cat lovers.\",\r\n  \"community_image_url\": \"https://ichef.bbci.co.uk/news/800/cpsprodpb/3738/production/_93263141_thinkstockphotos-489784110.jpg.webp\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -73,7 +73,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://3.249.82.166:8000/api/v1/protopost/create_post_template",
+							"raw": "http://3.249.82.166:8000/api/v1/protopost/create_community",
 							"protocol": "http",
 							"host": [
 								"3",
@@ -86,7 +86,7 @@
 								"api",
 								"v1",
 								"protopost",
-								"create_post_template"
+								"create_community"
 							]
 						}
 					},
@@ -96,7 +96,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Sat, 18 Dec 2021 16:01:11 GMT"
+							"value": "Wed, 12 Jan 2022 11:56:57 GMT"
 						},
 						{
 							"key": "Server",
@@ -120,7 +120,7 @@
 						},
 						{
 							"key": "Content-Length",
-							"value": "272"
+							"value": "324"
 						},
 						{
 							"key": "X-Content-Type-Options",
@@ -132,7 +132,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"Success\": true,\n    \"Community\": {\n        \"@context\": \"http://schema.org/\",\n        \"@type\": \"Organization\",\n        \"id\": 11,\n        \"name\": \"Muhammed's Community\",\n        \"description\": \"Some description\",\n        \"community_image_url\": \"https://cdn.motor1.com/images/mgl/VA0z9/s3/tesla-roadster.jpg\",\n        \"moderator\": 1,\n        \"isJoined\": true\n    }\n}"
+					"body": "{\n    \"Success\": true,\n    \"Community\": {\n        \"@context\": \"http://schema.org/\",\n        \"@type\": \"Organization\",\n        \"id\": 11,\n        \"name\": \"Cat lovers\",\n        \"description\": \"Community created for cat lovers.\",\n        \"community_image_url\": \"https://ichef.bbci.co.uk/news/800/cpsprodpb/3738/production/_93263141_thinkstockphotos-489784110.jpg.webp\",\n        \"moderator\": 10,\n        \"isJoined\": true\n    }\n}"
 				}
 			]
 		},
@@ -144,7 +144,7 @@
 					"apikey": [
 						{
 							"key": "value",
-							"value": "Token b032ed6625f1653aba82a7c393a0cd4b9fce7885",
+							"value": "Token e1261ab26a688013019e1f4b0e3b3948681730cd",
 							"type": "string"
 						},
 						{
@@ -163,7 +163,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"Muhammed's Template\",\r\n  \"data_field_templates\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\"\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\"\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\"\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\"\r\n    }\r\n  ]\r\n}",
+					"raw": "{\r\n  \"name\": \"Cat Share\",\r\n  \"data_field_templates\": [\r\n    {\r\n      \"name\": \"Name\",\r\n      \"type\": \"text\"\r\n    },\r\n    {\r\n      \"name\": \"Image\",\r\n      \"type\": \"image\"\r\n    },\r\n    {\r\n      \"name\": \"Age\",\r\n      \"type\": \"number\"\r\n    },\r\n    {\r\n      \"name\": \"Adoption date\",\r\n      \"type\": \"date\"\r\n    }\r\n  ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -198,7 +198,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Muhammed's Template\",\r\n  \"data_field_templates\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\"\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\"\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\"\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\"\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"name\": \"Cat Share\",\r\n  \"data_field_templates\": [\r\n    {\r\n      \"name\": \"Name\",\r\n      \"type\": \"text\"\r\n    },\r\n    {\r\n      \"name\": \"Image\",\r\n      \"type\": \"image\"\r\n    },\r\n    {\r\n      \"name\": \"Age\",\r\n      \"type\": \"number\"\r\n    },\r\n    {\r\n      \"name\": \"Adoption date\",\r\n      \"type\": \"date\"\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -231,7 +231,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Sat, 18 Dec 2021 16:07:51 GMT"
+							"value": "Wed, 12 Jan 2022 12:02:20 GMT"
 						},
 						{
 							"key": "Server",
@@ -255,7 +255,7 @@
 						},
 						{
 							"key": "Content-Length",
-							"value": "264"
+							"value": "455"
 						},
 						{
 							"key": "X-Content-Type-Options",
@@ -267,7 +267,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"Success\": true,\n    \"PostTemplate\": {\n        \"id\": 10,\n        \"community\": 11,\n        \"name\": \"Muhammed's Template\",\n        \"data_field_templates\": [\n            {\n                \"name\": \"Text Field\",\n                \"type\": \"text\"\n            },\n            {\n                \"name\": \"Image Field\",\n                \"type\": \"image\"\n            },\n            {\n                \"name\": \"Date Field\",\n                \"type\": \"date\"\n            },\n            {\n                \"name\": \"Location Field\",\n                \"type\": \"location\"\n            }\n        ]\n    }\n}"
+					"body": "{\n    \"Success\": true,\n    \"PostTemplate\": {\n        \"@context\": \"http://schema.org/\",\n        \"@type\": \"Post_Template\",\n        \"id\": 21,\n        \"community\": 11,\n        \"name\": \"Cat Share\",\n        \"data_field_templates\": [\n            {\n                \"name\": \"Name\",\n                \"type\": \"text\",\n                \"options\": null,\n                \"reference_name\": \"Name\"\n            },\n            {\n                \"name\": \"Image\",\n                \"type\": \"image\",\n                \"options\": null,\n                \"reference_name\": \"Image\"\n            },\n            {\n                \"name\": \"Age\",\n                \"type\": \"number\",\n                \"options\": null,\n                \"reference_name\": \"Age\"\n            },\n            {\n                \"name\": \"Adoption date\",\n                \"type\": \"date\",\n                \"options\": null,\n                \"reference_name\": \"Adoption%20date\"\n            }\n        ]\n    }\n}"
 				}
 			]
 		},
@@ -279,7 +279,7 @@
 					"apikey": [
 						{
 							"key": "value",
-							"value": "Token b032ed6625f1653aba82a7c393a0cd4b9fce7885",
+							"value": "Token e1261ab26a688013019e1f4b0e3b3948681730cd",
 							"type": "string"
 						},
 						{
@@ -298,7 +298,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"title\": \"Muhammed's Post\",\r\n  \"post_template\": 10,\r\n  \"data_fields\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\",\r\n      \"content\": {}\r\n    }\r\n  ]\r\n}",
+					"raw": "{\r\n  \"title\": \"My cat Dobby\",\r\n  \"post_template\": 21,\r\n  \"data_fields\": [\r\n    {\r\n      \"name\": \"Name\",\r\n      \"type\": \"text\",\r\n      \"content\": {\r\n          \"value\":\"Dobby\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Image\",\r\n      \"type\": \"image\",\r\n      \"content\": {\r\n          \"url\":\"https://pbs.twimg.com/profile_images/1278088682109632512/DigKDI94_400x400.jpg\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Age\",\r\n      \"type\": \"number\",\r\n      \"content\": {\r\n          \"value\":2\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Adoption date\",\r\n      \"type\": \"date\",\r\n      \"content\": {\r\n          \"value\":\"2021-05-01\"\r\n      }\r\n    }\r\n  ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -333,7 +333,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"title\": \"Muhammed's Post\",\r\n  \"post_template\": 10,\r\n  \"data_fields\": [\r\n    {\r\n      \"name\": \"Text Field\",\r\n      \"type\": \"text\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Image Field\",\r\n      \"type\": \"image\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Date Field\",\r\n      \"type\": \"date\",\r\n      \"content\": {}\r\n    },\r\n    {\r\n      \"name\": \"Location Field\",\r\n      \"type\": \"location\",\r\n      \"content\": {}\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"title\": \"My cat Dobby\",\r\n  \"post_template\": 21,\r\n  \"data_fields\": [\r\n    {\r\n      \"name\": \"Name\",\r\n      \"type\": \"text\",\r\n      \"content\": {\r\n          \"value\":\"Dobby\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Image\",\r\n      \"type\": \"image\",\r\n      \"content\": {\r\n          \"url\":\"https://pbs.twimg.com/profile_images/1278088682109632512/DigKDI94_400x400.jpg\"\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Age\",\r\n      \"type\": \"number\",\r\n      \"content\": {\r\n          \"value\":2\r\n      }\r\n    },\r\n    {\r\n      \"name\": \"Adoption date\",\r\n      \"type\": \"date\",\r\n      \"content\": {\r\n          \"value\":\"2021-05-01\"\r\n      }\r\n    }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -366,7 +366,7 @@
 					"header": [
 						{
 							"key": "Date",
-							"value": "Sat, 18 Dec 2021 16:11:12 GMT"
+							"value": "Wed, 12 Jan 2022 12:08:52 GMT"
 						},
 						{
 							"key": "Server",
@@ -390,7 +390,7 @@
 						},
 						{
 							"key": "Content-Length",
-							"value": "440"
+							"value": "697"
 						},
 						{
 							"key": "X-Content-Type-Options",
@@ -402,7 +402,7 @@
 						}
 					],
 					"cookie": [],
-					"body": "{\n    \"Success\": true,\n    \"Post\": {\n        \"poster_name\": \"gktpmuhammed\",\n        \"community_name\": \"Muhammed's Community\",\n        \"id\": 14,\n        \"poster\": 1,\n        \"community\": 11,\n        \"title\": \"Muhammed's Post\",\n        \"post_template\": 10,\n        \"data_fields\": [\n            {\n                \"name\": \"Text Field\",\n                \"type\": \"text\",\n                \"content\": {}\n            },\n            {\n                \"name\": \"Image Field\",\n                \"type\": \"image\",\n                \"content\": {}\n            },\n            {\n                \"name\": \"Date Field\",\n                \"type\": \"date\",\n                \"content\": {}\n            },\n            {\n                \"name\": \"Location Field\",\n                \"type\": \"location\",\n                \"content\": {}\n            }\n        ],\n        \"created_date\": \"2021-12-18T16:11:12.489175Z\"\n    }\n}"
+					"body": "{\n    \"Success\": true,\n    \"Post\": {\n        \"@context\": \"http://schema.org/\",\n        \"@type\": \"SocialMediaPosting\",\n        \"poster_name\": \"tester\",\n        \"community_name\": \"Cat lovers\",\n        \"id\": 70,\n        \"poster\": 10,\n        \"community\": 11,\n        \"title\": \"My cat Dobby\",\n        \"post_template\": 21,\n        \"data_fields\": [\n            {\n                \"name\": \"Name\",\n                \"type\": \"text\",\n                \"content\": {\n                    \"value\": \"Dobby\"\n                },\n                \"reference_name\": \"Name\"\n            },\n            {\n                \"name\": \"Image\",\n                \"type\": \"image\",\n                \"content\": {\n                    \"url\": \"https://pbs.twimg.com/profile_images/1278088682109632512/DigKDI94_400x400.jpg\"\n                },\n                \"reference_name\": \"Image\"\n            },\n            {\n                \"name\": \"Age\",\n                \"type\": \"number\",\n                \"content\": {\n                    \"value\": 2\n                },\n                \"reference_name\": \"Age\"\n            },\n            {\n                \"name\": \"Adoption date\",\n                \"type\": \"date\",\n                \"content\": {\n                    \"value\": \"2021-05-01\"\n                },\n                \"reference_name\": \"Adoption%20date\"\n            }\n        ],\n        \"created_date\": \"2022-01-12T12:08:52.443723Z\"\n    }\n}"
 				}
 			]
 		}
